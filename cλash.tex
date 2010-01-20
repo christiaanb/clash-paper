@@ -452,7 +452,259 @@ foo\par bar % Won't compile without at least two paragraphs.
 
 \section{Hardware description in Haskell}
 
-foo\par bar
+  To translate Haskell to hardware, every Haskell construct needs a
+  translation to \VHDL. There are often multiple valid translations
+  possible. When faced with choices, the most obvious choice has been
+  chosen wherever possible. In a lot of cases, when a programmer looks
+  at a functional hardware description it is completely clear what
+  hardware is described. We want our translator to generate exactly that
+  hardware whenever possible, to make working with Cλash as intuitive as
+  possible.
+
+  \subsection{Function application}
+    The basic syntactic elements of a functional program are functions
+    and function application. These have a single obvious \VHDL\
+    translation: each top level function becomes a hardware component,
+    where each argument is an input port and the result value is the
+    (single) output port. This output port can have a complex type (such
+    as a tuple), so having just a single output port does not pose a
+    limitation.
+
+    Each function application in turn becomes component instantiation.
+    Here, the result of each argument expression is assigned to a
+    signal, which is mapped to the corresponding input port. The output
+    port of the function is also mapped to a signal, which is used as
+    the result of the application.
+
+    Since every top level function generates its own component, the
+    hierarchy of of function calls is reflected in the final \VHDL\
+    output as well, creating a hierarchical \VHDL\ description of the
+    hardware.  This separation in different components makes the
+    resulting \VHDL\ output easier to read and debug.
+
+  \subsection{Choice}
+    Although describing components and connections allows us to describe
+    a lot of hardware designs already, there is an obvious thing
+    missing: choice. We need some way to be able to choose between
+    values based on another value.  In Haskell, choice is achieved by
+    \hs{case} expressions, \hs{if} expressions, pattern matching and
+    guards.
+
+    However, to be able to describe our hardware in a more convenient
+    way, we also want to translate Haskell's choice mechanisms. The
+    easiest of these are of course case expressions (and \hs{if}
+    expressions, which can be very directly translated to \hs{case}
+    expressions). A \hs{case} expression can in turn simply be
+    translated to a conditional assignment, where the conditions use
+    equality comparisons against the constructors in the \hs{case}
+    expressions.
+
+    A slightly more complex (but very powerful) form of choice is
+    pattern matching. A function can be defined in multiple clauses,
+    where each clause specifies a pattern. When the arguments match the
+    pattern, the corresponding clause will be used.
+
+  \subsection{Types}
+    Translation of two most basic functional concepts has been
+    discussed: function application and choice. Before looking further
+    into less obvious concepts like higher-order expressions and
+    polymorphism, the possible types that can be used in hardware
+    descriptions will be discussed.
+
+    Some way is needed to translate every values used to its hardware
+    equivalents. In particular, this means a hardware equivalent for
+    every \emph{type} used in a hardware description is needed
+
+    Since most functional languages have a lot of standard types that
+    are hard to translate (integers without a fixed size, lists without
+    a static length, etc.), a number of \quote{built-in} types will be
+    defined first. These types are built-in in the sense that our
+    compiler will have a fixed VHDL type for these. User defined types,
+    on the other hand, will have their hardware type derived directly
+    from their Haskell declaration automatically, according to the rules
+    sketched here.
+
+  \subsection{Built-in types}
+    The language currently supports the following built-in types. Of these,
+    only the \hs{Bool} type is supported by Haskell out of the box (the
+    others are defined by the Cλash package, so they are user-defined types
+    from Haskell's point of view).
+
+    \begin{description}
+      \item[\hs{Bit}]
+        This is the most basic type available. It is mapped directly onto
+        the \texttt{std\_logic} \VHDL\ type. Mapping this to the
+        \texttt{bit} type might make more sense (since the Haskell version
+        only has two values), but using \texttt{std\_logic} is more standard
+        (and allowed for some experimentation with don't care values)
+
+      \item[\hs{Bool}]
+        This is the only built-in Haskell type supported and is translated
+        exactly like the Bit type (where a value of \hs{True} corresponds to a
+        value of \hs{High}). Supporting the Bool type is particularly
+        useful to support \hs{if ... then ... else ...} expressions, which
+        always have a \hs{Bool} value for the condition.
+
+        A \hs{Bool} is translated to a \texttt{std\_logic}, just like \hs{Bit}.
+      \item[\hs{SizedWord}, \hs{SizedInt}]
+        These are types to represent integers. A \hs{SizedWord} is unsigned,
+        while a \hs{SizedInt} is signed. These types are parametrized by a
+        length type, so you can define an unsigned word of 32 bits wide as
+        ollows:
+
+        \begin{verbatim}
+          type Word32 = SizedWord D32
+        \end{verbatim}
+
+        Here, a type synonym \hs{Word32} is defined that is equal to the
+        \hs{SizedWord} type constructor applied to the type \hs{D32}. \hs{D32}
+        is the \emph{type level representation} of the decimal number 32,
+        making the \hs{Word32} type a 32-bit unsigned word.
+
+        These types are translated to the \small{VHDL} \texttt{unsigned} and
+        \texttt{signed} respectively.
+      \item[\hs{Vector}]
+        This is a vector type, that can contain elements of any other type and
+        has a fixed length. It has two type parameters: its
+        length and the type of the elements contained in it. By putting the
+        length parameter in the type, the length of a vector can be determined
+        at compile time, instead of only at run-time for conventional lists.
+
+        The \hs{Vector} type constructor takes two type arguments: the length
+        of the vector and the type of the elements contained in it. The state
+        type of an 8 element register bank would then for example be:
+
+        \begin{verbatim}
+        type RegisterState = Vector D8 Word32
+        \end{verbatim}
+
+        Here, a type synonym \hs{RegisterState} is defined that is equal to
+        the \hs{Vector} type constructor applied to the types \hs{D8} (The type
+        level representation of the decimal number 8) and \hs{Word32} (The 32
+        bit word type as defined above). In other words, the
+        \hs{RegisterState} type is a vector of 8 32-bit words.
+
+        A fixed size vector is translated to a \VHDL\ array type.
+      \item[\hs{RangedWord}]
+        This is another type to describe integers, but unlike the previous
+        two it has no specific bit-width, but an upper bound. This means that
+        its range is not limited to powers of two, but can be any number.
+        A \hs{RangedWord} only has an upper bound, its lower bound is
+        implicitly zero. There is a lot of added implementation complexity
+        when adding a lower bound and having just an upper bound was enough
+        for the primary purpose of this type: type-safely indexing vectors.
+
+        To define an index for the 8 element vector above, we would do:
+
+        \begin{verbatim}
+        type RegisterIndex = RangedWord D7
+        \end{verbatim}
+
+        Here, a type synonym \hs{RegisterIndex} is defined that is equal to
+        the \hs{RangedWord} type constructor applied to the type \hs{D7}. In
+        other words, this defines an unsigned word with values from
+        0 to 7 (inclusive). This word can be be used to index the
+        8 element vector \hs{RegisterState} above.
+
+        This type is translated to the \texttt{unsigned} \VHDL type.
+    \end{description}
+  \subsection{User-defined types}
+    There are three ways to define new types in Haskell: algebraic
+    data-types with the \hs{data} keyword, type synonyms with the \hs{type}
+    keyword and type renamings with the \hs{newtype} keyword. \GHC\
+    offers a few more advanced ways to introduce types (type families,
+    existential typing, \small{GADT}s, etc.) which are not standard
+    Haskell.  These will be left outside the scope of this research.
+
+    Only an algebraic datatype declaration actually introduces a
+    completely new type, for which we provide the \VHDL\ translation
+    below. Type synonyms and renamings only define new names for
+    existing types (where synonyms are completely interchangeable and
+    renamings need explicit conversion). Therefore, these do not need
+    any particular \VHDL\ translation, a synonym or renamed type will
+    just use the same representation as the original type. The
+    distinction between a renaming and a synonym does no longer matter
+    in hardware and can be disregarded in the generated \VHDL.
+
+    For algebraic types, we can make the following distinction: 
+
+    \begin{description}
+
+      \item[Product types]
+        A product type is an algebraic datatype with a single constructor with
+        two or more fields, denoted in practice like (a,b), (a,b,c), etc. This
+        is essentially a way to pack a few values together in a record-like
+        structure. In fact, the built-in tuple types are just algebraic product
+        types (and are thus supported in exactly the same way).
+
+        The ``product'' in its name refers to the collection of values belonging
+        to this type. The collection for a product type is the Cartesian
+        product of the collections for the types of its fields.
+
+        These types are translated to \VHDL\ record types, with one field for
+        every field in the constructor. This translation applies to all single
+        constructor algebraic data-types, including those with just one
+        field (which are technically not a product, but generate a VHDL
+        record for implementation simplicity).
+      \item[Enumerated types]
+        An enumerated type is an algebraic datatype with multiple constructors, but
+        none of them have fields. This is essentially a way to get an
+        enumeration-like type containing alternatives.
+
+        Note that Haskell's \hs{Bool} type is also defined as an
+        enumeration type, but we have a fixed translation for that.
+
+        These types are translated to \VHDL\ enumerations, with one value for
+        each constructor. This allows references to these constructors to be
+        translated to the corresponding enumeration value.
+      \item[Sum types]
+        A sum type is an algebraic datatype with multiple constructors, where
+        the constructors have one or more fields. Technically, a type with
+        more than one field per constructor is a sum of products type, but
+        for our purposes this distinction does not really make a
+        difference, so this distinction is note made.
+
+        The ``sum'' in its name refers again to the collection of values
+        belonging to this type. The collection for a sum type is the
+        union of the the collections for each of the constructors.
+
+        Sum types are currently not supported by the prototype, since there is
+        no obvious \VHDL\ alternative. They can easily be emulated, however, as
+        we will see from an example:
+
+        \begin{verbatim}
+        data Sum = A Bit Word | B Word
+        \end{verbatim}
+
+        An obvious way to translate this would be to create an enumeration to
+        distinguish the constructors and then create a big record that
+        contains all the fields of all the constructors. This is the same
+        translation that would result from the following enumeration and
+        product type (using a tuple for clarity):
+
+        \begin{verbatim}
+        data SumC = A | B
+        type Sum = (SumC, Bit, Word, Word)
+        \end{verbatim}
+
+        Here, the \hs{SumC} type effectively signals which of the latter three
+        fields of the \hs{Sum} type are valid (the first two if \hs{A}, the
+        last one if \hs{B}), all the other ones have no useful value.
+
+        An obvious problem with this naive approach is the space usage: the
+        example above generates a fairly big \VHDL\ type. Since we can be
+        sure that the two \hs{Word}s in the \hs{Sum} type will never be valid
+        at the same time, this is a waste of space.
+
+        Obviously, duplication detection could be used to reuse a
+        particular field for another constructor, but this would only
+        partially solve the problem. If two fields would be, for
+        example, an array of 8 bits and an 8 bit unsigned word, these are
+        different types and could not be shared. However, in the final
+        hardware, both of these types would simply be 8 bit connections,
+        so we have a 100\% size increase by not sharing these.
+      \end{description}
+
 
 \section{Cλash prototype}
 
