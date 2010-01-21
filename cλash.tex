@@ -706,13 +706,18 @@ foo\par bar % Won't compile without at least two paragraphs.
       \end{description}
 
 
-\section{Cλash prototype}
+\section{C$\lambda$ash prototype}
 
 foo\par bar
 
 \section{Related work}
+Many functional hardware description languages have been developed over the years. Early work includes such languages as $\mu$FP~\cite{muFP}, an extension of Backus' FP language to synchronous streams, designed particularly for describing and reasoning about regular circuits. The Ruby~\cite{Ruby} language uses relations, instead of functions, to describe circuits, and has a particular focus on layout. HML~\cite{HML1} is a hardware modeling language based on the strict functional language ML, and has support for polymorphic types and higher-order functions. Published work suggests that there is no direct simulation support for HML, and that the translation to VHDL is only partial.
 
-foo\par bar
+Like this work, many functional hardware description languages have some sort of foundation in the functional programming language Haskell. Hawk~\cite{Hawk2} uses Haskell to describe system-level executable specifications used to model the behavior of superscalar microprocessors. Hawk specifications can be simulated, but there seems to be no support for automated circuit synthesis. The ForSyDe~\cite{ForSyDe} system uses Haskell to specify abstract system models, which can (manually) be transformed into an implementation model using semantic preserving transformations. ForSyDe has several simulation and synthesis backends, though synthesis is restricted to the synchronous subset of the ForSyDe language.
+
+Lava~\cite{Lava} is a hardware description language that focuses on the structural representation of hardware. Besides support for simulation and circuit synthesis, Lava descriptions can be interfaced with formal method tools for formal verification. Lava descriptions are actually circuit generators when viewed from a synthesis viewpoint, in that the language elements of Haskell, such as choice, can be used to guide the circuit generation. If a developer wants to insert a choice element inside an actual circuit he will have to specify this explicitly as a component. In this respect C$\lambda$aSH differs from Lava, in that all the choice elements, such as case-statements and patter matching, are synthesized to choice elements in the eventual circuit. As such, richer control structures can both be specified and synthesized in C$\lambda$aSH compared to any of the languages mentioned in this section.
+
+The merits of polymorphic typing, combined with higher-order functions, are now also recognized in the `main-stream' hardware description languages, exemplified by the new VHDL 2008 standard~\cite{VHDL2008}. VHDL-2008 has support to specify types as generics, thus allowing a developer to describe polymorphic components. Note that those types still require an explicit generic map, whereas type-inference and type-specialization are implicit in C$\lambda$aSH.
 
 % An example of a floating figure using the graphicx package.
 % Note that \label must occur AFTER (or within) \caption.
@@ -832,20 +837,20 @@ The authors would like to thank...
 % http://www.ctan.org/tex-archive/biblio/bibtex/contrib/doc/
 % The IEEEtran BibTeX style support page is at:
 % http://www.michaelshell.org/tex/ieeetran/bibtex/
-%\bibliographystyle{IEEEtran}
+\bibliographystyle{IEEEtran}
 % argument is your BibTeX string definitions and bibliography database(s)
-%\bibliography{IEEEabrv,../bib/paper}
+\bibliography{IEEEabrv,cλash.bib}
 %
 % <OR> manually copy in the resultant .bbl file
 % set second argument of \begin to the number of references
 % (used to reserve space for the reference number labels box)
-\begin{thebibliography}{1}
-
-\bibitem{IEEEhowto:kopka}
-H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
-  0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
-
-\end{thebibliography}
+% \begin{thebibliography}{1}
+% 
+% \bibitem{IEEEhowto:kopka}
+% H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
+%   0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
+% 
+% \end{thebibliography}
 
 
 
