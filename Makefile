@@ -1,2 +1,5 @@
 all:
-	latexmk -pdf cλash.tex
+	latexmk -pdf -pv cλash.tex
+
+clean:
+	latexmk -CA

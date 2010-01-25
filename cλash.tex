@@ -70,13 +70,8 @@
 % manually specify the path to it like:
 % \documentclass[conference]{../sty/IEEEtran}
 
-
-
-
-
 % Some very useful LaTeX packages include:
 % (uncomment the ones you want to load)
-
 
 % *** MISC UTILITY PACKAGES ***
 %
@@ -351,6 +346,7 @@
 % default font, though (it contains no smallcaps it seems).
 \def\VHDL{\textsc{VHDL}}
 \def\GHC{\textsc{GHC}}
+\def\CLaSH{C$\lambda$aSH}
 
 % Macro for pretty printing haskell snippets. Just monospaced for now, perhaps
 % we'll get something more complex later on.
@@ -360,7 +356,7 @@
 %
 % paper title
 % can use linebreaks \\ within to get better formatting as desired
-\title{Haskell as a Structural\\ Hardware Description Language}
+\title{\CLaSH: Structural Descriptions \\ of Synchronous Hardware using Haskell}
 
 
 % author names and affiliations
@@ -445,7 +441,7 @@ The abstract goes here.
 
 
 \section{Introduction}
-Hardware description languages has allowed the productivity of hardware engineers to keep pace with the development of chip technology. Standard Hardware description languages, like VHDL and Verilog, allowed an engineer to describe circuits using a programming language. These standard languages are very good at describing detailed hardware properties such as timing behavior, but are generally cumbersome in expressing higher-level abstraction. These languages also tend to have a complex syntax and a lack of formal semantics. To overcome these complexities, and raise the abstraction level, a great number of approaches based on functional languages has been proposed \cite{T-Ruby,Hydra,HML2,Hawk1,Lava,ForSyDe1,Wired,reFLect}. The idea of using functional languages started in the early 1980s \cite{Cardelli1981,muFP,DAISY,FHDL}, a time which also saw the birth of the currently popular hardware description languages such as VHDL.
+Hardware description languages has allowed the productivity of hardware engineers to keep pace with the development of chip technology. Standard Hardware description languages, like VHDL and Verilog, allowed an engineer to describe circuits using a programming language. These standard languages are very good at describing detailed hardware properties such as timing behavior, but are generally cumbersome in expressing higher-level abstractions. These languages also tend to have a complex syntax and a lack of formal semantics. To overcome these complexities, and raise the abstraction level, a great number of approaches based on functional languages has been proposed \cite{T-Ruby,Hydra,HML2,Hawk1,Lava,ForSyDe1,Wired,reFLect}. The idea of using functional languages started in the early 1980s \cite{Cardelli1981,muFP,DAISY,FHDL}, a time which also saw the birth of the currently popular hardware description languages such as VHDL.
 
 \section{Hardware description in Haskell}
 
@@ -455,7 +451,7 @@ Hardware description languages has allowed the productivity of hardware engineer
   chosen wherever possible. In a lot of cases, when a programmer looks
   at a functional hardware description it is completely clear what
   hardware is described. We want our translator to generate exactly that
-  hardware whenever possible, to make working with Cλash as intuitive as
+  hardware whenever possible, to make working with \CLaSH\ as intuitive as
   possible.
 
   \subsection{Function application}
@@ -524,7 +520,7 @@ Hardware description languages has allowed the productivity of hardware engineer
   \subsection{Built-in types}
     The language currently supports the following built-in types. Of these,
     only the \hs{Bool} type is supported by Haskell out of the box (the
-    others are defined by the Cλash package, so they are user-defined types
+    others are defined by the \CLaSH\ package, so they are user-defined types
     from Haskell's point of view).
 
     \begin{description}
@@ -703,7 +699,7 @@ Hardware description languages has allowed the productivity of hardware engineer
       \end{description}
 
 
-\section{C$\lambda$ash prototype}
+\section{\CLaSH\ prototype}
 
 foo\par bar
 
@@ -712,9 +708,9 @@ Many functional hardware description languages have been developed over the year
 
 Like this work, many functional hardware description languages have some sort of foundation in the functional programming language Haskell. Hawk~\cite{Hawk1} uses Haskell to describe system-level executable specifications used to model the behavior of superscalar microprocessors. Hawk specifications can be simulated, but there seems to be no support for automated circuit synthesis. The ForSyDe~\cite{ForSyDe2} system uses Haskell to specify abstract system models, which can (manually) be transformed into an implementation model using semantic preserving transformations. ForSyDe has several simulation and synthesis backends, though synthesis is restricted to the synchronous subset of the ForSyDe language.
 
-Lava~\cite{Lava} is a hardware description language that focuses on the structural representation of hardware. Besides support for simulation and circuit synthesis, Lava descriptions can be interfaced with formal method tools for formal verification. Lava descriptions are actually circuit generators when viewed from a synthesis viewpoint, in that the language elements of Haskell, such as choice, can be used to guide the circuit generation. If a developer wants to insert a choice element inside an actual circuit he will have to specify this explicitly as a component. In this respect C$\lambda$aSH differs from Lava, in that all the choice elements, such as case-statements and patter matching, are synthesized to choice elements in the eventual circuit. As such, richer control structures can both be specified and synthesized in C$\lambda$aSH compared to any of the languages mentioned in this section.
+Lava~\cite{Lava} is a hardware description language that focuses on the structural representation of hardware. Besides support for simulation and circuit synthesis, Lava descriptions can be interfaced with formal method tools for formal verification. Lava descriptions are actually circuit generators when viewed from a synthesis viewpoint, in that the language elements of Haskell, such as choice, can be used to guide the circuit generation. If a developer wants to insert a choice element inside an actual circuit he will have to specify this explicitly as a component. In this respect \CLaSH\ differs from Lava, in that all the choice elements, such as case-statements and patter matching, are synthesized to choice elements in the eventual circuit. As such, richer control structures can both be specified and synthesized in \CLaSH\ compared to any of the languages mentioned in this section.
 
-The merits of polymorphic typing, combined with higher-order functions, are now also recognized in the `main-stream' hardware description languages, exemplified by the new VHDL 2008 standard~\cite{VHDL2008}. VHDL-2008 has support to specify types as generics, thus allowing a developer to describe polymorphic components. Note that those types still require an explicit generic map, whereas type-inference and type-specialization are implicit in C$\lambda$aSH.
+The merits of polymorphic typing, combined with higher-order functions, are now also recognized in the `main-stream' hardware description languages, exemplified by the new VHDL 2008 standard~\cite{VHDL2008}. VHDL-2008 has support to specify types as generics, thus allowing a developer to describe polymorphic components. Note that those types still require an explicit generic map, whereas type-inference and type-specialization are implicit in \CLaSH.
 
 Wired~\cite{Wired},, T-Ruby~\cite{T-Ruby}, Hydra~\cite{Hydra}. 
 
