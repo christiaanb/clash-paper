@@ -445,29 +445,20 @@ Hardware description languages have allowed the productivity of hardware enginee
 
 \section{Hardware description in Haskell}
 
-  To translate Haskell to hardware, every Haskell construct needs a
-  translation to \VHDL. There are often multiple valid translations
-  possible. When faced with choices, the most obvious choice has been
-  chosen wherever possible. In a lot of cases, when a programmer looks
-  at a functional hardware description it is completely clear what
-  hardware is described. We want our translator to generate exactly that
-  hardware whenever possible, to make working with \CLaSH\ as intuitive as
-  possible.
-
   \subsection{Function application}
     The basic syntactic elements of a functional program are functions
     and function application. These have a single obvious \VHDL\
     translation: each top level function becomes a hardware component,
     where each argument is an input port and the result value is the
     (single) output port. This output port can have a complex type (such
-    as a tuple), so having just a single output port does not pose a
+    as a tuple), so having just a single output port does not create a
     limitation.
 
     Each function application in turn becomes component instantiation.
     Here, the result of each argument expression is assigned to a
     signal, which is mapped to the corresponding input port. The output
     port of the function is also mapped to a signal, which is used as
-    the result of the application.
+    the result of the application itself.
 
     Since every top level function generates its own component, the
     hierarchy of of function calls is reflected in the final \VHDL\
@@ -475,27 +466,68 @@ Hardware description languages have allowed the productivity of hardware enginee
     hardware.  This separation in different components makes the
     resulting \VHDL\ output easier to read and debug.
 
-  \subsection{Choice}
-    Although describing components and connections allows us to describe
-    a lot of hardware designs already, there is an obvious thing
-    missing: choice. We need some way to be able to choose between
-    values based on another value.  In Haskell, choice is achieved by
-    \hs{case} expressions, \hs{if} expressions, pattern matching and
-    guards.
+    Example that defines the \texttt{mac} function by applying the
+    \texttt{add} and \texttt{mul} functions to calculate $a * b + c$:
 
-    However, to be able to describe our hardware in a more convenient
-    way, we also want to translate Haskell's choice mechanisms. The
-    easiest of these are of course case expressions (and \hs{if}
+\begin{verbatim}
+mac a b c = add (mul a b) c
+\end{verbatim}
+
+    TODO: Pretty picture
+
+  \subsection{Choices }
+    Although describing components and connections allows describing a
+    lot of hardware designs already, there is an obvious thing missing:
+    choice. We need some way to be able to choose between values based
+    on another value.  In Haskell, choice is achieved by \hs{case}
+    expressions, \hs{if} expressions, pattern matching and guards.
+
+    The easiest of these are of course case expressions (and \hs{if}
     expressions, which can be very directly translated to \hs{case}
     expressions). A \hs{case} expression can in turn simply be
-    translated to a conditional assignment, where the conditions use
-    equality comparisons against the constructors in the \hs{case}
-    expressions.
+    translated to a conditional assignment in \VHDL, where the
+    conditions use equality comparisons against the constructors in the
+    \hs{case} expressions.
 
     A slightly more complex (but very powerful) form of choice is
     pattern matching. A function can be defined in multiple clauses,
     where each clause specifies a pattern. When the arguments match the
     pattern, the corresponding clause will be used.
+
+    A pattern match (with optional guards) can also be implemented using
+    conditional assignments in \VHDL, where the condition is the logical
+    and of comparison results of each part of the pattern as well as the
+    guard.
+
+    Contrived example that sums two values when they are equal or
+    non-equal (depending on the predicate given) and returns 0
+    otherwise. This shows three implementations, one using and if
+    expression, one using only case expressions and one using pattern
+    matching and guards.
+
+\begin{verbatim}
+sumif pred a b = if pred == Eq && a == b || pred == Neq && a != b
+                 then a + b
+                 else 0
+\end{verbatim}
+
+\begin{verbatim}
+sumif pred a b = case pred of
+  Eq -> case a == b of
+    True -> a + b
+    False -> 0
+  Neq -> case a != b of
+    True -> a + b
+    False -> 0
+\end{verbatim}
+
+\begin{verbatim}
+sumif Eq a b | a == b = a + b
+sumif Neq a b | a != b = a + b
+sumif _ _ _ = 0
+\end{verbatim}
+
+  TODO: Pretty picture
 
   \subsection{Types}
     Translation of two most basic functional concepts has been
