@@ -343,8 +343,8 @@
 
 % Macro for certain acronyms in small caps. Doesn't work with the
 % default font, though (it contains no smallcaps it seems).
-\def\VHDL{\textsc{vhdl}}
-\def\GHC{\textsc{ghc}}
+\def\VHDL{{\small{VHDL}}}
+\def\GHC{{\small{GHC}}}
 \def\CLaSH{\textsc{C$\lambda$aSH}}
 
 % Macro for pretty printing haskell snippets. Just monospaced for now, perhaps
@@ -560,7 +560,7 @@ sumif _ _ _ = 0
     are hard to translate (integers without a fixed size, lists without
     a static length, etc.), a number of \quote{built-in} types will be
     defined first. These types are built-in in the sense that our
-    compiler will have a fixed VHDL type for these. User defined types,
+    compiler will have a fixed \VHDL\ type for these. User defined types,
     on the other hand, will have their hardware type derived directly
     from their Haskell declaration automatically, according to the rules
     sketched here.
@@ -602,7 +602,7 @@ sumif _ _ _ = 0
         is the \emph{type level representation} of the decimal number 32,
         making the \hs{Word32} type a 32-bit unsigned word.
 
-        These types are translated to the \small{VHDL} \texttt{unsigned} and
+        These types are translated to the \VHDL\ \texttt{unsigned} and
         \texttt{signed} respectively.
       \item[\hs{Vector}]
         This is a vector type, that can contain elements of any other type and
@@ -654,7 +654,7 @@ sumif _ _ _ = 0
     data-types with the \hs{data} keyword, type synonyms with the \hs{type}
     keyword and type renamings with the \hs{newtype} keyword. \GHC\
     offers a few more advanced ways to introduce types (type families,
-    existential typing, \small{GADT}s, etc.) which are not standard
+    existential typing, {\small{GADT}}s, etc.) which are not standard
     Haskell.  These will be left outside the scope of this research.
 
     Only an algebraic datatype declaration actually introduces a
