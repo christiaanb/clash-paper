@@ -609,9 +609,9 @@ sumif _ _ _ = 0
         length type, so you can define an unsigned word of 32 bits wide as
         ollows:
 
-        \begin{verbatim}
-          type Word32 = SizedWord D32
-        \end{verbatim}
+\begin{verbatim}
+  type Word32 = SizedWord D32
+\end{verbatim}
 
         Here, a type synonym \hs{Word32} is defined that is equal to the
         \hs{SizedWord} type constructor applied to the type \hs{D32}. \hs{D32}
@@ -631,9 +631,9 @@ sumif _ _ _ = 0
         of the vector and the type of the elements contained in it. The state
         type of an 8 element register bank would then for example be:
 
-        \begin{verbatim}
-        type RegisterState = Vector D8 Word32
-        \end{verbatim}
+\begin{verbatim}
+type RegisterState = Vector D8 Word32
+\end{verbatim}
 
         Here, a type synonym \hs{RegisterState} is defined that is equal to
         the \hs{Vector} type constructor applied to the types \hs{D8} (The type
@@ -653,9 +653,9 @@ sumif _ _ _ = 0
 
         To define an index for the 8 element vector above, we would do:
 
-        \begin{verbatim}
-        type RegisterIndex = RangedWord D7
-        \end{verbatim}
+\begin{verbatim}
+type RegisterIndex = RangedWord D7
+\end{verbatim}
 
         Here, a type synonym \hs{RegisterIndex} is defined that is equal to
         the \hs{RangedWord} type constructor applied to the type \hs{D7}. In
@@ -728,9 +728,9 @@ sumif _ _ _ = 0
         no obvious \VHDL\ alternative. They can easily be emulated, however, as
         we will see from an example:
 
-        \begin{verbatim}
-        data Sum = A Bit Word | B Word
-        \end{verbatim}
+\begin{verbatim}
+data Sum = A Bit Word | B Word
+\end{verbatim}
 
         An obvious way to translate this would be to create an enumeration to
         distinguish the constructors and then create a big record that
@@ -738,10 +738,10 @@ sumif _ _ _ = 0
         translation that would result from the following enumeration and
         product type (using a tuple for clarity):
 
-        \begin{verbatim}
-        data SumC = A | B
-        type Sum = (SumC, Bit, Word, Word)
-        \end{verbatim}
+\begin{verbatim}
+data SumC = A | B
+type Sum = (SumC, Bit, Word, Word)
+\end{verbatim}
 
         Here, the \hs{SumC} type effectively signals which of the latter three
         fields of the \hs{Sum} type are valid (the first two if \hs{A}, the
