@@ -568,49 +568,37 @@ sumif _ _ _ = 0
     polymorphism, the possible types that can be used in hardware
     descriptions will be discussed.
 
-    Some way is needed to translate every values used to its hardware
+    Some way is needed to translate every value used to its hardware
     equivalents. In particular, this means a hardware equivalent for
-    every \emph{type} used in a hardware description is needed
+    every \emph{type} used in a hardware description is needed.
 
-    Since most functional languages have a lot of standard types that
-    are hard to translate (integers without a fixed size, lists without
-    a static length, etc.), a number of \quote{built-in} types will be
-    defined first. These types are built-in in the sense that our
-    compiler will have a fixed \VHDL\ type for these. User defined types,
-    on the other hand, will have their hardware type derived directly
-    from their Haskell declaration automatically, according to the rules
-    sketched here.
+    The following types are \emph{built-in}, meaning that their hardware
+    translation is fixed into the \CLaSH compiler. A designer can also
+    define his own types, which will be translated into hardware types
+    using translation rules that are discussed later on.
 
   \subsection{Built-in types}
-    The language currently supports the following built-in types. Of these,
-    only the \hs{Bool} type is supported by Haskell out of the box (the
-    others are defined by the \CLaSH\ package, so they are user-defined types
-    from Haskell's point of view).
-
     \begin{xlist}
       \item[\hs{Bit}]
-        This is the most basic type available. It is mapped directly onto
-        the \texttt{std\_logic} \VHDL\ type. Mapping this to the
-        \texttt{bit} type might make more sense (since the Haskell version
-        only has two values), but using \texttt{std\_logic} is more standard
-        (and allowed for some experimentation with don't care values)
-
+        This is the most basic type available. It can have two values:
+        \hs{Low} and \hs{High}. It is mapped directly onto the
+        \texttt{std\_logic} \VHDL\ type. 
       \item[\hs{Bool}]
-        This is the only built-in Haskell type supported and is translated
-        exactly like the Bit type (where a value of \hs{True} corresponds to a
-        value of \hs{High}). Supporting the Bool type is particularly
-        useful to support \hs{if ... then ... else ...} expressions, which
-        always have a \hs{Bool} value for the condition.
-
-        A \hs{Bool} is translated to a \texttt{std\_logic}, just like \hs{Bit}.
+        This is a basic logic type. It can have two values: \hs{True}
+        and \hs{False}. It is translated to \texttt{std\_logic} exactly
+        like the \hs{Bit} type (where a value of \hs{True} corresponds
+        to a value of \hs{High}). Supporting the Bool type is
+        particularly useful to support \hs{if ... then ... else ...}
+        expressions, which always have a \hs{Bool} value for the
+        condition.
       \item[\hs{SizedWord}, \hs{SizedInt}]
         These are types to represent integers. A \hs{SizedWord} is unsigned,
         while a \hs{SizedInt} is signed. These types are parametrized by a
         length type, so you can define an unsigned word of 32 bits wide as
-        ollows:
+        follows:
 
 \begin{verbatim}
-  type Word32 = SizedWord D32
+type Word32 = SizedWord D32
 \end{verbatim}
 
         Here, a type synonym \hs{Word32} is defined that is equal to the
@@ -622,10 +610,7 @@ sumif _ _ _ = 0
         \texttt{signed} respectively.
       \item[\hs{Vector}]
         This is a vector type, that can contain elements of any other type and
-        has a fixed length. It has two type parameters: its
-        length and the type of the elements contained in it. By putting the
-        length parameter in the type, the length of a vector can be determined
-        at compile time, instead of only at run-time for conventional lists.
+        has a fixed length.
 
         The \hs{Vector} type constructor takes two type arguments: the length
         of the vector and the type of the elements contained in it. The state
@@ -647,9 +632,12 @@ type RegisterState = Vector D8 Word32
         two it has no specific bit-width, but an upper bound. This means that
         its range is not limited to powers of two, but can be any number.
         A \hs{RangedWord} only has an upper bound, its lower bound is
-        implicitly zero. There is a lot of added implementation complexity
-        when adding a lower bound and having just an upper bound was enough
-        for the primary purpose of this type: type-safely indexing vectors.
+        implicitly zero.
+
+        The main purpose of the \hs{RangedWord} type is to be used as an
+        index to a \hs{Vector}.
+
+        TODO: Perhaps remove this example?
 
         To define an index for the 8 element vector above, we would do:
 
@@ -665,13 +653,14 @@ type RegisterIndex = RangedWord D7
 
         This type is translated to the \texttt{unsigned} \VHDL type.
     \end{xlist}
+
   \subsection{User-defined types}
     There are three ways to define new types in Haskell: algebraic
     data-types with the \hs{data} keyword, type synonyms with the \hs{type}
     keyword and type renamings with the \hs{newtype} keyword. \GHC\
     offers a few more advanced ways to introduce types (type families,
     existential typing, {\small{GADT}}s, etc.) which are not standard
-    Haskell.  These will be left outside the scope of this research.
+    Haskell. These are not currently supported.
 
     Only an algebraic datatype declaration actually introduces a
     completely new type, for which we provide the \VHDL\ translation
@@ -686,26 +675,27 @@ type RegisterIndex = RangedWord D7
     For algebraic types, we can make the following distinction: 
 
     \begin{xlist}
-      \item[Product types]
-        A product type is an algebraic datatype with a single constructor with
-        two or more fields, denoted in practice like (a,b), (a,b,c), etc. This
-        is essentially a way to pack a few values together in a record-like
-        structure. In fact, the built-in tuple types are just algebraic product
-        types (and are thus supported in exactly the same way).
+      \item[\bf{Single constructor}]
+        Algebraic datatypes with a single constructor with one or more
+        fields, are essentially a way to pack a few values together in a
+        record-like structure.
 
-        The \quote{product} in its name refers to the collection of values 
-        belonging to this type. The collection for a product type is the 
-        Cartesian product of the collections for the types of its fields.
+        An example of such a type is the following pair of integers:
+
+\begin{verbatim}
+data IntPair = IntPair Int Int
+\end{verbatim}
+
+        Haskell's builtin tuple types are also defined as single
+        constructor algebraic types and are translated according to this
+        rule by the \CLaSH compiler.
 
         These types are translated to \VHDL\ record types, with one field for
-        every field in the constructor. This translation applies to all single
-        constructor algebraic data-types, including those with just one
-        field (which are technically not a product, but generate a VHDL
-        record for implementation simplicity).
-      \item[Enumerated types]
-        An enumerated type is an algebraic datatype with multiple constructors, but
-        none of them have fields. This is essentially a way to get an
-        enumeration-like type containing alternatives.
+        every field in the constructor.
+      \item[\bf{No fields}]
+        Algebraic datatypes with multiple constructors, but without any
+        fields are essentially a way to get an enumeration-like type
+        containing alternatives.
 
         Note that Haskell's \hs{Bool} type is also defined as an
         enumeration type, but we have a fixed translation for that.
@@ -713,52 +703,10 @@ type RegisterIndex = RangedWord D7
         These types are translated to \VHDL\ enumerations, with one value for
         each constructor. This allows references to these constructors to be
         translated to the corresponding enumeration value.
-      \item[Sum types]
-        A sum type is an algebraic datatype with multiple constructors, where
-        the constructors have one or more fields. Technically, a type with
-        more than one field per constructor is a sum of products type, but
-        for our purposes this distinction does not really make a
-        difference, so this distinction is note made.
-
-        The \quote{sum} in its name refers again to the collection of values
-        belonging to this type. The collection for a sum type is the
-        union of the the collections for each of the constructors.
-
-        Sum types are currently not supported by the prototype, since there is
-        no obvious \VHDL\ alternative. They can easily be emulated, however, as
-        we will see from an example:
-
-\begin{verbatim}
-data Sum = A Bit Word | B Word
-\end{verbatim}
-
-        An obvious way to translate this would be to create an enumeration to
-        distinguish the constructors and then create a big record that
-        contains all the fields of all the constructors. This is the same
-        translation that would result from the following enumeration and
-        product type (using a tuple for clarity):
-
-\begin{verbatim}
-data SumC = A | B
-type Sum = (SumC, Bit, Word, Word)
-\end{verbatim}
-
-        Here, the \hs{SumC} type effectively signals which of the latter three
-        fields of the \hs{Sum} type are valid (the first two if \hs{A}, the
-        last one if \hs{B}), all the other ones have no useful value.
-
-        An obvious problem with this naive approach is the space usage: the
-        example above generates a fairly big \VHDL\ type. Since we can be
-        sure that the two \hs{Word}s in the \hs{Sum} type will never be valid
-        at the same time, this is a waste of space.
-
-        Obviously, duplication detection could be used to reuse a
-        particular field for another constructor, but this would only
-        partially solve the problem. If two fields would be, for
-        example, an array of 8 bits and an 8 bit unsigned word, these are
-        different types and could not be shared. However, in the final
-        hardware, both of these types would simply be 8 bit connections,
-        so we have a 100\% size increase by not sharing these.
+      \item[\bf{Multiple constructors with fields}]
+        Algebraic datatypes with multiple constructors, where at least
+        one of these constructors has one or more fields are not
+        currently supported.
       \end{xlist}
 
 
