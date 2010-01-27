@@ -360,7 +360,7 @@
     \setlength{\leftmargin}{\labelwidth}
     \addtolength{\leftmargin}{\labelsep}
     \setlength{\rightmargin}{0pt}
-    \setlength{\parsep}{0.5ex plus 0.2ex minus 0.1ex}
+    \setlength{\listparindent}{\parindent}
     \setlength{\itemsep}{0 ex plus 0.2ex}
     \renewcommand{\makelabel}[1]{##1:\hfil}
     }
@@ -368,6 +368,8 @@
 {\end{list}}
 
 \usepackage{paralist}
+\usepackage{xcolor}
+\def\comment#1{{\color[rgb]{1.0,0.0,0.0}{#1}}}
 
 %include polycode.fmt
 %include clash.fmt
@@ -538,7 +540,7 @@ netlist. This research also features an a prototype translater called \CLaSH\
 mac a b c = add (mul a b) c
 \end{code}
 
-    TODO: Pretty picture
+\comment{TODO: Pretty picture}
 
   \subsection{Choices}
     Although describing components and connections allows describing a
@@ -570,26 +572,26 @@ mac a b c = add (mul a b) c
     expression, one using only case expressions and one using pattern
     matching and guards.
 
-\begin{code}
-sumif pred a b =  if  pred == Eq && a == b ||
-                      pred == Neq && a != b
-                  then  a + b
-                  else  0
+    \begin{code}
+    sumif pred a b =  if  pred == Eq && a == b ||
+                          pred == Neq && a != b
+                      then  a + b
+                      else  0
 
-sumif pred a b = case pred of
-  Eq ->   case a == b of
-    True    -> a + b
-    False   -> 0
-  Neq ->  case a != b of
-    True    -> a + b
-    False   -> 0
+    sumif pred a b = case pred of
+      Eq ->   case a == b of
+        True    -> a + b
+        False   -> 0
+      Neq ->  case a != b of
+        True    -> a + b
+        False   -> 0
 
-sumif Eq a b    | a == b = a + b
-sumif Neq a b   | a != b = a + b
-sumif _ _ _     = 0
-\end{code}
+    sumif Eq a b    | a == b = a + b
+    sumif Neq a b   | a != b = a + b
+    sumif _ _ _     = 0
+    \end{code}
 
-  TODO: Pretty picture
+  \comment{TODO: Pretty picture}
 
   \subsection{Types}
     Translation of two most basic functional concepts has been
@@ -627,61 +629,54 @@ sumif _ _ _     = 0
         length type, so you can define an unsigned word of 32 bits wide as
         follows:
 
-\begin{code}
-type Word32 = SizedWord D32
-\end{code}
+        \begin{code}
+        type Word32 = SizedWord D32
+        \end{code}
 
         Here, a type synonym \hs{Word32} is defined that is equal to the
         \hs{SizedWord} type constructor applied to the type \hs{D32}. \hs{D32}
         is the \emph{type level representation} of the decimal number 32,
-        making the \hs{Word32} type a 32-bit unsigned word.
-
-        These types are translated to the \VHDL\ \texttt{unsigned} and
-        \texttt{signed} respectively.
+        making the \hs{Word32} type a 32-bit unsigned word. These types are 
+        translated to the \VHDL\ \texttt{unsigned} and \texttt{signed} 
+        respectively.
       \item[\hs{Vector}]
         This is a vector type, that can contain elements of any other type and
-        has a fixed length.
+        has a fixed length. The \hs{Vector} type constructor takes two type 
+        arguments: the length of the vector and the type of the elements 
+        contained in it. The state type of an 8 element register bank would 
+        then for example be:
 
-        The \hs{Vector} type constructor takes two type arguments: the length
-        of the vector and the type of the elements contained in it. The state
-        type of an 8 element register bank would then for example be:
-
-\begin{code}
-type RegisterState = Vector D8 Word32
-\end{code}
+        \begin{code}
+        type RegisterState = Vector D8 Word32
+        \end{code}
 
         Here, a type synonym \hs{RegisterState} is defined that is equal to
-        the \hs{Vector} type constructor applied to the types \hs{D8} (The type
-        level representation of the decimal number 8) and \hs{Word32} (The 32
-        bit word type as defined above). In other words, the
-        \hs{RegisterState} type is a vector of 8 32-bit words.
-
-        A fixed size vector is translated to a \VHDL\ array type.
+        the \hs{Vector} type constructor applied to the types \hs{D8} (The 
+        type level representation of the decimal number 8) and \hs{Word32} 
+        (The 32 bit word type as defined above). In other words, the 
+        \hs{RegisterState} type is a vector of 8 32-bit words. A fixed size 
+        vector is translated to a \VHDL\ array type.
       \item[\hs{RangedWord}]
         This is another type to describe integers, but unlike the previous
         two it has no specific bit-width, but an upper bound. This means that
         its range is not limited to powers of two, but can be any number.
         A \hs{RangedWord} only has an upper bound, its lower bound is
-        implicitly zero.
+        implicitly zero. The main purpose of the \hs{RangedWord} type is to be 
+        used as an index to a \hs{Vector}.
 
-        The main purpose of the \hs{RangedWord} type is to be used as an
-        index to a \hs{Vector}.
+        \comment{TODO: Perhaps remove this example?} To define an index for 
+        the 8 element vector above, we would do:
 
-        TODO: Perhaps remove this example?
-
-        To define an index for the 8 element vector above, we would do:
-
-\begin{code}
-type RegisterIndex = RangedWord D7
-\end{code}
+        \begin{code}
+        type RegisterIndex = RangedWord D7
+        \end{code}
 
         Here, a type synonym \hs{RegisterIndex} is defined that is equal to
         the \hs{RangedWord} type constructor applied to the type \hs{D7}. In
         other words, this defines an unsigned word with values from
         0 to 7 (inclusive). This word can be be used to index the
-        8 element vector \hs{RegisterState} above.
-
-        This type is translated to the \texttt{unsigned} \VHDL type.
+        8 element vector \hs{RegisterState} above. This type is translated to 
+        the \texttt{unsigned} \VHDL type.
     \end{xlist}
 
   \subsection{User-defined types}
@@ -708,9 +703,8 @@ type RegisterIndex = RangedWord D7
       \item[\bf{Single constructor}]
         Algebraic datatypes with a single constructor with one or more
         fields, are essentially a way to pack a few values together in a
-        record-like structure.
-
-        An example of such a type is the following pair of integers:
+        record-like structure. An example of such a type is the following pair 
+        of integers:
 
 \begin{code}
 data IntPair = IntPair Int Int
@@ -718,21 +712,16 @@ data IntPair = IntPair Int Int
 
         Haskell's builtin tuple types are also defined as single
         constructor algebraic types and are translated according to this
-        rule by the \CLaSH compiler.
-
-        These types are translated to \VHDL\ record types, with one field for
-        every field in the constructor.
+        rule by the \CLaSH compiler. These types are translated to \VHDL\ 
+        record types, with one field for every field in the constructor.
       \item[\bf{No fields}]
         Algebraic datatypes with multiple constructors, but without any
         fields are essentially a way to get an enumeration-like type
-        containing alternatives.
-
-        Note that Haskell's \hs{Bool} type is also defined as an
-        enumeration type, but we have a fixed translation for that.
-
-        These types are translated to \VHDL\ enumerations, with one value for
-        each constructor. This allows references to these constructors to be
-        translated to the corresponding enumeration value.
+        containing alternatives. Note that Haskell's \hs{Bool} type is also 
+        defined as an enumeration type, but we have a fixed translation for 
+        that. These types are translated to \VHDL\ enumerations, with one 
+        value for each constructor. This allows references to these 
+        constructors to be translated to the corresponding enumeration value.
       \item[\bf{Multiple constructors with fields}]
         Algebraic datatypes with multiple constructors, where at least
         one of these constructors has one or more fields are not
