@@ -370,6 +370,7 @@
 \usepackage{paralist}
 
 %include polycode.fmt
+%include clash.fmt
 
 \begin{document}
 %
@@ -540,27 +541,24 @@ mac a b c = add (mul a b) c
     expression, one using only case expressions and one using pattern
     matching and guards.
 
-\begin{verbatim}
-sumif pred a b = if pred == Eq && a == b || pred == Neq && a != b
-                 then a + b
-                 else 0
-\end{verbatim}
+\begin{code}
+sumif pred a b = 
+  if    pred == Eq && a == b || pred == Neq && a != b
+  then  a + b
+  else  0
 
-\begin{verbatim}
 sumif pred a b = case pred of
-  Eq -> case a == b of
-    True -> a + b
-    False -> 0
-  Neq -> case a != b of
-    True -> a + b
-    False -> 0
-\end{verbatim}
+  Eq ->   case a == b of
+    True    -> a + b
+    False   -> 0
+  Neq ->  case a != b of
+    True    -> a + b
+    False   -> 0
 
-\begin{verbatim}
-sumif Eq a b | a == b = a + b
-sumif Neq a b | a != b = a + b
-sumif _ _ _ = 0
-\end{verbatim}
+sumif Eq a b    | a == b = a + b
+sumif Neq a b   | a != b = a + b
+sumif _ _ _     = 0
+\end{code}
 
   TODO: Pretty picture
 
