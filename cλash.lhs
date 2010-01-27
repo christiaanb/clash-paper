@@ -352,6 +352,8 @@
 \def\hs#1{\texttt{#1}}
 \def\quote#1{``{#1}"}
 
+%include polycode.fmt
+
 \begin{document}
 %
 % paper title
@@ -922,7 +924,7 @@ The authors would like to thank...
 % http://www.michaelshell.org/tex/ieeetran/bibtex/
 \bibliographystyle{IEEEtran}
 % argument is your BibTeX string definitions and bibliography database(s)
-\bibliography{IEEEabrv,cλash.bib}
+\bibliography{IEEEabrv,clash.bib}
 %
 % <OR> manually copy in the resultant .bbl file
 % set second argument of \begin to the number of references
