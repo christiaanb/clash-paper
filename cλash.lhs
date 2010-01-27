@@ -522,9 +522,9 @@ itself to be used as hardware description language.
     Example that defines the \texttt{mac} function by applying the
     \texttt{add} and \texttt{mul} functions to calculate $a * b + c$:
 
-\begin{verbatim}
+\begin{code}
 mac a b c = add (mul a b) c
-\end{verbatim}
+\end{code}
 
     TODO: Pretty picture
 
@@ -559,10 +559,10 @@ mac a b c = add (mul a b) c
     matching and guards.
 
 \begin{code}
-sumif pred a b = if pred == Eq && a == b 
-                 || pred == Neq && a != b
-                 then  a + b
-                 else  0
+sumif pred a b =  if  pred == Eq && a == b ||
+                      pred == Neq && a != b
+                  then  a + b
+                  else  0
 
 sumif pred a b = case pred of
   Eq ->   case a == b of
@@ -615,9 +615,9 @@ sumif _ _ _     = 0
         length type, so you can define an unsigned word of 32 bits wide as
         follows:
 
-\begin{verbatim}
+\begin{code}
 type Word32 = SizedWord D32
-\end{verbatim}
+\end{code}
 
         Here, a type synonym \hs{Word32} is defined that is equal to the
         \hs{SizedWord} type constructor applied to the type \hs{D32}. \hs{D32}
@@ -634,9 +634,9 @@ type Word32 = SizedWord D32
         of the vector and the type of the elements contained in it. The state
         type of an 8 element register bank would then for example be:
 
-\begin{verbatim}
+\begin{code}
 type RegisterState = Vector D8 Word32
-\end{verbatim}
+\end{code}
 
         Here, a type synonym \hs{RegisterState} is defined that is equal to
         the \hs{Vector} type constructor applied to the types \hs{D8} (The type
@@ -659,9 +659,9 @@ type RegisterState = Vector D8 Word32
 
         To define an index for the 8 element vector above, we would do:
 
-\begin{verbatim}
+\begin{code}
 type RegisterIndex = RangedWord D7
-\end{verbatim}
+\end{code}
 
         Here, a type synonym \hs{RegisterIndex} is defined that is equal to
         the \hs{RangedWord} type constructor applied to the type \hs{D7}. In
@@ -700,9 +700,9 @@ type RegisterIndex = RangedWord D7
 
         An example of such a type is the following pair of integers:
 
-\begin{verbatim}
+\begin{code}
 data IntPair = IntPair Int Int
-\end{verbatim}
+\end{code}
 
         Haskell's builtin tuple types are also defined as single
         constructor algebraic types and are translated according to this
