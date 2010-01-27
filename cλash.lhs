@@ -538,13 +538,14 @@ mac a b c = add (mul a b) c
     matching and guards.
 
 \begin{verbatim}
-sumif pred a b = if pred == Eq && a == b || pred == Neq && a != b
-                 then a + b
-                 else 0
+sumif cmp a b = if cmp == Eq && a == b 
+                || cmp == Neq && a != b
+                then a + b
+                else 0
 \end{verbatim}
 
 \begin{verbatim}
-sumif pred a b = case pred of
+sumif cmp a b = case cmp of
   Eq -> case a == b of
     True -> a + b
     False -> 0
