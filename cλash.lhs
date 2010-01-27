@@ -473,12 +473,29 @@ level, a great number of approaches based on functional languages has been
 proposed \cite{T-Ruby,Hydra,HML2,Hawk1,Lava,ForSyDe1,Wired,reFLect}. The idea 
 of using functional languages started in the early 1980s \cite{Cardelli1981,
 muFP,DAISY,FHDL}, a time which also saw the birth of the currently popular 
-hardware description languages such as \VHDL.
+hardware description languages such as \VHDL. What gives functional languages 
+as hardware description languages their merits is the fact that basic 
+combinatorial circuits are equivalent to mathematical function, and that 
+functional languages lend themselves very well to describe and compose these 
+mathematical functions.
 
-What gives functional languages as hardware description languages their merits 
-is the fact that basic combinatorial circuits are equivalent to mathematical 
-function, and that functional languages lend themselves very well to describe 
-and compose these mathematical functions.
+In an attempt to decrease the amount of work involved with creating all the 
+required tooling, such as parsers and type-checkers, many functional hardware 
+description languages are embedded as a domain specific language inside the 
+functional language Haskell \cite{Hydra,Hawk1,Lava,ForSyDe1,Wired}. What this 
+means is that a developer is given a library of Haskell functions and types 
+that together form the language primitives of the domain specific language. 
+Using these functions, the designer does not only describes a circuit, but 
+actually builds a large domain-specific datatype which can be further 
+processed by an embedded compiler. This compiler actually runs in the same 
+environment as the description; as a result compile-time and run-time become 
+hard to define, as the embedded compiler is usually compiled by the same 
+Haskell compiler as the circuit description itself.
+
+The approach taken in this research is not to make another domain specific 
+language embedded in Haskell, but to use (a subset) of the Haskell language 
+itself to be used as hardware description language. 
+
 \section{Hardware description in Haskell}
 
   \subsection{Function application}
@@ -511,7 +528,7 @@ mac a b c = add (mul a b) c
 
     TODO: Pretty picture
 
-  \subsection{Choices }
+  \subsection{Choices}
     Although describing components and connections allows describing a
     lot of hardware designs already, there is an obvious thing missing:
     choice. We need some way to be able to choose between values based
@@ -800,7 +817,7 @@ type Sum = (SumC, Bit, Word, Word)
     This approach makes the state of a function very explicit: which variables 
     are part of the state is completely determined by the type signature. This 
     approach to state is well suited to be used in combination with the 
-    existing code and language features, such as all the choice elements, as 
+    existing code and language features, such as all the choice constructs, as 
     state values are just normal values.
 \section{\CLaSH\ prototype}
 
@@ -851,11 +868,11 @@ polymorphic components. Note that those types still require an explicit
 generic map, whereas type-inference and type-specialization are implicit in 
 \CLaSH.
 
-Wired~\cite{Wired},, T-Ruby~\cite{T-Ruby}, Hydra~\cite{Hydra}. 
-
-A functional language designed specifically for hardware design is 
-$re{\mathit{FL}}^{ect}$~\cite{reFLect}, which draws experience from earlier 
-language called \acro{FL}~\cite{FL} to la
+% Wired~\cite{Wired},, T-Ruby~\cite{T-Ruby}, Hydra~\cite{Hydra}. 
+% 
+% A functional language designed specifically for hardware design is 
+% $re{\mathit{FL}}^{ect}$~\cite{reFLect}, which draws experience from earlier 
+% language called \acro{FL}~\cite{FL} to la
 
 % An example of a floating figure using the graphicx package.
 % Note that \label must occur AFTER (or within) \caption.
