@@ -494,7 +494,19 @@ Haskell compiler as the circuit description itself.
 
 The approach taken in this research is not to make another domain specific 
 language embedded in Haskell, but to use (a subset) of the Haskell language 
-itself to be used as hardware description language. 
+itself to be used as hardware description language. By taking this approach, 
+we can capture certain language constructs, such as Haskell's choice elements 
+(if-statement, case-statment, etc.), which are not available in the functional 
+hardware description languages that are embedded in Haskell. As far as the 
+authors know, such extensive support for choice-elements is new in the domain 
+of functional hardware description language. As the hardware descriptions are 
+plain Haskell functions, these descriptions can be compiled for simulation 
+using using the optimizing Haskell compiler \GHC.
+
+Like the standard hardware description languages, descriptions made in a 
+functional hardware description languages must eventually be converted into a 
+netlist. This research also features an a prototype translater called \CLaSH\ 
+(pronounced: Clash), which converts the Haskell code to equivalently behaving synthesizable \VHDL\ code, ready to be converted to an actual netlist format by optimizing \VHDL\ synthesis tools.
 
 \section{Hardware description in Haskell}
 
