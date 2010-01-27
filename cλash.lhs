@@ -343,9 +343,10 @@
 
 % Macro for certain acronyms in small caps. Doesn't work with the
 % default font, though (it contains no smallcaps it seems).
-\def\VHDL{{\small{VHDL}}}
-\def\GHC{{\small{GHC}}}
-\def\CLaSH{\textsc{C$\lambda$aSH}}
+\def\acro#1{{\small{#1}}}
+\def\VHDL{\acro{VHDL}}
+\def\GHC{\acro{GHC}}
+\def\CLaSH{{\small{C}}$\lambda$a{\small{SH}}}
 
 % Macro for pretty printing haskell snippets. Just monospaced for now, perhaps
 % we'll get something more complex later on.
@@ -372,7 +373,7 @@
 %
 % paper title
 % can use linebreaks \\ within to get better formatting as desired
-\title{\CLaSH: Structural Descriptions \\ of Synchronous Hardware using Haskell}
+\title{C$\lambda$aSH: Structural Descriptions \\ of Synchronous Hardware using Haskell}
 
 
 % author names and affiliations
@@ -761,6 +762,12 @@ type Sum = (SumC, Bit, Word, Word)
         so we have a 100\% size increase by not sharing these.
       \end{xlist}
 
+  \subsection{State}
+    A very important concept in hardware it the concept of state. In a 
+    stateful design, the outputs depend on the history of the inputs, or the 
+    state. State is usually stored in registers, which retain their value 
+    during a clock cycle. As we want to describe more than simple 
+    combinatorial designs, \CLaSH\ needs an abstraction mechanism for state.
 
 \section{\CLaSH\ prototype}
 
@@ -768,15 +775,15 @@ foo\par bar
 
 \section{Related work}
 Many functional hardware description languages have been developed over the 
-years. Early work includes such languages as \textsc{$\mu$fp}~\cite{muFP}, an 
-extension of Backus' \textsc{fp} language to synchronous streams, designed 
+years. Early work includes such languages as $\mu$\acro{FP}~\cite{muFP}, an 
+extension of Backus' \acro{FP} language to synchronous streams, designed 
 particularly for describing and reasoning about regular circuits. The 
 Ruby~\cite{Ruby} language uses relations, instead of functions, to describe 
-circuits, and has a particular focus on layout. \textsc{hml}~\cite{HML2} is a 
+circuits, and has a particular focus on layout. \acro{HML}~\cite{HML2} is a 
 hardware modeling language based on the strict functional language 
-\textsc{ml}, and has support for polymorphic types and higher-order functions. 
+\acro{ML}, and has support for polymorphic types and higher-order functions. 
 Published work suggests that there is no direct simulation support for 
-\textsc{hml}, and that the translation to \VHDL\ is only partial.
+\acro{HML}, and that the translation to \VHDL\ is only partial.
 
 Like this work, many functional hardware description languages have some sort 
 of foundation in the functional programming language Haskell. 
@@ -815,7 +822,7 @@ Wired~\cite{Wired},, T-Ruby~\cite{T-Ruby}, Hydra~\cite{Hydra}.
 
 A functional language designed specifically for hardware design is 
 $re{\mathit{FL}}^{ect}$~\cite{reFLect}, which draws experience from earlier 
-language called \textsc{fl}~\cite{FL} to la
+language called \acro{FL}~\cite{FL} to la
 
 % An example of a floating figure using the graphicx package.
 % Note that \label must occur AFTER (or within) \caption.
