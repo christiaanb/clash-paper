@@ -367,6 +367,8 @@
   }
 {\end{list}}
 
+\usepackage{paralist}
+
 %include polycode.fmt
 
 \begin{document}
@@ -382,7 +384,7 @@
 \author{\IEEEauthorblockN{Christiaan P.R. Baaij, Matthijs Kooijman, Jan Kuper, Marco E.T. Gerards, Bert Molenkamp, Sabih H. Gerez}
 \IEEEauthorblockA{University of Twente, Department of EEMCS\\
 P.O. Box 217, 7500 AE, Enschede, The Netherlands\\
-c.p.r.baaij@utwente.nl, matthijs@stdin.nl}}
+c.p.r.baaij@@utwente.nl, matthijs@@stdin.nl}}
 % \and
 % \IEEEauthorblockN{Homer Simpson}
 % \IEEEauthorblockA{Twentieth Century Fox\\
@@ -687,7 +689,7 @@ type RegisterIndex = RangedWord D7
     For algebraic types, we can make the following distinction: 
 
     \begin{xlist}
-      \item[Product types]
+      \item[\textbf{Product types}]
         A product type is an algebraic datatype with a single constructor with
         two or more fields, denoted in practice like (a,b), (a,b,c), etc. This
         is essentially a way to pack a few values together in a record-like
@@ -703,7 +705,7 @@ type RegisterIndex = RangedWord D7
         constructor algebraic data-types, including those with just one
         field (which are technically not a product, but generate a VHDL
         record for implementation simplicity).
-      \item[Enumerated types]
+      \item[\textbf{Enumerated types}]
         An enumerated type is an algebraic datatype with multiple constructors, but
         none of them have fields. This is essentially a way to get an
         enumeration-like type containing alternatives.
@@ -714,7 +716,7 @@ type RegisterIndex = RangedWord D7
         These types are translated to \VHDL\ enumerations, with one value for
         each constructor. This allows references to these constructors to be
         translated to the corresponding enumeration value.
-      \item[Sum types]
+      \item[\textbf{Sum types}]
         A sum type is an algebraic datatype with multiple constructors, where
         the constructors have one or more fields. Technically, a type with
         more than one field per constructor is a sum of products type, but
@@ -769,6 +771,39 @@ type Sum = (SumC, Bit, Word, Word)
     during a clock cycle. As we want to describe more than simple 
     combinatorial designs, \CLaSH\ needs an abstraction mechanism for state.
 
+    An important property in Haskell, and in most other functional languages, 
+    is \emph{purity}. A function is said to be \emph{pure} if it satisfies two
+    conditions:
+    \begin{inparaenum}
+      \item given the same arguments twice, it should return the same value in 
+      both cases, and
+      \item when the function is called, it should not have observable 
+      side-effects.
+    \end{inparaenum}
+    This purity property is important for functional languages, since it 
+    enables all kinds of mathematical reasoning that could not be guaranteed 
+    correct for impure functions. Pure functions are as such a perfect match 
+    for a combinatorial circuit, where the output solely depends on the 
+    inputs. When a circuit has state however, it can no longer be simply
+    described by a pure function. Simply removing the purity property is not a 
+    valid option, as the language would then lose many of it mathematical 
+    properties. In an effort to include the concept of state in pure 
+    functions, the current value of the state is made an argument of the  
+    function; the updated state becomes part of the result.
+    
+    A simple example is the description of an accumulator circuit:
+    \begin{code}
+    acc :: Word -> State Word -> (State Word, Word)
+    acc inp (State s) = (State s', outp)
+      where
+        outp  = s + inp
+        s'    = outp
+    \end{code}
+    This approach makes the state of a function very explicit: which variables 
+    are part of the state is completely determined by the type signature. This 
+    approach to state is well suited to be used in combination with the 
+    existing code and language features, such as all the choice elements, as 
+    state values are just normal values.
 \section{\CLaSH\ prototype}
 
 foo\par bar
