@@ -352,6 +352,20 @@
 \def\hs#1{\texttt{#1}}
 \def\quote#1{``{#1}"}
 
+\newenvironment{xlist}[1][\rule{0em}{0em}]{%
+  \begin{list}{}{%
+    \settowidth{\labelwidth}{#1:}
+    \setlength{\labelsep}{0.5cm}
+    \setlength{\leftmargin}{\labelwidth}
+    \addtolength{\leftmargin}{\labelsep}
+    \setlength{\rightmargin}{0pt}
+    \setlength{\parsep}{0.5ex plus 0.2ex minus 0.1ex}
+    \setlength{\itemsep}{0 ex plus 0.2ex}
+    \renewcommand{\makelabel}[1]{##1:\hfil}
+    }
+  }
+{\end{list}}
+
 %include polycode.fmt
 
 \begin{document}
@@ -573,7 +587,7 @@ sumif _ _ _ = 0
     others are defined by the \CLaSH\ package, so they are user-defined types
     from Haskell's point of view).
 
-    \begin{description}
+    \begin{xlist}
       \item[\hs{Bit}]
         This is the most basic type available. It is mapped directly onto
         the \texttt{std\_logic} \VHDL\ type. Mapping this to the
@@ -650,7 +664,7 @@ sumif _ _ _ = 0
         8 element vector \hs{RegisterState} above.
 
         This type is translated to the \texttt{unsigned} \VHDL type.
-    \end{description}
+    \end{xlist}
   \subsection{User-defined types}
     There are three ways to define new types in Haskell: algebraic
     data-types with the \hs{data} keyword, type synonyms with the \hs{type}
@@ -671,8 +685,7 @@ sumif _ _ _ = 0
 
     For algebraic types, we can make the following distinction: 
 
-    \begin{description}
-
+    \begin{xlist}
       \item[Product types]
         A product type is an algebraic datatype with a single constructor with
         two or more fields, denoted in practice like (a,b), (a,b,c), etc. This
@@ -746,7 +759,7 @@ sumif _ _ _ = 0
         different types and could not be shared. However, in the final
         hardware, both of these types would simply be 8 bit connections,
         so we have a 100\% size increase by not sharing these.
-      \end{description}
+      \end{xlist}
 
 
 \section{\CLaSH\ prototype}
