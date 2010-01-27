@@ -747,14 +747,14 @@ elements of Haskell, such as choice, can be used to guide the circuit
 generation. If a developer wants to insert a choice element inside an actual 
 circuit he will have to specify this explicitly as a component. In this 
 respect \CLaSH\ differs from Lava, in that all the choice elements, such as 
-case-statements and patter matching, are synthesized to choice elements in the 
+case-statements and pattern matching, are synthesized to choice elements in the 
 eventual circuit. As such, richer control structures can both be specified and 
 synthesized in \CLaSH\ compared to any of the languages mentioned in this 
 section.
 
 The merits of polymorphic typing, combined with higher-order functions, are 
 now also recognized in the `main-stream' hardware description languages, 
-exemplified by the new \VHDL\ 2008 standard~\cite{VHDL2008}. \VHDL-2008 has 
+exemplified by the new \VHDL\-2008 standard~\cite{VHDL2008}. \VHDL-2008 has 
 support to specify types as generics, thus allowing a developer to describe 
 polymorphic components. Note that those types still require an explicit 
 generic map, whereas type-inference and type-specialization are implicit in 
