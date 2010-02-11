@@ -5,5 +5,7 @@
 *.log
 *.pdf
 *.bak
+*.ptb
+*.synctex.gz
 .latexmkrc
 cλash.tex

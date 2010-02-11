@@ -512,8 +512,8 @@ in this research. The functions describe the behavior of the hardware between
 clock cycles, as such, only synchronous systems can be described. Many 
 functional hardware description models signals as a stream of all values over 
 time; state is then modeled as a delay on this stream of values. The approach 
-taken in this research is to make the current state of the circuit part of the 
-input of the function and the updated state part of the output of a function.
+taken in this research is to make the current state of a circuit part of the 
+input of the function and the updated state part of the output.
 
 Like the standard hardware description languages, descriptions made in a 
 functional hardware description language must eventually be converted into a 
