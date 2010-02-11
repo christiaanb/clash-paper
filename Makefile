@@ -1,6 +1,5 @@
 all:
-	lhs2TeX -v --poly < cλash.lhs > cλash.tex
-	latexmk -pdf -pv cλash.tex
+	latexmk -r latexmkrc -pdf -pvc cλash.lhs
 
 clean:
 	latexmk -CA
