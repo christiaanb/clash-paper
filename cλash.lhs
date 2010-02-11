@@ -465,50 +465,62 @@ The abstract goes here.
 \section{Introduction}
 Hardware description languages has allowed the productivity of hardware 
 engineers to keep pace with the development of chip technology. Standard 
-Hardware description languages, like \VHDL\ and Verilog, allowed an engineer 
-to describe circuits using a programming language. These standard languages 
-are very good at describing detailed hardware properties such as timing 
-behavior, but are generally cumbersome in expressing higher-level 
-abstractions. These languages also tend to have a complex syntax and a lack of 
-formal semantics. To overcome these complexities, and raise the abstraction 
-level, a great number of approaches based on functional languages has been 
-proposed \cite{T-Ruby,Hydra,HML2,Hawk1,Lava,ForSyDe1,Wired,reFLect}. The idea 
-of using functional languages started in the early 1980s \cite{Cardelli1981,
-muFP,DAISY,FHDL}, a time which also saw the birth of the currently popular 
-hardware description languages such as \VHDL. What gives functional languages 
-as hardware description languages their merits is the fact that basic 
-combinatorial circuits are equivalent to mathematical function, and that 
-functional languages lend themselves very well to describe and compose these 
-mathematical functions.
+Hardware description languages, like \VHDL~\cite{VHDL2008} and 
+Verilog~\cite{Verilog}, allowed an engineer to describe circuits using a 
+programming language. These standard languages are very good at describing 
+detailed hardware properties such as timing behavior, but are generally 
+cumbersome in expressing higher-level abstractions. In an attempt to raise the 
+abstraction level of the descriptions, a great number of approaches based on 
+functional languages has been proposed \cite{T-Ruby,Hydra,HML2,Hawk1,Lava,
+ForSyDe1,Wired,reFLect}. The idea of using functional languages for hardware 
+descriptions started in the early 1980s \cite{Cardelli1981, muFP,DAISY,FHDL}, 
+a time which also saw the birth of the currently popular hardware description 
+languages such as \VHDL. The merit of using a functional language to describe 
+hardware comes from the fact that basic combinatorial circuits are equivalent 
+to mathematical functions and that functional languages are very good at 
+describing and composing mathematical functions.
 
 In an attempt to decrease the amount of work involved with creating all the 
 required tooling, such as parsers and type-checkers, many functional hardware 
 description languages are embedded as a domain specific language inside the 
-functional language Haskell \cite{Hydra,Hawk1,Lava,ForSyDe1,Wired}. What this 
-means is that a developer is given a library of Haskell functions and types 
-that together form the language primitives of the domain specific language. 
-Using these functions, the designer does not only describes a circuit, but 
-actually builds a large domain-specific datatype which can be further 
-processed by an embedded compiler. This compiler actually runs in the same 
-environment as the description; as a result compile-time and run-time become 
-hard to define, as the embedded compiler is usually compiled by the same 
-Haskell compiler as the circuit description itself.
+functional language Haskell \cite{Hydra,Hawk1,Lava,ForSyDe1,Wired}. This 
+means that a developer is given a library of Haskell~\cite{Haskell} functions 
+and types that together form the language primitives of the domain specific 
+language. As a result of how the signals are modeled and abstracted, the 
+functions used to describe a circuit also build a large domain-specific 
+datatype (hidden from the designer) which can be further processed by an 
+embedded compiler. This compiler actually runs in the same environment as the 
+description; as a result compile-time and run-time become hard to define, as 
+the embedded compiler is usually compiled by the same Haskell compiler as the 
+circuit description itself.
 
 The approach taken in this research is not to make another domain specific 
-language embedded in Haskell, but to use (a subset) of the Haskell language 
-itself to be used as hardware description language. By taking this approach, 
-we can capture certain language constructs, such as Haskell's choice elements 
-(if-statement, case-statment, etc.), which are not available in the functional 
-hardware description languages that are embedded in Haskell. As far as the 
-authors know, such extensive support for choice-elements is new in the domain 
-of functional hardware description language. As the hardware descriptions are 
-plain Haskell functions, these descriptions can be compiled for simulation 
-using using the optimizing Haskell compiler \GHC.
+language embedded in Haskell, but to use (a subset of) the Haskell language 
+itself for the purpose of describing hardware. By taking this approach, we can 
+capture certain language constructs, such as Haskell's choice elements 
+(if-constructs, case-constructs, pattern matching, etc.), which are not 
+available in the functional hardware description languages that are embedded 
+in Haskell as a domain specific languages. As far as the authors know, such 
+extensive support for choice-elements is new in the domain of functional 
+hardware description language. As the hardware descriptions are plain Haskell 
+functions, these descriptions can be compiled for simulation using using the 
+optimizing Haskell compiler \GHC.
+
+Where descriptions in a conventional hardware description language have an 
+explicit clock for the purpose state and synchronicity, the clock is implied 
+in this research. The functions describe the behavior of the hardware between 
+clock cycles, as such, only synchronous systems can be described. Many 
+functional hardware description models signals as a stream of all values over 
+time; state is then modeled as a delay on this stream of values. The approach 
+taken in this research is to make the current state of the circuit part of the 
+input of the function and the updated state part of the output of a function.
 
 Like the standard hardware description languages, descriptions made in a 
-functional hardware description languages must eventually be converted into a 
-netlist. This research also features an a prototype translater called \CLaSH\ 
-(pronounced: Clash), which converts the Haskell code to equivalently behaving synthesizable \VHDL\ code, ready to be converted to an actual netlist format by optimizing \VHDL\ synthesis tools.
+functional hardware description language must eventually be converted into a 
+netlist. This research also features a prototype translator called \CLaSH\ 
+(pronounced: clash), which converts the Haskell code to equivalently behaving 
+synthesizable \VHDL\ code, ready to be converted to an actual netlist format 
+by optimizing \VHDL\ synthesis tools.
 
 \section{Hardware description in Haskell}
 
@@ -605,7 +617,7 @@ mac a b c = add (mul a b) c
     every \emph{type} used in a hardware description is needed.
 
     The following types are \emph{built-in}, meaning that their hardware
-    translation is fixed into the \CLaSH compiler. A designer can also
+    translation is fixed into the \CLaSH\ compiler. A designer can also
     define his own types, which will be translated into hardware types
     using translation rules that are discussed later on.
 
@@ -712,7 +724,7 @@ data IntPair = IntPair Int Int
 
         Haskell's builtin tuple types are also defined as single
         constructor algebraic types and are translated according to this
-        rule by the \CLaSH compiler. These types are translated to \VHDL\ 
+        rule by the \CLaSH\ compiler. These types are translated to \VHDL\ 
         record types, with one field for every field in the constructor.
       \item[\bf{No fields}]
         Algebraic datatypes with multiple constructors, but without any
@@ -811,7 +823,7 @@ section.
 
 The merits of polymorphic typing, combined with higher-order functions, are 
 now also recognized in the `main-stream' hardware description languages, 
-exemplified by the new \VHDL\-2008 standard~\cite{VHDL2008}. \VHDL-2008 has 
+exemplified by the new \VHDL-2008 standard~\cite{VHDL2008}. \VHDL-2008 has 
 support to specify types as generics, thus allowing a developer to describe 
 polymorphic components. Note that those types still require an explicit 
 generic map, whereas type-inference and type-specialization are implicit in 
