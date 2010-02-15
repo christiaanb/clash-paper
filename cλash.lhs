@@ -122,7 +122,7 @@
 % *** GRAPHICS RELATED PACKAGES ***
 %
 \ifCLASSINFOpdf
-  % \usepackage[pdftex]{graphicx}
+  \usepackage[pdftex]{graphicx}
   % declare the path(s) where your graphic files are
   % \graphicspath{{../pdf/}{../jpeg/}}
   % and their extensions so you won't have to specify these with
@@ -520,7 +520,7 @@ functional hardware description language must eventually be converted into a
 netlist. This research also features a prototype translator called \CLaSH\ 
 (pronounced: clash), which converts the Haskell code to equivalently behaving 
 synthesizable \VHDL\ code, ready to be converted to an actual netlist format 
-by optimizing \VHDL\ synthesis tools.
+by an optimizing \VHDL\ synthesis tools.
 
 \section{Hardware description in Haskell}
 
@@ -533,14 +533,14 @@ by optimizing \VHDL\ synthesis tools.
     as a tuple), so having just a single output port does not create a
     limitation.
 
-    Each function application in turn becomes component instantiation.
+    Each function application in turn becomes a component instantiation.
     Here, the result of each argument expression is assigned to a
     signal, which is mapped to the corresponding input port. The output
     port of the function is also mapped to a signal, which is used as
     the result of the application itself.
 
     Since every top level function generates its own component, the
-    hierarchy of of function calls is reflected in the final \VHDL\
+    hierarchy of function calls is reflected in the final \VHDL\
     output as well, creating a hierarchical \VHDL\ description of the
     hardware.  This separation in different components makes the
     resulting \VHDL\ output easier to read and debug.
@@ -552,7 +552,17 @@ by optimizing \VHDL\ synthesis tools.
 mac a b c = add (mul a b) c
 \end{code}
 
-\comment{TODO: Pretty picture}
+\begin{figure}
+\centerline{\includegraphics{mac}}
+\caption{Combinatorial Multiply-Accumulate (curried)}
+\label{img:mac-comb}
+\end{figure}
+
+\begin{figure}
+\centerline{\includegraphics{mac-nocurry}}
+\caption{Combinatorial Multiply-Accumulate (uncurried)}
+\label{img:mac-comb-nocurry}
+\end{figure}
 
   \subsection{Choices}
     Although describing components and connections allows describing a

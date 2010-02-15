@@ -3,3 +3,4 @@ all:
 
 clean:
 	latexmk -CA
+	rm -rf *.pdf
