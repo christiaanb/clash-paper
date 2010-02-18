@@ -750,6 +750,66 @@ data IntPair = IntPair Int Int
         currently supported.
     \end{xlist}
 
+  \subsection{Polymorphic functions}
+    A powerful construct in most functional language is polymorphism.
+    This means the arguments of a function (and consequentially, values
+    within the function as well) do not need to have a fixed type.
+    Haskell supports \emph{parametric polymorphism}, meaning a
+    function's type can be parameterized with another type.
+
+    As an example of a polymorphic function, consider the following
+    \hs{append} function's type:
+    
+    TODO: Use vectors instead of lists?
+
+    \begin{code}
+    append :: [a] -> a -> [a]
+    \end{code}
+
+    This type is parameterized by \hs{a}, which can contain any type at
+    all. This means that append can append an element to a list,
+    regardless of the type of the elements in the list (but the element
+    added must match the elements in the list, since there is only one
+    \hs{a}).
+
+    This kind of polymorphism is extremely useful in hardware designs to
+    make operations work on a vector without knowing exactly what elements
+    are inside, routing signals without knowing exactly what kinds of
+    signals these are, or working with a vector without knowing exactly
+    how long it is. Polymorphism also plays an important role in most
+    higher order functions, as we will see in the next section.
+
+    The previous example showed unconstrained polymorphism (TODO: How is
+    this really called?): \hs{a} can have \emph{any} type. Furthermore,
+    Haskell supports limiting the types of a type parameter to specific
+    class of types. An example of such a type class is the \hs{Num}
+    class, which contains all of Haskell's numerical types.
+
+    Now, take the addition operator, which has the following type:
+
+    \begin{code}
+    (+) :: Num a => a -> a -> a
+    \end{code}
+
+    This type is again parameterized by \hs{a}, but it can only contain
+    types that are \emph{instances} of the \emph{type class} \hs{Num}.
+    Our numerical built-in types are also instances of the \hs{Num}
+    class, so we can use the addition operator on \hs{SizedWords} as
+    well as on {SizedInts}.
+
+    In \CLaSH, unconstrained polymorphism is completely supported. Any
+    function defined can have any number of unconstrained type
+    parameters. The \CLaSH compiler will infer the type of every such
+    argument depending on how the function is applied. There is one
+    exception to this: The top level function that is translated, can
+    not have any polymorphic arguments (since it is never applied, so
+    there is no way to find out the actual types for the type
+    parameters).
+
+    \CLaSH does not support user-defined type classes, but does use some
+    of the builtin ones for its builtin functions (like \hs{Num} and
+    \hs{Eq}).
+
   \subsection{State}
     A very important concept in hardware it the concept of state. In a 
     stateful design, the outputs depend on the history of the inputs, or the 
