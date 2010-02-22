@@ -524,7 +524,7 @@ functional hardware description language must eventually be converted into a
 netlist. This research also features a prototype translator called \CLaSH\ 
 (pronounced: clash), which converts the Haskell code to equivalently behaving 
 synthesizable \VHDL\ code, ready to be converted to an actual netlist format 
-by an optimizing \VHDL\ synthesis tools.
+by an optimizing \VHDL\ synthesis tool.
 
 \section{Hardware description in Haskell}
 
@@ -549,62 +549,46 @@ by an optimizing \VHDL\ synthesis tools.
     As an example we can see the netlist of the |mac| function in
     \Cref{img:mac-comb}; the |mac| function applies both the |mul| and |add|
     function to calculate $a * b + c$:
+    
     \begin{code}
     mac a b c = add (mul a b) c
     \end{code}
+    
     \begin{figure}
     \centerline{\includegraphics{mac}}
     \caption{Combinatorial Multiply-Accumulate}
     \label{img:mac-comb}
     \end{figure}
+    
     The result of using a complex input type can be seen in 
     \cref{img:mac-comb-nocurry} where the |mac| function now uses a single
     input tuple for the |a|, |b|, and |c| arguments:
+    
     \begin{code}
     mac (a, b, c) = add (mul a b) c
     \end{code}
+    
     \begin{figure}
     \centerline{\includegraphics{mac-nocurry}}
     \caption{Combinatorial Multiply-Accumulate (complex input)}
     \label{img:mac-comb-nocurry}
     \end{figure}
 
-  \subsection{Choices}
-    Although describing components and connections allows describing a
-    lot of hardware designs already, there is an obvious thing missing:
-    choice. We need some way to be able to choose between values based
-    on another value.  In Haskell, choice is achieved by \hs{case}
-    expressions, \hs{if} expressions, pattern matching and guards.
-
-    The easiest of these are of course case expressions (and \hs{if}
-    expressions, which can be very directly translated to \hs{case}
-    expressions). A \hs{case} expression can in turn simply be
-    translated to a conditional assignment in \VHDL, where the
-    conditions use equality comparisons against the constructors in the
-    \hs{case} expressions.
-
-    A slightly more complex (but very powerful) form of choice is
-    pattern matching. A function can be defined in multiple clauses,
-    where each clause specifies a pattern. When the arguments match the
-    pattern, the corresponding clause will be used.
-
-    A pattern match (with optional guards) can also be implemented using
-    conditional assignments in \VHDL, where the condition is the logical
-    and of comparison results of each part of the pattern as well as the
-    guard.
-
-    Contrived example that sums two values when they are equal or
-    non-equal (depending on the predicate given) and returns 0
-    otherwise. This shows three implementations, one using and if
-    expression, one using only case expressions and one using pattern
-    matching and guards.
-
+  \subsection{Choice}
+    In Haskell, choice can be achieved by a large set of language constructs, 
+    consisting of: \hs{case} constructs, \hs{if-then-else} constructs, 
+    pattern matching, and guards. The easiest of these are the \hs{case} 
+    constructs (and \hs{if} expressions, which can be very directly translated 
+    to \hs{case} expressions). A \hs{case} expression can in turn simply be    
+    translated to a conditional assignment in \VHDL, where the conditions use 
+    equality comparisons against the constructors in the \hs{case} 
+    expressions. We can see two versions of a contrived example, the first 
+    using a \hs{case} construct and the other using a \hs{if-then-else} 
+    constructs, in the code below. The example sums two values when they are 
+    equal or non-equal (depending on the predicate given) and returns 0 
+    otherwise.
+    
     \begin{code}
-    sumif pred a b =  if  pred == Eq && a == b ||
-                          pred == Neq && a != b
-                      then  a + b
-                      else  0
-
     sumif pred a b = case pred of
       Eq ->   case a == b of
         True    -> a + b
@@ -612,23 +596,51 @@ by an optimizing \VHDL\ synthesis tools.
       Neq ->  case a != b of
         True    -> a + b
         False   -> 0
+    \end{code}
 
+    \begin{code}
+    sumif pred a b = 
+      if pred == Eq then 
+        if a == b then a + b else 0
+      else 
+        if a != b then a + b else 0
+    \end{code}
+
+    Both versions of the example correspond to the same netlist, which is 
+    depicted in \Cref{img:choice}
+
+    \begin{figure}
+    \centerline{\includegraphics{choice-case}}
+    \caption{Choice - sumif}
+    \label{img:choice}
+    \end{figure}
+
+    A slightly more complex (but very powerful) form of choice is pattern 
+    matching. A function can be defined in multiple clauses, where each clause 
+    specifies a pattern. When the arguments match the pattern, the 
+    corresponding clause will be used. Expressions can also contain guards, 
+    where the expression is only executed if the guard evaluates to true. A 
+    pattern match (with optional guards) can be to a conditional assignments 
+    in \VHDL, where the conditions are an equality test of the argument and 
+    one of the patterns (combined with the guard if was present). A third 
+    version of the earlier example, using both pattern matching and guards, 
+    can be seen below:
+    
+    \begin{code}
     sumif Eq a b    | a == b = a + b
     sumif Neq a b   | a != b = a + b
     sumif _ _ _     = 0
     \end{code}
+    
+    The version using pattern matching and guards has the same netlist 
+    representation (\Cref{img:choice}) as the earlier two versions of the 
+    example.
 
-    \begin{figure}
-    \centerline{\includegraphics{choice-ifthenelse}}
-    \caption{Choice - \emph{if-then-else}}
-    \label{img:choice}
-    \end{figure}
-
-    \begin{figure}
-    \centerline{\includegraphics{choice-case}}
-    \caption{Choice - \emph{case-statement / pattern matching}}
-    \label{img:choice}
-    \end{figure}
+    % \begin{figure}
+    % \centerline{\includegraphics{choice-ifthenelse}}
+    % \caption{Choice - \emph{if-then-else}}
+    % \label{img:choice}
+    % \end{figure}
 
   \subsection{Types}
     Translation of two most basic functional concepts has been
