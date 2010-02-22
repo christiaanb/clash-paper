@@ -391,7 +391,7 @@
 \author{\IEEEauthorblockN{Christiaan P.R. Baaij, Matthijs Kooijman, Jan Kuper, Marco E.T. Gerards, Bert Molenkamp, Sabih H. Gerez}
 \IEEEauthorblockA{University of Twente, Department of EEMCS\\
 P.O. Box 217, 7500 AE, Enschede, The Netherlands\\
-c.p.r.baaij@@utwente.nl, matthijs@@stdin.nl}}
+c.p.r.baaij@@utwente.nl, matthijs@@stdin.nl, j.kuper@@utwente.nl}}
 % \and
 % \IEEEauthorblockN{Homer Simpson}
 % \IEEEauthorblockA{Twentieth Century Fox\\
@@ -607,7 +607,7 @@ by an optimizing \VHDL\ synthesis tool.
     \end{code}
 
     Both versions of the example correspond to the same netlist, which is 
-    depicted in \Cref{img:choice}
+    depicted in \Cref{img:choice}.
 
     \begin{figure}
     \centerline{\includegraphics{choice-case}}
@@ -643,69 +643,80 @@ by an optimizing \VHDL\ synthesis tool.
     % \end{figure}
 
   \subsection{Types}
-    Translation of two most basic functional concepts has been
-    discussed: function application and choice. Before looking further
-    into less obvious concepts like higher-order expressions and
-    polymorphism, the possible types that can be used in hardware
-    descriptions will be discussed.
+    Haskell is a strongly-typed language, meaning that the type of a variable   
+    or function is determined at compile-time. Not all of Haskell's typing 
+    constructs have a clear translation to hardware, as such this section will
+    only deal with the types that do have a clear correspondence to hardware.
+    The translatable types are divided into two categories: \emph{built-in}
+    types and \emph{user-defined} types. Built-in types are those types for
+    which a direct translation is defined within the \CLaSH\ compiler; the
+    term user-defined types should not require any further elaboration.
+  
+    % Translation of two most basic functional concepts has been
+    % discussed: function application and choice. Before looking further
+    % into less obvious concepts like higher-order expressions and
+    % polymorphism, the possible types that can be used in hardware
+    % descriptions will be discussed.
+    % 
+    % Some way is needed to translate every value used to its hardware
+    % equivalents. In particular, this means a hardware equivalent for
+    % every \emph{type} used in a hardware description is needed.
+    % 
+    % The following types are \emph{built-in}, meaning that their hardware
+    % translation is fixed into the \CLaSH\ compiler. A designer can also
+    % define his own types, which will be translated into hardware types
+    % using translation rules that are discussed later on.
 
-    Some way is needed to translate every value used to its hardware
-    equivalents. In particular, this means a hardware equivalent for
-    every \emph{type} used in a hardware description is needed.
-
-    The following types are \emph{built-in}, meaning that their hardware
-    translation is fixed into the \CLaSH\ compiler. A designer can also
-    define his own types, which will be translated into hardware types
-    using translation rules that are discussed later on.
-
-  \subsection{Built-in types}
+  \subsubsection{Built-in types}
     \begin{xlist}
-      \item[\hs{Bit}]
+      \item[\bf{Bit}]
         This is the most basic type available. It can have two values:
-        \hs{Low} and \hs{High}. It is mapped directly onto the
-        \texttt{std\_logic} \VHDL\ type. 
-      \item[\hs{Bool}]
+        \hs{Low} and \hs{High}. 
+        % It is mapped directly onto the \texttt{std\_logic} \VHDL\ type. 
+      \item[\bf{Bool}]
         This is a basic logic type. It can have two values: \hs{True}
-        and \hs{False}. It is translated to \texttt{std\_logic} exactly
-        like the \hs{Bit} type (where a value of \hs{True} corresponds
-        to a value of \hs{High}). Supporting the Bool type is
-        particularly useful to support \hs{if ... then ... else ...}
-        expressions, which always have a \hs{Bool} value for the
-        condition.
-      \item[\hs{SizedWord}, \hs{SizedInt}]
+        and \hs{False}. 
+        % It is translated to \texttt{std\_logic} exactly like the \hs{Bit} 
+        % type (where a value of \hs{True} corresponds to a value of 
+        % \hs{High}). 
+        Supporting the Bool type is required in order to support the
+        \hs{if-then-else} construct, which requires a \hs{Bool} value for 
+        the condition.
+      \item[\bf{SizedWord}, \bf{SizedInt}]
         These are types to represent integers. A \hs{SizedWord} is unsigned,
-        while a \hs{SizedInt} is signed. These types are parametrized by a
-        length type, so you can define an unsigned word of 32 bits wide as
-        follows:
+        while a \hs{SizedInt} is signed. Both are parametrizable in their 
+        size. 
+        % , so you can define an unsigned word of 32 bits wide as follows:
 
-        \begin{code}
-        type Word32 = SizedWord D32
-        \end{code}
+        % \begin{code}
+        % type Word32 = SizedWord D32
+        % \end{code}
 
-        Here, a type synonym \hs{Word32} is defined that is equal to the
-        \hs{SizedWord} type constructor applied to the type \hs{D32}. \hs{D32}
-        is the \emph{type level representation} of the decimal number 32,
-        making the \hs{Word32} type a 32-bit unsigned word. These types are 
-        translated to the \VHDL\ \texttt{unsigned} and \texttt{signed} 
-        respectively.
-      \item[\hs{Vector}]
-        This is a vector type, that can contain elements of any other type and
+        % Here, a type synonym \hs{Word32} is defined that is equal to the
+        % \hs{SizedWord} type constructor applied to the type \hs{D32}. 
+        % \hs{D32} is the \emph{type level representation} of the decimal 
+        % number 32, making the \hs{Word32} type a 32-bit unsigned word. These 
+        % types are translated to the \VHDL\ \texttt{unsigned} and 
+        % \texttt{signed} respectively.
+      \item[\bf{Vector}]
+        This is a vector type that can contain elements of any other type and
         has a fixed length. The \hs{Vector} type constructor takes two type 
         arguments: the length of the vector and the type of the elements 
-        contained in it. The state type of an 8 element register bank would 
-        then for example be:
+        contained in it. 
+        % The state type of an 8 element register bank would then for example 
+        % be:
 
-        \begin{code}
-        type RegisterState = Vector D8 Word32
-        \end{code}
+        % \begin{code}
+        % type RegisterState = Vector D8 Word32
+        % \end{code}
 
-        Here, a type synonym \hs{RegisterState} is defined that is equal to
-        the \hs{Vector} type constructor applied to the types \hs{D8} (The 
-        type level representation of the decimal number 8) and \hs{Word32} 
-        (The 32 bit word type as defined above). In other words, the 
-        \hs{RegisterState} type is a vector of 8 32-bit words. A fixed size 
-        vector is translated to a \VHDL\ array type.
-      \item[\hs{RangedWord}]
+        % Here, a type synonym \hs{RegisterState} is defined that is equal to
+        % the \hs{Vector} type constructor applied to the types \hs{D8} (The 
+        % type level representation of the decimal number 8) and \hs{Word32} 
+        % (The 32 bit word type as defined above). In other words, the 
+        % \hs{RegisterState} type is a vector of 8 32-bit words. A fixed size 
+        % vector is translated to a \VHDL\ array type.
+      \item[\bf{RangedWord}]
         This is another type to describe integers, but unlike the previous
         two it has no specific bit-width, but an upper bound. This means that
         its range is not limited to powers of two, but can be any number.
@@ -713,25 +724,25 @@ by an optimizing \VHDL\ synthesis tool.
         implicitly zero. The main purpose of the \hs{RangedWord} type is to be 
         used as an index to a \hs{Vector}.
 
-        \comment{TODO: Perhaps remove this example?} To define an index for 
-        the 8 element vector above, we would do:
+        % \comment{TODO: Perhaps remove this example?} To define an index for 
+        % the 8 element vector above, we would do:
 
-        \begin{code}
-        type RegisterIndex = RangedWord D7
-        \end{code}
+        % \begin{code}
+        % type RegisterIndex = RangedWord D7
+        % \end{code}
 
-        Here, a type synonym \hs{RegisterIndex} is defined that is equal to
-        the \hs{RangedWord} type constructor applied to the type \hs{D7}. In
-        other words, this defines an unsigned word with values from
-        0 to 7 (inclusive). This word can be be used to index the
-        8 element vector \hs{RegisterState} above. This type is translated to 
-        the \texttt{unsigned} \VHDL type.
+        % Here, a type synonym \hs{RegisterIndex} is defined that is equal to
+        % the \hs{RangedWord} type constructor applied to the type \hs{D7}. In
+        % other words, this defines an unsigned word with values from
+        % 0 to 7 (inclusive). This word can be be used to index the
+        % 8 element vector \hs{RegisterState} above. This type is translated 
+        % to the \texttt{unsigned} \VHDL type.
     \end{xlist}
 
-  \subsection{User-defined types}
+  \subsubsection{User-defined types}
     There are three ways to define new types in Haskell: algebraic
     data-types with the \hs{data} keyword, type synonyms with the \hs{type}
-    keyword and type renamings with the \hs{newtype} keyword. \GHC\
+    keyword and datatype renamings with the \hs{newtype} keyword. \GHC\
     offers a few more advanced ways to introduce types (type families,
     existential typing, {\small{GADT}}s, etc.) which are not standard
     Haskell. These are not currently supported.
@@ -739,14 +750,13 @@ by an optimizing \VHDL\ synthesis tool.
     Only an algebraic datatype declaration actually introduces a
     completely new type, for which we provide the \VHDL\ translation
     below. Type synonyms and renamings only define new names for
-    existing types (where synonyms are completely interchangeable and
-    renamings need explicit conversion). Therefore, these do not need
+    existing types, where synonyms are completely interchangeable and
+    renamings need explicit conversion. Therefore, these do not need
     any particular \VHDL\ translation, a synonym or renamed type will
     just use the same representation as the original type. The
     distinction between a renaming and a synonym does no longer matter
-    in hardware and can be disregarded in the generated \VHDL.
-
-    For algebraic types, we can make the following distinction: 
+    in hardware and can be disregarded in the generated \VHDL. For algebraic 
+    types, we can make the following distinction: 
 
     \begin{xlist}
       \item[\bf{Single constructor}]
@@ -755,9 +765,9 @@ by an optimizing \VHDL\ synthesis tool.
         record-like structure. An example of such a type is the following pair 
         of integers:
 
-\begin{code}
-data IntPair = IntPair Int Int
-\end{code}
+        \begin{code}
+        data IntPair = IntPair Int Int
+        \end{code}
 
         Haskell's builtin tuple types are also defined as single
         constructor algebraic types and are translated according to this
@@ -787,7 +797,7 @@ data IntPair = IntPair Int Int
     As an example of a polymorphic function, consider the following
     \hs{append} function's type:
     
-    TODO: Use vectors instead of lists?
+    \comment{TODO: Use vectors instead of lists?}
 
     \begin{code}
     append :: [a] -> a -> [a]
@@ -806,11 +816,11 @@ data IntPair = IntPair Int Int
     how long it is. Polymorphism also plays an important role in most
     higher order functions, as we will see in the next section.
 
-    The previous example showed unconstrained polymorphism (TODO: How is
-    this really called?): \hs{a} can have \emph{any} type. Furthermore,
-    Haskell supports limiting the types of a type parameter to specific
-    class of types. An example of such a type class is the \hs{Num}
-    class, which contains all of Haskell's numerical types.
+    The previous example showed unconstrained polymorphism \comment{(TODO: How 
+    is this really called?)}: \hs{a} can have \emph{any} type. 
+    Furthermore,Haskell supports limiting the types of a type parameter to 
+    specific class of types. An example of such a type class is the 
+    \hs{Num} class, which contains all of Haskell's numerical types.
 
     Now, take the addition operator, which has the following type:
 
@@ -949,7 +959,7 @@ data IntPair = IntPair Int Int
     abstraction mechanism in his designs and have an optimal amount of
     code reuse.
 
-    TODO: Describe ALU example (no code)
+    \comment{TODO: Describe ALU example (no code)}
 
   \subsection{State}
     A very important concept in hardware it the concept of state. In a 
