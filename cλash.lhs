@@ -814,14 +814,14 @@ data IntPair = IntPair Int Int
 
     In \CLaSH, unconstrained polymorphism is completely supported. Any
     function defined can have any number of unconstrained type
-    parameters. The \CLaSH compiler will infer the type of every such
+    parameters. The \CLaSH\ compiler will infer the type of every such
     argument depending on how the function is applied. There is one
     exception to this: The top level function that is translated, can
     not have any polymorphic arguments (since it is never applied, so
     there is no way to find out the actual types for the type
     parameters).
 
-    \CLaSH does not support user-defined type classes, but does use some
+    \CLaSH\ does not support user-defined type classes, but does use some
     of the builtin ones for its builtin functions (like \hs{Num} and
     \hs{Eq}).
 
@@ -932,7 +932,7 @@ data IntPair = IntPair Int Int
     \end{code}
 
     Finally, higher order arguments are not limited to just builtin
-    functions, but any function defined in \CLaSH can have function
+    functions, but any function defined in \CLaSH\ can have function
     arguments. This allows the hardware designer to use a powerful
     abstraction mechanism in his designs and have an optimal amount of
     code reuse.
