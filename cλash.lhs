@@ -63,6 +63,7 @@
 % should be used if it is desired that the figures are to be displayed in
 % draft mode.
 %
+
 \documentclass[conference,pdf,a4paper,10pt,final,twoside,twocolumn]{IEEEtran}
 % Add the compsoc option for Computer Society conferences.
 %
@@ -90,9 +91,6 @@
 % \ifCLASSINFOpdf conditional that works the same way.
 % When switching from latex to pdflatex and vice-versa, the compiler may
 % have to be run twice to clear warning/error messages.
-
-
-
 
 
 
@@ -371,6 +369,12 @@
 \usepackage{xcolor}
 \def\comment#1{{\color[rgb]{1.0,0.0,0.0}{#1}}}
 
+\usepackage{cleveref}
+\crefname{figure}{figure}{figures}
+\newcommand{\fref}[1]{\cref{#1}} 
+\newcommand{\Fref}[1]{\Cref{#1}}
+
+
 %include polycode.fmt
 %include clash.fmt
 
@@ -526,43 +530,44 @@ by an optimizing \VHDL\ synthesis tools.
 
   \subsection{Function application}
     The basic syntactic elements of a functional program are functions
-    and function application. These have a single obvious \VHDL\
-    translation: each top level function becomes a hardware component,
-    where each argument is an input port and the result value is the
-    (single) output port. This output port can have a complex type (such
-    as a tuple), so having just a single output port does not create a
-    limitation.
-
-    Each function application in turn becomes a component instantiation.
-    Here, the result of each argument expression is assigned to a
-    signal, which is mapped to the corresponding input port. The output
-    port of the function is also mapped to a signal, which is used as
-    the result of the application itself.
+    and function application. These have a single obvious translation to a 
+    netlist: every function becomes a component, every function argument is an
+    input port and the result value is of a function is an output port. This 
+    output port can have a complex type (such as a tuple), so having just a 
+    single output port does not create a limitation. Each function application 
+    in turn becomes a component instantiation. Here, the result of each 
+    argument expression is assigned to a signal, which is mapped to the 
+    corresponding input port. The output port of the function is also mapped 
+    to a signal, which is used as the result of the application itself.
 
     Since every top level function generates its own component, the
-    hierarchy of function calls is reflected in the final \VHDL\
-    output as well, creating a hierarchical \VHDL\ description of the
-    hardware.  This separation in different components makes the
-    resulting \VHDL\ output easier to read and debug.
+    hierarchy of function calls is reflected in the final netlist aswell, 
+    creating a hierarchical description of the hardware. This separation in 
+    different components makes the resulting \VHDL\ output easier to read and 
+    debug.
 
-    Example that defines the \texttt{mac} function by applying the
-    \texttt{add} and \texttt{mul} functions to calculate $a * b + c$:
-
-\begin{code}
-mac a b c = add (mul a b) c
-\end{code}
-
-\begin{figure}
-\centerline{\includegraphics{mac}}
-\caption{Combinatorial Multiply-Accumulate (curried)}
-\label{img:mac-comb}
-\end{figure}
-
-\begin{figure}
-\centerline{\includegraphics{mac-nocurry}}
-\caption{Combinatorial Multiply-Accumulate (uncurried)}
-\label{img:mac-comb-nocurry}
-\end{figure}
+    As an example we can see the netlist of the |mac| function in
+    \Cref{img:mac-comb}; the |mac| function applies both the |mul| and |add|
+    function to calculate $a * b + c$:
+    \begin{code}
+    mac a b c = add (mul a b) c
+    \end{code}
+    \begin{figure}
+    \centerline{\includegraphics{mac}}
+    \caption{Combinatorial Multiply-Accumulate}
+    \label{img:mac-comb}
+    \end{figure}
+    The result of using a complex input type can be seen in 
+    \cref{img:mac-comb-nocurry} where the |mac| function now uses a single
+    input tuple for the |a|, |b|, and |c| arguments:
+    \begin{code}
+    mac (a, b, c) = add (mul a b) c
+    \end{code}
+    \begin{figure}
+    \centerline{\includegraphics{mac-nocurry}}
+    \caption{Combinatorial Multiply-Accumulate (complex input)}
+    \label{img:mac-comb-nocurry}
+    \end{figure}
 
   \subsection{Choices}
     Although describing components and connections allows describing a
@@ -613,7 +618,17 @@ mac a b c = add (mul a b) c
     sumif _ _ _     = 0
     \end{code}
 
-  \comment{TODO: Pretty picture}
+    \begin{figure}
+    \centerline{\includegraphics{choice-ifthenelse}}
+    \caption{Choice - \emph{if-then-else}}
+    \label{img:choice}
+    \end{figure}
+
+    \begin{figure}
+    \centerline{\includegraphics{choice-case}}
+    \caption{Choice - \emph{case-statement / pattern matching}}
+    \label{img:choice}
+    \end{figure}
 
   \subsection{Types}
     Translation of two most basic functional concepts has been
