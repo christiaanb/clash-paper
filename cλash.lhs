@@ -751,7 +751,7 @@ by an optimizing \VHDL\ synthesis tool.
     completely new type, for which we provide the \VHDL\ translation
     below. Type synonyms and renamings only define new names for
     existing types, where synonyms are completely interchangeable and
-    renamings need explicit conversion. Therefore, these do not need
+    renamings need explicit conversiona. Therefore, these do not need
     any particular \VHDL\ translation, a synonym or renamed type will
     just use the same representation as the original type. The
     distinction between a renaming and a synonym does no longer matter
@@ -990,12 +990,16 @@ by an optimizing \VHDL\ synthesis tool.
     
     A simple example is the description of an accumulator circuit:
     \begin{code}
-    acc :: Word -> State Word -> (State Word, Word)
-    acc inp (State s) = (State s', outp)
+    macS a b (State c) = (State c', outp)
       where
-        outp  = s + inp
-        s'    = outp
+        outp  = mac a b c
+        c'    = outp
     \end{code}
+    \begin{figure}
+    \centerline{\includegraphics{mac-state}}
+    \caption{Stateful Multiply-Accumulate}
+    \label{img:mac-state}
+    \end{figure}
     This approach makes the state of a function very explicit: which variables 
     are part of the state is completely determined by the type signature. This 
     approach to state is well suited to be used in combination with the 
