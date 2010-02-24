@@ -815,7 +815,7 @@ by any (optimizing) \VHDL\ synthesis tool.
     \end{code}
 
     This type is parameterized by \hs{a}, which can contain any type at
-    all. This means that append can append an element to a vector,
+    all. This means that \hs{append} can append an element to a vector,
     regardless of the type of the elements in the list (as long as the type of 
     the value to be added is of the same type as the values in the vector). 
     This kind of polymorphism is extremely useful in hardware designs to make 
@@ -861,8 +861,8 @@ by any (optimizing) \VHDL\ synthesis tool.
     for the type parameters).
 
     \CLaSH\ does not support user-defined type classes, but does use some
-    of the built-in type classes for its built-in function, such asL \hs{Num} 
-    for  numerical operations, \hs{Eq} for the equality operators, and
+    of the built-in type classes for its built-in function, such as: \hs{Num} 
+    for numerical operations, \hs{Eq} for the equality operators, and
     \hs{Ord} for the comparison/order operators.
 
   \subsection{Higher order}
