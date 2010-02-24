@@ -354,9 +354,10 @@
 \newenvironment{xlist}[1][\rule{0em}{0em}]{%
   \begin{list}{}{%
     \settowidth{\labelwidth}{#1:}
-    \setlength{\labelsep}{\parindent}
+    \setlength{\labelsep}{0.5em}
     \setlength{\leftmargin}{\labelwidth}
     \addtolength{\leftmargin}{\labelsep}
+    \addtolength{\leftmargin}{\parindent}
     \setlength{\rightmargin}{0pt}
     \setlength{\listparindent}{\parindent}
     \setlength{\itemsep}{0 ex plus 0.2ex}
@@ -585,15 +586,19 @@ by any (optimizing) \VHDL\ synthesis tool.
     consisting of: \hs{case} constructs, \hs{if-then-else} constructs, 
     pattern matching, and guards. The easiest of these are the \hs{case} 
     constructs (\hs{if} expressions can be very directly translated to 
-    \hs{case} expressions). % Choice elements are translated to multiplexers
+    \hs{case} expressions). A \hs{case} construct is translated to a 
+    multiplexer, where the control value is linked to the selection port and 
+    the  output of each case is linked to the corresponding input port on the 
+    multiplexer.
     % A \hs{case} expression can in turn simply be translated to a conditional 
     % assignment in \VHDL, where the conditions use equality comparisons 
     % against the constructors in the \hs{case} expressions. 
-    We can see two versions of a contrived example, the first 
+    We can see two versions of a contrived example below, the first 
     using a \hs{case} construct and the other using a \hs{if-then-else} 
     constructs, in the code below. The example sums two values when they are 
     equal or non-equal (depending on the predicate given) and returns 0 
-    otherwise.
+    otherwise. Both versions of the example roughly correspond to the same 
+    netlist, which is depicted in \Cref{img:choice}.
     
     \begin{code}
     sumif pred a b = case pred of
@@ -613,9 +618,6 @@ by any (optimizing) \VHDL\ synthesis tool.
         if a != b then a + b else 0
     \end{code}
 
-    Both versions of the example correspond to the same netlist, which is 
-    depicted in \Cref{img:choice}.
-
     \begin{figure}
     \centerline{\includegraphics{choice-case}}
     \caption{Choice - sumif}
@@ -626,22 +628,19 @@ by any (optimizing) \VHDL\ synthesis tool.
     matching. A function can be defined in multiple clauses, where each clause 
     specifies a pattern. When the arguments match the pattern, the 
     corresponding clause will be used. Expressions can also contain guards, 
-    where the expression is only executed if the guard evaluates to true. A 
-    pattern match (with optional guards) can be to a conditional assignments 
-    in \VHDL, where the conditions are an equality test of the argument and 
-    one of the patterns (combined with the guard if was present). A third 
-    version of the earlier example, using both pattern matching and guards, 
-    can be seen below:
+    where the expression is only executed if the guard evaluates to true. Like 
+    \hs{if-then-else} constructs, pattern matching and guards have a 
+    (straightforward) translation to \hs{case} constructs and can as such be 
+    mapped to multiplexers. A third version of the earlier example, using both 
+    pattern matching and guards, can be seen below. The version using pattern 
+    matching and guards also has roughly the same netlist representation 
+    (\Cref{img:choice}) as the earlier two versions of the example.
     
     \begin{code}
     sumif Eq a b    | a == b = a + b
     sumif Neq a b   | a != b = a + b
     sumif _ _ _     = 0
     \end{code}
-    
-    The version using pattern matching and guards has the same netlist 
-    representation (\Cref{img:choice}) as the earlier two versions of the 
-    example.
 
     % \begin{figure}
     % \centerline{\includegraphics{choice-ifthenelse}}
@@ -650,14 +649,17 @@ by any (optimizing) \VHDL\ synthesis tool.
     % \end{figure}
 
   \subsection{Types}
-    Haskell is a strongly-typed language, meaning that the type of a variable   
-    or function is determined at compile-time. Not all of Haskell's typing 
-    constructs have a clear translation to hardware, as such this section will
-    only deal with the types that do have a clear correspondence to hardware.
-    The translatable types are divided into two categories: \emph{built-in}
-    types and \emph{user-defined} types. Built-in types are those types for
-    which a direct translation is defined within the \CLaSH\ compiler; the
-    term user-defined types should not require any further elaboration.
+    Haskell is a statically-typed language, meaning that the type of a 
+    variable or function is determined at compile-time. Not all of Haskell's 
+    typing constructs have a clear translation to hardware, as such this 
+    section will only deal with the types that do have a clear correspondence 
+    to hardware. The translatable types are divided into two categories: 
+    \emph{built-in} types and \emph{user-defined} types. Built-in types are 
+    those types for which a direct translation is defined within the \CLaSH\ 
+    compiler; the term user-defined types should not require any further 
+    elaboration. The translatable types are also inferable by the compiler, 
+    meaning that a developer does not have to annotate every function with a 
+    type signature.
   
     % Translation of two most basic functional concepts has been
     % discussed: function application and choice. Before looking further
@@ -675,6 +677,8 @@ by any (optimizing) \VHDL\ synthesis tool.
     % using translation rules that are discussed later on.
 
   \subsubsection{Built-in types}
+    The following types have direct translation defined within the \CLaSH\
+    compiler:
     \begin{xlist}
       \item[\bf{Bit}]
         This is the most basic type available. It can have two values:
@@ -709,7 +713,9 @@ by any (optimizing) \VHDL\ synthesis tool.
         This is a vector type that can contain elements of any other type and
         has a fixed length. The \hs{Vector} type constructor takes two type 
         arguments: the length of the vector and the type of the elements 
-        contained in it. 
+        contained in it. The short-hand notation used for the vector type in  
+        the rest of paper is: \hs{[a|n]}. Where the \hs{a} is the element 
+        type, and \hs{n} is the length of the vector.
         % The state type of an 8 element register bank would then for example 
         % be:
 
@@ -723,12 +729,12 @@ by any (optimizing) \VHDL\ synthesis tool.
         % (The 32 bit word type as defined above). In other words, the 
         % \hs{RegisterState} type is a vector of 8 32-bit words. A fixed size 
         % vector is translated to a \VHDL\ array type.
-      \item[\bf{RangedWord}]
+      \item[\bf{Index}]
         This is another type to describe integers, but unlike the previous
         two it has no specific bit-width, but an upper bound. This means that
         its range is not limited to powers of two, but can be any number.
-        A \hs{RangedWord} only has an upper bound, its lower bound is
-        implicitly zero. The main purpose of the \hs{RangedWord} type is to be 
+        An \hs{Index} only has an upper bound, its lower bound is
+        implicitly zero. The main purpose of the \hs{Index} type is to be 
         used as an index to a \hs{Vector}.
 
         % \comment{TODO: Perhaps remove this example?} To define an index for 
@@ -810,7 +816,7 @@ by any (optimizing) \VHDL\ synthesis tool.
     \comment{TODO: Use vectors instead of lists?}
 
     \begin{code}
-    append :: [a] -> a -> [a]
+    append :: [a|n] -> a -> [a|n + 1]
     \end{code}
 
     This type is parameterized by \hs{a}, which can contain any type at
