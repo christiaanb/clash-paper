@@ -766,10 +766,8 @@ by any (optimizing) \VHDL\ synthesis tool.
     names for existing types, where synonyms are completely interchangeable 
     and renaming constructs need explicit conversions. Therefore, these do not 
     need any particular translation, a synonym or renamed type will just use 
-    the same representation as the original type. The distinction between a     
-    renaming and a synonym does no longer matter in hardware and can be     
-    disregarded in the translation process. For algebraic types, we can make     
-    the following distinction: 
+    the same representation as the original type. For algebraic types, we can 
+    make the following distinctions: 
 
     \begin{xlist}
       \item[\bf{Single constructor}]
@@ -803,65 +801,69 @@ by any (optimizing) \VHDL\ synthesis tool.
         currently supported.
     \end{xlist}
 
-  \subsection{Polymorphic functions}
-    A powerful construct in most functional language is polymorphism.
-    This means the arguments of a function (and consequentially, values
-    within the function as well) do not need to have a fixed type.
-    Haskell supports \emph{parametric polymorphism}, meaning a
-    function's type can be parameterized with another type.
+  \subsection{Polymorphism}
+    A powerful construct in most functional languages is polymorphism, it 
+    allows a function to handle values of different data types in a uniform 
+    way. Haskell supports \emph{parametric polymorphism}~\cite{polymorphism}, 
+    meaning functions can be written without mention of any specific type and 
+    can be used transparently with any number of new types.
 
-    As an example of a polymorphic function, consider the following
-    \hs{append} function's type:
-    
-    \comment{TODO: Use vectors instead of lists?}
-
+    As an example of a parametric polymorphic function, consider the type of 
+    the following \hs{append} function, which appends an element to a vector:
     \begin{code}
     append :: [a|n] -> a -> [a|n + 1]
     \end{code}
 
     This type is parameterized by \hs{a}, which can contain any type at
-    all. This means that append can append an element to a list,
-    regardless of the type of the elements in the list (but the element
-    added must match the elements in the list, since there is only one
-    \hs{a}).
+    all. This means that append can append an element to a vector,
+    regardless of the type of the elements in the list (as long as the type of 
+    the value to be added is of the same type as the values in the vector). 
+    This kind of polymorphism is extremely useful in hardware designs to make 
+    operations work on a vector without knowing exactly what elements are 
+    inside, routing signals without knowing exactly what kinds of signals 
+    these are, or working with a vector without knowing exactly how long it 
+    is. Polymorphism also plays an important role in most higher order 
+    functions, as we will see in the next section.
 
-    This kind of polymorphism is extremely useful in hardware designs to
-    make operations work on a vector without knowing exactly what elements
-    are inside, routing signals without knowing exactly what kinds of
-    signals these are, or working with a vector without knowing exactly
-    how long it is. Polymorphism also plays an important role in most
-    higher order functions, as we will see in the next section.
-
-    The previous example showed unconstrained polymorphism \comment{(TODO: How 
-    is this really called?)}: \hs{a} can have \emph{any} type. 
-    Furthermore,Haskell supports limiting the types of a type parameter to 
-    specific class of types. An example of such a type class is the 
-    \hs{Num} class, which contains all of Haskell's numerical types.
-
-    Now, take the addition operator, which has the following type:
-
+    Another type of polymorphism is \emph{ad-hoc 
+    polymorphism}~\cite{polymorphism}, which refers to polymorphic 
+    functions which can be applied to arguments of different types, but which 
+    behave differently depending on the type of the argument to which they are 
+    applied. In Haskell, ad-hoc polymorphism is achieved through the use of 
+    type classes, where a class definition provides the general interface of a 
+    function, and class instances define the functionality for the specific 
+    types. An example of such a type class is the \hs{Num} class, which 
+    contains all of Haskell's numerical operation. A developer can make use of 
+    this ad-hoc polymorphism by adding a constraint to a parametrically 
+    polymorphic type variable. Such a constraint indicates that the type 
+    variable can only be instantiated to a type whose members supports the 
+    overloaded functions associated with the type class. 
+    
+    As an example we will take a look at type signature of the function 
+    \hs{sum}, which sums the values in a vector:
     \begin{code}
-    (+) :: Num a => a -> a -> a
+    sum :: Num a => [a|n] -> a
     \end{code}
 
     This type is again parameterized by \hs{a}, but it can only contain
-    types that are \emph{instances} of the \emph{type class} \hs{Num}.
-    Our numerical built-in types are also instances of the \hs{Num}
+    types that are \emph{instances} of the \emph{type class} \hs{Num}, so that  
+    we know that the addition (+) operator is defined for that type. 
+    \CLaSH's built-in numerical types are also instances of the \hs{Num}
     class, so we can use the addition operator on \hs{SizedWords} as
-    well as on {SizedInts}.
+    well as on \hs{SizedInts}.
 
-    In \CLaSH, unconstrained polymorphism is completely supported. Any
-    function defined can have any number of unconstrained type
-    parameters. The \CLaSH\ compiler will infer the type of every such
-    argument depending on how the function is applied. There is one
-    exception to this: The top level function that is translated, can
-    not have any polymorphic arguments (since it is never applied, so
-    there is no way to find out the actual types for the type
-    parameters).
+    In \CLaSH, parametric polymorphism is completely supported. Any function 
+    defined can have any number of unconstrained type parameters. The \CLaSH\ 
+    compiler will infer the type of every such argument depending on how the 
+    function is applied. There is one exception to this: The top level 
+    function that is translated, can not have any polymorphic arguments (as 
+    they are never applied, so there is no way to find out the actual types 
+    for the type parameters).
 
     \CLaSH\ does not support user-defined type classes, but does use some
-    of the builtin ones for its builtin functions (like \hs{Num} and
-    \hs{Eq}).
+    of the built-in type classes for its built-in function, such asL \hs{Num} 
+    for  numerical operations, \hs{Eq} for the equality operators, and
+    \hs{Ord} for the comparison/order operators.
 
   \subsection{Higher order}
     Another powerful abstraction mechanism in functional languages, is
