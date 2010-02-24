@@ -531,17 +531,21 @@ by an optimizing \VHDL\ synthesis tool.
   \subsection{Function application}
     The basic syntactic elements of a functional program are functions
     and function application. These have a single obvious translation to a 
-    netlist: every function becomes a component, every function argument is an
-    input port and the result value is of a function is an output port. This 
-    output port can have a complex type (such as a tuple), so having just a 
-    single output port does not create a limitation. Each function application 
-    in turn becomes a component instantiation. Here, the result of each 
-    argument expression is assigned to a signal, which is mapped to the 
-    corresponding input port. The output port of the function is also mapped 
+    netlist format: 
+    \begin{inparaenum}
+      \item every function is translated to a component, 
+      \item every function argument is translated to an input port, and
+      \item the result value of a function is translated to an output port.
+    \end{inparaenum} 
+    This output port can have a complex type (such as a tuple), so having just 
+    a single output port does not create a limitation. Each function 
+    application in turn becomes a component instantiation. Here, the result of 
+    each argument expression is assigned to a signal, which is mapped to the     
+    corresponding input port. The output port of the function is also mapped     
     to a signal, which is used as the result of the application itself.
 
     Since every top level function generates its own component, the
-    hierarchy of function calls is reflected in the final netlist aswell, 
+    hierarchy of function calls is reflected in the final netlist,% aswell, 
     creating a hierarchical description of the hardware. This separation in 
     different components makes the resulting \VHDL\ output easier to read and 
     debug.
@@ -578,11 +582,12 @@ by an optimizing \VHDL\ synthesis tool.
     In Haskell, choice can be achieved by a large set of language constructs, 
     consisting of: \hs{case} constructs, \hs{if-then-else} constructs, 
     pattern matching, and guards. The easiest of these are the \hs{case} 
-    constructs (and \hs{if} expressions, which can be very directly translated 
-    to \hs{case} expressions). A \hs{case} expression can in turn simply be    
-    translated to a conditional assignment in \VHDL, where the conditions use 
-    equality comparisons against the constructors in the \hs{case} 
-    expressions. We can see two versions of a contrived example, the first 
+    constructs (\hs{if} expressions can be very directly translated to 
+    \hs{case} expressions). 
+    % A \hs{case} expression can in turn simply be translated to a conditional 
+    % assignment in \VHDL, where the conditions use equality comparisons 
+    % against the constructors in the \hs{case} expressions. 
+    We can see two versions of a contrived example, the first 
     using a \hs{case} construct and the other using a \hs{if-then-else} 
     constructs, in the code below. The example sums two values when they are 
     equal or non-equal (depending on the predicate given) and returns 0 
@@ -771,16 +776,19 @@ by an optimizing \VHDL\ synthesis tool.
 
         Haskell's builtin tuple types are also defined as single
         constructor algebraic types and are translated according to this
-        rule by the \CLaSH\ compiler. These types are translated to \VHDL\ 
-        record types, with one field for every field in the constructor.
+        rule by the \CLaSH\ compiler.
+        % These types are translated to \VHDL\ record types, with one field 
+        % for every field in the constructor.
       \item[\bf{No fields}]
         Algebraic datatypes with multiple constructors, but without any
         fields are essentially a way to get an enumeration-like type
         containing alternatives. Note that Haskell's \hs{Bool} type is also 
         defined as an enumeration type, but we have a fixed translation for 
-        that. These types are translated to \VHDL\ enumerations, with one 
-        value for each constructor. This allows references to these 
-        constructors to be translated to the corresponding enumeration value.
+        that. 
+        % These types are translated to \VHDL\ enumerations, with one 
+        % value for each constructor. This allows references to these 
+        % constructors to be translated to the corresponding enumeration 
+        % value.
       \item[\bf{Multiple constructors with fields}]
         Algebraic datatypes with multiple constructors, where at least
         one of these constructors has one or more fields are not
@@ -986,21 +994,25 @@ by an optimizing \VHDL\ synthesis tool.
     valid option, as the language would then lose many of it mathematical 
     properties. In an effort to include the concept of state in pure 
     functions, the current value of the state is made an argument of the  
-    function; the updated state becomes part of the result.
+    function; the updated state becomes part of the result. A simple example 
+    is adding an accumulator register to the earlier multiply-accumulate 
+    circuit, of which the resulting netlist can be seen in 
+    \Cref{img:mac-state}:
     
-    A simple example is the description of an accumulator circuit:
     \begin{code}
     macS a b (State c) = (State c', outp)
       where
         outp  = mac a b c
         c'    = outp
     \end{code}
+    
     \begin{figure}
     \centerline{\includegraphics{mac-state}}
     \caption{Stateful Multiply-Accumulate}
     \label{img:mac-state}
     \end{figure}
-    This approach makes the state of a function very explicit: which variables 
+    
+    This approach makes the state of a circuit very explicit: which variables 
     are part of the state is completely determined by the type signature. This 
     approach to state is well suited to be used in combination with the 
     existing code and language features, such as all the choice constructs, as 
