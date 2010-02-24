@@ -755,36 +755,32 @@ by any (optimizing) \VHDL\ synthesis tool.
   \subsubsection{User-defined types}
     There are three ways to define new types in Haskell: algebraic
     data-types with the \hs{data} keyword, type synonyms with the \hs{type}
-    keyword and datatype renamings with the \hs{newtype} keyword. \GHC\
-    offers a few more advanced ways to introduce types (type families,
-    existential typing, {\small{GADT}}s, etc.) which are not standard
-    Haskell. These are not currently supported.
+    keyword and datatype renaming constructs with the \hs{newtype} keyword. 
+    \GHC\ offers a few more advanced ways to introduce types (type families,
+    existential typing, {\small{GADT}}s, etc.) which are not standard Haskell. 
+    As it is currently unclear how these advanced type constructs correspond 
+    with hardware, they are for now unsupported by the \CLaSH\ compiler
 
     Only an algebraic datatype declaration actually introduces a
-    completely new type, for which we provide the \VHDL\ translation
-    below. Type synonyms and renamings only define new names for
-    existing types, where synonyms are completely interchangeable and
-    renamings need explicit conversiona. Therefore, these do not need
-    any particular \VHDL\ translation, a synonym or renamed type will
-    just use the same representation as the original type. The
-    distinction between a renaming and a synonym does no longer matter
-    in hardware and can be disregarded in the generated \VHDL. For algebraic 
-    types, we can make the following distinction: 
+    completely new type. Type synonyms and renaming constructs only define new 
+    names for existing types, where synonyms are completely interchangeable 
+    and renaming constructs need explicit conversions. Therefore, these do not 
+    need any particular translation, a synonym or renamed type will just use 
+    the same representation as the original type. The distinction between a     
+    renaming and a synonym does no longer matter in hardware and can be     
+    disregarded in the translation process. For algebraic types, we can make     
+    the following distinction: 
 
     \begin{xlist}
       \item[\bf{Single constructor}]
         Algebraic datatypes with a single constructor with one or more
         fields, are essentially a way to pack a few values together in a
-        record-like structure. An example of such a type is the following pair 
-        of integers:
-
+        record-like structure. Haskell's built-in tuple types are also defined 
+        as single constructor algebraic types  An example of a single 
+        constructor type is the following pair of integers:
         \begin{code}
         data IntPair = IntPair Int Int
         \end{code}
-
-        Haskell's builtin tuple types are also defined as single
-        constructor algebraic types and are translated according to this
-        rule by the \CLaSH\ compiler.
         % These types are translated to \VHDL\ record types, with one field 
         % for every field in the constructor.
       \item[\bf{No fields}]
@@ -792,7 +788,11 @@ by any (optimizing) \VHDL\ synthesis tool.
         fields are essentially a way to get an enumeration-like type
         containing alternatives. Note that Haskell's \hs{Bool} type is also 
         defined as an enumeration type, but we have a fixed translation for 
-        that. 
+        that. An example of such an enum type is the type that represents the
+        colors in a traffic light:
+        \begin{code}
+        data TrafficLight = Red | Orange | Green
+        \end{code}
         % These types are translated to \VHDL\ enumerations, with one 
         % value for each constructor. This allows references to these 
         % constructors to be translated to the corresponding enumeration 
