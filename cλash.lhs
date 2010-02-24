@@ -525,7 +525,7 @@ functional hardware description language must eventually be converted into a
 netlist. This research also features a prototype translator called \CLaSH\ 
 (pronounced: clash), which converts the Haskell code to equivalently behaving 
 synthesizable \VHDL\ code, ready to be converted to an actual netlist format 
-by any (optimizing) \VHDL\ synthesis tool.
+by an (optimizing) \VHDL\ synthesis tool.
 
 \section{Hardware description in Haskell}
 
@@ -833,8 +833,8 @@ by any (optimizing) \VHDL\ synthesis tool.
     type classes, where a class definition provides the general interface of a 
     function, and class instances define the functionality for the specific 
     types. An example of such a type class is the \hs{Num} class, which 
-    contains all of Haskell's numerical operation. A developer can make use of 
-    this ad-hoc polymorphism by adding a constraint to a parametrically 
+    contains all of Haskell's numerical operations. A developer can make use 
+    of this ad-hoc polymorphism by adding a constraint to a parametrically 
     polymorphic type variable. Such a constraint indicates that the type 
     variable can only be instantiated to a type whose members supports the 
     overloaded functions associated with the type class. 
@@ -865,36 +865,36 @@ by any (optimizing) \VHDL\ synthesis tool.
     for numerical operations, \hs{Eq} for the equality operators, and
     \hs{Ord} for the comparison/order operators.
 
-  \subsection{Higher order}
+  \subsection{Higher-order functions}
     Another powerful abstraction mechanism in functional languages, is
-    the concept of \emph{higher order functions}, or \emph{functions as
+    the concept of \emph{higher-order functions}, or \emph{functions as
     a first class value}. This allows a function to be treated as a
     value and be passed around, even as the argument of another
-    function. Let's clarify that with an example:
+    function. The following example should clarify this concept:
     
     \begin{code}
-    notList xs = map not xs
+    negVector xs = map not xs
     \end{code}
 
-    This defines a function \hs{notList}, with a single list of booleans
-    \hs{xs} as an argument, which simply negates all of the booleans in
-    the list. To do this, it uses the function \hs{map}, which takes
-    \emph{another function} as its first argument and applies that other
-    function to each element in the list, returning again a list of the
-    results.
+    The code above defines a function \hs{negVector}, which takes a vector of
+    booleans, and returns a vector where all the values are negated. It 
+    achieves this by calling the \hs{map} function, and passing it 
+    \emph{another function}, boolean negation, and the vector of booleans, 
+    \hs{xs}. The \hs{map} function applies the negation function to all the 
+    elements in the vector.
 
-    As you can see, the \hs{map} function is a higher order function,
-    since it takes another function as an argument. Also note that
-    \hs{map} is again a polymorphic function: It does not pose any
-    constraints on the type of elements in the list passed, other than
-    that it must be the same as the type of the argument the passed
-    function accepts. The type of elements in the resulting list is of
-    course equal to the return type of the function passed (which need
-    not be the same as the type of elements in the input list). Both of
-    these can be readily seen from the type of \hs{map}:
+    The \hs{map} function is called a higher-order function, since it takes 
+    another function as an argument. Also note that \hs{map} is again a 
+    parametric polymorphic function: It does not pose any constraints on the 
+    type of the vector elements, other than that it must be the same type as 
+    the input type of the function passed to \hs{map}. The element type of the 
+    resulting vector is equal to the return type of the function passed, which 
+    need not necessarily be the same as the element type of the input vector. 
+    All of these characteristics  can readily be inferred from the type 
+    signature belonging to \hs{map}:
 
     \begin{code}
-    map :: (a -> b) -> [a] -> [b]
+    map :: (a -> b) -> [a|n] -> [b|n]
     \end{code}
     
     As an example from a common hardware design, let's look at the
@@ -915,7 +915,7 @@ by any (optimizing) \VHDL\ synthesis tool.
     show in the next section about state.
 
     \begin{code}
-    fir ... = foldl1 (+) (zipwith (*) xs hs)
+    fir {-"$\ldots$"-} = foldl1 (+) (zipwith (*) xs hs)
     \end{code}
 
     Here, the \hs{zipwith} function is very similar to the \hs{map}
