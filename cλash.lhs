@@ -354,7 +354,7 @@
 \newenvironment{xlist}[1][\rule{0em}{0em}]{%
   \begin{list}{}{%
     \settowidth{\labelwidth}{#1:}
-    \setlength{\labelsep}{0.5cm}
+    \setlength{\labelsep}{\parindent}
     \setlength{\leftmargin}{\labelwidth}
     \addtolength{\leftmargin}{\labelsep}
     \setlength{\rightmargin}{0pt}
@@ -480,9 +480,9 @@ ForSyDe1,Wired,reFLect}. The idea of using functional languages for hardware
 descriptions started in the early 1980s \cite{Cardelli1981, muFP,DAISY,FHDL}, 
 a time which also saw the birth of the currently popular hardware description 
 languages such as \VHDL. The merit of using a functional language to describe 
-hardware comes from the fact that basic combinatorial circuits are equivalent 
-to mathematical functions and that functional languages are very good at 
-describing and composing mathematical functions.
+hardware comes from the fact that combinatorial circuits can be directly 
+modeled as mathematical functions and that functional languages are very good 
+at describing and composing mathematical functions.
 
 In an attempt to decrease the amount of work involved with creating all the 
 required tooling, such as parsers and type-checkers, many functional hardware 
@@ -506,15 +506,15 @@ capture certain language constructs, such as Haskell's choice elements
 available in the functional hardware description languages that are embedded 
 in Haskell as a domain specific languages. As far as the authors know, such 
 extensive support for choice-elements is new in the domain of functional 
-hardware description language. As the hardware descriptions are plain Haskell 
-functions, these descriptions can be compiled for simulation using using the 
-optimizing Haskell compiler \GHC.
+hardware description languages. As the hardware descriptions are plain Haskell 
+functions, these descriptions can be compiled for simulation using an 
+optimizing Haskell compiler such as the Glasgow Haskell Compiler (\GHC).
 
 Where descriptions in a conventional hardware description language have an 
 explicit clock for the purpose state and synchronicity, the clock is implied 
-in this research. The functions describe the behavior of the hardware between 
+in this research. A developer describes the behavior of the hardware between 
 clock cycles, as such, only synchronous systems can be described. Many 
-functional hardware description models signals as a stream of all values over 
+functional hardware description model signals as a stream of all values over 
 time; state is then modeled as a delay on this stream of values. The approach 
 taken in this research is to make the current state of a circuit part of the 
 input of the function and the updated state part of the output.
@@ -524,7 +524,7 @@ functional hardware description language must eventually be converted into a
 netlist. This research also features a prototype translator called \CLaSH\ 
 (pronounced: clash), which converts the Haskell code to equivalently behaving 
 synthesizable \VHDL\ code, ready to be converted to an actual netlist format 
-by an optimizing \VHDL\ synthesis tool.
+by any (optimizing) \VHDL\ synthesis tool.
 
 \section{Hardware description in Haskell}
 
@@ -534,15 +534,17 @@ by an optimizing \VHDL\ synthesis tool.
     netlist format: 
     \begin{inparaenum}
       \item every function is translated to a component, 
-      \item every function argument is translated to an input port, and
-      \item the result value of a function is translated to an output port.
+      \item every function argument is translated to an input port,
+      \item the result value of a function is translated to an output port, 
+            and
+      \item function applications are translated to component instantiations.
     \end{inparaenum} 
-    This output port can have a complex type (such as a tuple), so having just 
-    a single output port does not create a limitation. Each function 
-    application in turn becomes a component instantiation. Here, the result of 
-    each argument expression is assigned to a signal, which is mapped to the     
-    corresponding input port. The output port of the function is also mapped     
-    to a signal, which is used as the result of the application itself.
+    The output port can have a complex type (such as a tuple), so having just 
+    a single output port does not pose any limitation. The arguments of a 
+    function applications are assigned to a signal, which are then mapped to
+    the corresponding input ports of the component. The output port of the 
+    function is also mapped to a signal, which is used as the result of the 
+    application itself.
 
     Since every top level function generates its own component, the
     hierarchy of function calls is reflected in the final netlist,% aswell, 
@@ -583,7 +585,7 @@ by an optimizing \VHDL\ synthesis tool.
     consisting of: \hs{case} constructs, \hs{if-then-else} constructs, 
     pattern matching, and guards. The easiest of these are the \hs{case} 
     constructs (\hs{if} expressions can be very directly translated to 
-    \hs{case} expressions). 
+    \hs{case} expressions). % Choice elements are translated to multiplexers
     % A \hs{case} expression can in turn simply be translated to a conditional 
     % assignment in \VHDL, where the conditions use equality comparisons 
     % against the constructors in the \hs{case} expressions. 
