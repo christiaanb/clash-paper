@@ -375,6 +375,9 @@
 \newcommand{\fref}[1]{\cref{#1}} 
 \newcommand{\Fref}[1]{\Cref{#1}}
 
+\usepackage{epstopdf}
+
+\epstopdfDeclareGraphicsRule{.svg}{pdf}{.pdf}{rsvg-convert --format=pdf < #1 > \noexpand\OutputFile}
 
 %include polycode.fmt
 %include clash.fmt
@@ -443,9 +446,14 @@ c.p.r.baaij@@utwente.nl, matthijs@@stdin.nl, j.kuper@@utwente.nl}}
 \begin{abstract}
 %\boldmath
 \CLaSH\ is a functional hardware description language that borrows both its 
-syntax and semantics from the functional programming language Haskell. The use of polymorphism and higher-order functions allow a circuit designer to describe more abstract and general specifications than are possible in the traditional hardware description languages.
+syntax and semantics from the functional programming language Haskell. Circuit 
+descriptions can be translated to synthesizable VHDL using the prototype 
+\CLaSH\ compiler. As the circuit descriptions are made in plain Haskell, 
+simulations can also be compiled by a Haskell compiler.
 
-Circuit descriptions can be translated to synthesizable VHDL using the prototype \CLaSH\ compiler. As the circuit descriptions are made in plain Haskell, simulations can also be compiled by any Haskell compiler.
+The use of polymorphism and higher-order functions allow a circuit designer to 
+describe more abstract and general specifications than are possible in the 
+traditional hardware description languages.
 \end{abstract}
 % IEEEtran.cls defaults to using nonbold math in the Abstract.
 % This preserves the distinction between vectors and scalars. However,
@@ -565,7 +573,7 @@ by an (optimizing) \VHDL\ synthesis tool.
     \end{code}
     
     \begin{figure}
-    \centerline{\includegraphics{mac}}
+    \centerline{\includegraphics{mac.svg}}
     \caption{Combinatorial Multiply-Accumulate}
     \label{img:mac-comb}
     \end{figure}
@@ -579,7 +587,7 @@ by an (optimizing) \VHDL\ synthesis tool.
     \end{code}
     
     \begin{figure}
-    \centerline{\includegraphics{mac-nocurry}}
+    \centerline{\includegraphics{mac-nocurry.svg}}
     \caption{Combinatorial Multiply-Accumulate (complex input)}
     \label{img:mac-comb-nocurry}
     \end{figure}
@@ -622,7 +630,7 @@ by an (optimizing) \VHDL\ synthesis tool.
     \end{code}
 
     \begin{figure}
-    \centerline{\includegraphics{choice-case}}
+    \centerline{\includegraphics{choice-case.svg}}
     \caption{Choice - sumif}
     \label{img:choice}
     \end{figure}
@@ -972,7 +980,7 @@ by an (optimizing) \VHDL\ synthesis tool.
     \end{code}
     
     \begin{figure}
-    \centerline{\includegraphics{mac-state}}
+    \centerline{\includegraphics{mac-state.svg}}
     \caption{Stateful Multiply-Accumulate}
     \label{img:mac-state}
     \end{figure}
@@ -981,7 +989,7 @@ by an (optimizing) \VHDL\ synthesis tool.
     state, and what part of the output is part of the updated state. This 
     aspect will also reflected in the type signature of the function. 
     Abstracting the state of a circuit in this way makes it very explicit: 
-    which variables  are part of the state is completely determined by the 
+    which variables are part of the state is completely determined by the 
     type signature. This approach to state is well suited to be used in 
     combination with the existing code and language features, such as all the 
     choice constructs, as state values are just normal values. We can simulate 
@@ -1031,10 +1039,10 @@ using higher-order functions:
 xs *+* ys = foldl1 (+) (zipWith (*) xs hs)
 \end{code}
 
-The \hs{zipWith} function is very similar to the \hs{map} function: It 
-takes a function, two vectors, and then applies the function to each of 
-the elements in the two vectors pairwise (\emph{e.g.}, \hs{zipWith (*) [1, 
-2] [3, 4]} becomes \hs{[1 * 3, 2 * 4]} $\equiv$ \hs{[3,8]}).
+The \hs{zipWith} function is very similar to the \hs{map} function seen 
+earlier: It takes a function, two vectors, and then applies the function to 
+each of the elements in the two vectors pairwise (\emph{e.g.}, \hs{zipWith (*) 
+[1, 2] [3, 4]} becomes \hs{[1 * 3, 2 * 4]} $\equiv$ \hs{[3,8]}).
 
 The \hs{foldl1} function takes a function, a single vector, and applies 
 the function to the first two elements of the vector. It then applies the
@@ -1078,7 +1086,7 @@ The resulting netlist of a 4-taps FIR filter based on the above definition
 is depicted in \Cref{img:4tapfir}.
 
 \begin{figure}
-\centerline{\includegraphics{4tapfir}}
+\centerline{\includegraphics{4tapfir.svg}}
 \caption{4-taps FIR Filter}
 \label{img:4tapfir}
 \end{figure}
@@ -1110,9 +1118,13 @@ automated circuit synthesis.
 
 The ForSyDe~\cite{ForSyDe2} system uses Haskell to specify abstract system 
 models, which can (manually) be transformed into an implementation model using 
-semantic preserving transformations. ForSyDe has several simulation and 
-synthesis backends, though synthesis is restricted to the synchronous subset 
-of the ForSyDe language.
+semantic preserving transformations. A designer can model systems using 
+heterogeneous models of computation, which include continuous time, 
+synchronous and untimed models of computation. Using so-called domain 
+interfaces a designer can simulate electronic systems which have both analog 
+as digital parts. ForSyDe has several simulation and  synthesis backends, 
+though synthesis is restricted to the synchronous subset of the ForSyDe 
+language. Unlike \CLaSH\ there is no support for the automated synthesis of description that contain polymorphism or higher-order functions.
 
 Lava~\cite{Lava} is a hardware description language that focuses on the 
 structural representation of hardware. Besides support for simulation and 
@@ -1121,12 +1133,13 @@ tools for formal verification. Lava descriptions are actually circuit
 generators when viewed from a synthesis viewpoint, in that the language 
 elements of Haskell, such as choice, can be used to guide the circuit 
 generation. If a developer wants to insert a choice element inside an actual 
-circuit he will have to specify this explicitly as a component. In this 
-respect \CLaSH\ differs from Lava, in that all the choice elements, such as 
-case-statements and pattern matching, are synthesized to choice elements in the 
-eventual circuit. As such, richer control structures can both be specified and 
-synthesized in \CLaSH\ compared to any of the languages mentioned in this 
-section.
+circuit he will have to specify this explicitly as a component. 
+
+In this respect \CLaSH\ differs from Lava, in that all the choice elements, 
+such as case-statements and pattern matching, are synthesized to choice 
+elements in the eventual circuit. As such, richer control structures can both 
+be specified and synthesized in \CLaSH\ compared to any of the languages 
+mentioned in this section.
 
 The merits of polymorphic typing, combined with higher-order functions, are 
 now also recognized in the `main-stream' hardware description languages, 
