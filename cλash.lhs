@@ -606,10 +606,7 @@ by an (optimizing) \VHDL\ synthesis tool.
     % against the constructors in the \hs{case} expressions. 
     We can see two versions of a contrived example below, the first 
     using a \hs{case} construct and the other using a \hs{if-then-else} 
-    constructs, in the code below. The example sums two values when they are 
-    equal or non-equal (depending on the predicate given) and returns 0 
-    otherwise. Both versions of the example roughly correspond to the same 
-    netlist, which is depicted in \Cref{img:choice}.
+    constructs, in the code below. 
     
     \begin{code}
     sumif pred a b = case pred of
@@ -634,6 +631,11 @@ by an (optimizing) \VHDL\ synthesis tool.
     \caption{Choice - sumif}
     \label{img:choice}
     \end{figure}
+    
+    The example sums two values when they are equal or non-equal (depending on 
+    the predicate given) and returns 0 otherwise. Both versions of the example 
+    roughly correspond to the same netlist, which is depicted in 
+    \Cref{img:choice}.
 
     A slightly more complex (but very powerful) form of choice is pattern 
     matching. A function can be defined in multiple clauses, where each clause 
