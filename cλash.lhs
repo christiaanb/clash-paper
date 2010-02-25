@@ -442,7 +442,10 @@ c.p.r.baaij@@utwente.nl, matthijs@@stdin.nl, j.kuper@@utwente.nl}}
 
 \begin{abstract}
 %\boldmath
-The abstract goes here.
+\CLaSH\ is a functional hardware description language that borrows both its 
+syntax and semantics from the functional programming language Haskell. The use of polymorphism and higher-order functions allow a circuit designer to describe more abstract and general specifications than are possible in the traditional hardware description languages.
+
+Circuit descriptions can be translated to synthesizable VHDL using the prototype \CLaSH\ compiler. As the circuit descriptions are made in plain Haskell, simulations can also be compiled by any Haskell compiler.
 \end{abstract}
 % IEEEtran.cls defaults to using nonbold math in the Abstract.
 % This preserves the distinction between vectors and scalars. However,
@@ -509,7 +512,7 @@ in Haskell as a domain specific languages. As far as the authors know, such
 extensive support for choice-elements is new in the domain of functional 
 hardware description languages. As the hardware descriptions are plain Haskell 
 functions, these descriptions can be compiled for simulation using an 
-optimizing Haskell compiler such as the Glasgow Haskell Compiler (\GHC).
+optimizing Haskell compiler such as the Glasgow Haskell Compiler (\GHC)~\cite{ghc}.
 
 Where descriptions in a conventional hardware description language have an 
 explicit clock for the purpose state and synchronicity, the clock is implied 
@@ -896,44 +899,6 @@ by an (optimizing) \VHDL\ synthesis tool.
     \begin{code}
     map :: (a -> b) -> [a|n] -> [b|n]
     \end{code}
-    
-    As an example of a common hardware design where the use of higher-order
-    functions leads to a very natural description is a FIR filter, which is 
-    basically the dot-product of two vectors:
-
-    \begin{equation}
-    y_t  = \sum\nolimits_{i = 0}^{n - 1} {x_{t - i}  \cdot h_i } 
-    \end{equation}
-    
-    A FIR filter multiplies fixed constants ($h$) with the current 
-    and a few previous input samples ($x$). Each of these multiplications
-    are summed, to produce the result at time $t$. The equation of a FIR 
-    filter is indeed equivalent to the equation of the dot-product, which is 
-    shown below:
-    
-    \begin{equation}
-    \mathbf{x}\bullet\mathbf{y} = \sum\nolimits_{i = 0}^{n - 1} {x_i \cdot y_i } 
-    \end{equation}
-
-    We can easily and directly implement the equation for the dot-product
-    using higher-order functions:
-
-    \begin{code}
-    xs *+* ys = foldl1 (+) (zipWith (*) xs hs)
-    \end{code}
-
-    The \hs{zipWith} function is very similar to the \hs{map} function: It 
-    takes a function, two vectors, and then applies the function to each of 
-    the elements in the two vectors pairwise (\emph{e.g.}, \hs{zipWith (*) [1, 
-    2] [3, 4]} becomes \hs{[1 * 3, 2 * 4]} $\equiv$ \hs{[3,8]}).
-
-    The \hs{foldl1} function takes a function, a single vector, and applies 
-    the function to the first two elements of the vector. It then applies the
-    function to the result of the first application and the next element from 
-    the vector. This continues until the end of the vector is reached. The 
-    result of the \hs{foldl1} function is the result of the last application.
-    As you can see, the \hs{zipWith (*)} function is just pairwise 
-    multiplication and the \hs{foldl1 (+)} function is just summation.
 
     So far, only functions have been used as higher-order values. In
     Haskell, there are two more ways to obtain a function-typed value:
@@ -1019,10 +984,8 @@ by an (optimizing) \VHDL\ synthesis tool.
     which variables  are part of the state is completely determined by the 
     type signature. This approach to state is well suited to be used in 
     combination with the existing code and language features, such as all the 
-    choice constructs, as state values are just normal values.
-    
-    We can simulate stateful descriptions using the recursive \hs{run} 
-    function:
+    choice constructs, as state values are just normal values. We can simulate 
+    stateful descriptions using the recursive \hs{run} function:
     
     \begin{code}
     run f s (i:inps) = o : (run f s' inps)
@@ -1043,7 +1006,45 @@ by an (optimizing) \VHDL\ synthesis tool.
 foo\par bar
 
 \section{Use cases}
-Returning to the example of the FIR filter, we will slightly change the
+As an example of a common hardware design where the use of higher-order
+functions leads to a very natural description is a FIR filter, which is 
+basically the dot-product of two vectors:
+
+\begin{equation}
+y_t  = \sum\nolimits_{i = 0}^{n - 1} {x_{t - i}  \cdot h_i } 
+\end{equation}
+
+A FIR filter multiplies fixed constants ($h$) with the current 
+and a few previous input samples ($x$). Each of these multiplications
+are summed, to produce the result at time $t$. The equation of a FIR 
+filter is indeed equivalent to the equation of the dot-product, which is 
+shown below:
+
+\begin{equation}
+\mathbf{x}\bullet\mathbf{y} = \sum\nolimits_{i = 0}^{n - 1} {x_i \cdot y_i } 
+\end{equation}
+
+We can easily and directly implement the equation for the dot-product
+using higher-order functions:
+
+\begin{code}
+xs *+* ys = foldl1 (+) (zipWith (*) xs hs)
+\end{code}
+
+The \hs{zipWith} function is very similar to the \hs{map} function: It 
+takes a function, two vectors, and then applies the function to each of 
+the elements in the two vectors pairwise (\emph{e.g.}, \hs{zipWith (*) [1, 
+2] [3, 4]} becomes \hs{[1 * 3, 2 * 4]} $\equiv$ \hs{[3,8]}).
+
+The \hs{foldl1} function takes a function, a single vector, and applies 
+the function to the first two elements of the vector. It then applies the
+function to the result of the first application and the next element from 
+the vector. This continues until the end of the vector is reached. The 
+result of the \hs{foldl1} function is the result of the last application.
+As you can see, the \hs{zipWith (*)} function is just pairwise 
+multiplication and the \hs{foldl1 (+)} function is just summation.
+
+Returning to the actual FIR filter, we will slightly change the
 equation belong to it, so as to make the translation to code more obvious.
 What we will do is change the definition of the vector of input samples.
 So, instead of having the input sample received at time
@@ -1051,7 +1052,7 @@ $t$ stored in $x_t$, $x_0$ now always stores the current sample, and $x_i$
 stores the $ith$ previous sample. This changes the equation to the
 following (Note that this is completely equivalent to the original
 equation, just with a different definition of $x$ that will better suit
-the the transformation to code):
+the transformation to code):
 
 \begin{equation}
 y_t  = \sum\nolimits_{i = 0}^{n - 1} {x_i  \cdot h_i } 
@@ -1059,8 +1060,7 @@ y_t  = \sum\nolimits_{i = 0}^{n - 1} {x_i  \cdot h_i }
 
 Consider that the vector \hs{hs} contains the FIR coefficients and the 
 vector \hs{xs} contains the current input sample in front and older 
-samples behind. The function that does this shifting of the input samples 
-is shown below:
+samples behind. The function that shifts the input samples is shown below:
 
 \begin{code}
 x >> xs = x +> tail xs  
@@ -1089,22 +1089,30 @@ years. Early work includes such languages as $\mu$\acro{FP}~\cite{muFP}, an
 extension of Backus' \acro{FP} language to synchronous streams, designed 
 particularly for describing and reasoning about regular circuits. The 
 Ruby~\cite{Ruby} language uses relations, instead of functions, to describe 
-circuits, and has a particular focus on layout. \acro{HML}~\cite{HML2} is a 
-hardware modeling language based on the strict functional language 
-\acro{ML}, and has support for polymorphic types and higher-order functions. 
-Published work suggests that there is no direct simulation support for 
-\acro{HML}, and that the translation to \VHDL\ is only partial.
+circuits, and has a particular focus on layout. 
+
+\acro{HML}~\cite{HML2} is a hardware modeling language based on the strict 
+functional language \acro{ML}, and has support for polymorphic types and 
+higher-order functions. Published work suggests that there is no direct 
+simulation support for \acro{HML}, but that a description in \acro{HML} has to 
+be translated to \VHDL\ and that the translated description can than be 
+simulated in a \VHDL\ simulator. Also not all of the mentioned language 
+features of \acro{HML} could be translated to hardware. The \CLaSH\ compiler 
+on the other hand can correctly translate all of the language constructs 
+mentioned in this paper to a netlist format.
 
 Like this work, many functional hardware description languages have some sort 
 of foundation in the functional programming language Haskell. 
 Hawk~\cite{Hawk1} uses Haskell to describe system-level executable 
 specifications used to model the behavior of superscalar microprocessors. Hawk 
 specifications can be simulated, but there seems to be no support for 
-automated circuit synthesis. The ForSyDe~\cite{ForSyDe2} system uses Haskell 
-to specify abstract system models, which can (manually) be transformed into an 
-implementation model using semantic preserving transformations. ForSyDe has 
-several simulation and synthesis backends, though synthesis is restricted to 
-the synchronous subset of the ForSyDe language.
+automated circuit synthesis. 
+
+The ForSyDe~\cite{ForSyDe2} system uses Haskell to specify abstract system 
+models, which can (manually) be transformed into an implementation model using 
+semantic preserving transformations. ForSyDe has several simulation and 
+synthesis backends, though synthesis is restricted to the synchronous subset 
+of the ForSyDe language.
 
 Lava~\cite{Lava} is a hardware description language that focuses on the 
 structural representation of hardware. Besides support for simulation and 
