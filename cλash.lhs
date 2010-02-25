@@ -897,57 +897,45 @@ by an (optimizing) \VHDL\ synthesis tool.
     map :: (a -> b) -> [a|n] -> [b|n]
     \end{code}
     
-    As an example from a common hardware design, let's look at the
-    equation of a FIR filter.
+    As an example of a common hardware design where the use of higher-order
+    functions leads to a very natural description is a FIR filter, which is 
+    basically the dot-product of two vectors:
 
     \begin{equation}
     y_t  = \sum\nolimits_{i = 0}^{n - 1} {x_{t - i}  \cdot h_i } 
     \end{equation}
-
-    A FIR filter multiplies fixed constants ($h$) with the current and
-    a few previous input samples ($x$). Each of these multiplications
-    are summed, to produce the result at time $t$.
-
-    This is easily and directly implemented using higher order
-    functions. Consider that the vector \hs{hs} contains the FIR
-    coefficients and the vector \hs{xs} contains the current input sample
-    in front and older samples behind. How \hs{xs} gets its value will be
-    show in the next section about state.
-
-    \begin{code}
-    fir {-"$\ldots$"-} = foldl1 (+) (zipwith (*) xs hs)
-    \end{code}
-
-    Here, the \hs{zipwith} function is very similar to the \hs{map}
-    function: It takes a function two lists and then applies the
-    function to each of the elements of the two lists pairwise
-    (\emph{e.g.}, \hs{zipwith (+) [1, 2] [3, 4]} becomes 
-    \hs{[1 + 3, 2 + 4]}.
-
-    The \hs{foldl1} function takes a function and a single list and applies the
-    function to the first two elements of the list. It then applies to
-    function to the result of the first application and the next element
-    from the list. This continues until the end of the list is reached.
-    The result of the \hs{foldl1} function is the result of the last
-    application.
-
-    As you can see, the \hs{zipwith (*)} function is just pairwise
-    multiplication and the \hs{foldl1 (+)} function is just summation.
-
-    To make the correspondence between the code and the equation even
-    more obvious, we turn the list of input samples in the equation
-    around. So, instead of having the the input sample received at time
-    $t$ in $x_t$, $x_0$ now always stores the current sample, and $x_i$
-    stores the $ith$ previous sample. This changes the equation to the
-    following (Note that this is completely equivalent to the original
-    equation, just with a different definition of $x$ that better suits
-    the \hs{x} from the code):
-
+    
+    A FIR filter multiplies fixed constants ($h$) with the current 
+    and a few previous input samples ($x$). Each of these multiplications
+    are summed, to produce the result at time $t$. The equation of the FIR 
+    filter is indeed equivalent to the equation of the dot-product, which is 
+    shown below:
+    
     \begin{equation}
-    y_t  = \sum\nolimits_{i = 0}^{n - 1} {x_i  \cdot h_i } 
+    \mathbf{x}\bullet\mathbf{y} = \sum\nolimits_{i = 0}^{n - 1} {x_i \cdot y_i } 
     \end{equation}
 
-    So far, only functions have been used as higher order values. In
+    We can easily and directly implement the equation for the dot-product
+    using higher-order functions:
+
+    \begin{code}
+    xs *+* ys = foldl1 (+) (zipwith (*) xs hs)
+    \end{code}
+
+    The \hs{zipwith} function is very similar to the \hs{map} function: It 
+    takes a function, two vectors, and then applies the function to each of 
+    the elements in the two vectors pairwise (\emph{e.g.}, \hs{zipwith (*) [1, 
+    2] [3, 4]} becomes \hs{[1 * 3, 2 * 4]} $\equiv$ \hs{[3,8]}).
+
+    The \hs{foldl1} function takes a function, a single vector, and applies 
+    the function to the first two elements of the vector. It then applies the
+    function to the result of the first application and the next element from 
+    the vector. This continues until the end of the vector is reached. The 
+    result of the \hs{foldl1} function is the result of the last application.
+    As you can see, the \hs{zipwith (*)} function is just pairwise 
+    multiplication and the \hs{foldl1 (+)} function is just summation.
+
+    So far, only functions have been used as higher-order values. In
     Haskell, there are two more ways to obtain a function-typed value:
     partial application and lambda abstraction. Partial application
     means that a function that takes multiple arguments can be applied
@@ -961,17 +949,15 @@ by an (optimizing) \VHDL\ synthesis tool.
 
     Here, the expression \hs{(+) 1} is the partial application of the
     plus operator to the value \hs{1}, which is again a function that
-    adds one to its argument.
-
-    A labmda expression allows one to introduce an anonymous function
-    in any expression. Consider the following expression, which again
-    adds one to every element of a list:
+    adds one to its argument. A lambda expression allows one to introduce an 
+    anonymous function in any expression. Consider the following expression, 
+    which again adds one to every element of a vector:
 
     \begin{code}
     map (\x -> x + 1) xs
     \end{code}
 
-    Finally, higher order arguments are not limited to just builtin
+    Finally, higher order arguments are not limited to just built-in
     functions, but any function defined in \CLaSH\ can have function
     arguments. This allows the hardware designer to use a powerful
     abstraction mechanism in his designs and have an optimal amount of
@@ -1027,6 +1013,26 @@ by an (optimizing) \VHDL\ synthesis tool.
     approach to state is well suited to be used in combination with the 
     existing code and language features, such as all the choice constructs, as 
     state values are just normal values.
+    
+    \comment{
+    To make the correspondence between the code and the equation even
+    more obvious, we turn the list of input samples in the equation
+    around. So, instead of having the the input sample received at time
+    $t$ in $x_t$, $x_0$ now always stores the current sample, and $x_i$
+    stores the $ith$ previous sample. This changes the equation to the
+    following (Note that this is completely equivalent to the original
+    equation, just with a different definition of $x$ that better suits
+    the \hs{x} from the code):}
+
+    \begin{equation}
+    y_t  = \sum\nolimits_{i = 0}^{n - 1} {x_i  \cdot h_i } 
+    \end{equation}
+    \comment{
+    Consider that the vector \hs{hs} contains the FIR
+    coefficients and the vector \hs{xs} contains the current input sample
+    in front and older samples behind. How \hs{xs} gets its value will be
+    show in the next section about state.}
+    
 \section{\CLaSH\ prototype}
 
 foo\par bar

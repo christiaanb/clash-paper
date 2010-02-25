@@ -1,1 +1,2 @@
-%format != = "\neq"
+%format !=  = "\neq"
+%format *+* = "\bullet"
