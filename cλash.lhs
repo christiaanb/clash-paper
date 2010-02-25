@@ -1019,51 +1019,51 @@ by an (optimizing) \VHDL\ synthesis tool.
     which variables  are part of the state is completely determined by the 
     type signature. This approach to state is well suited to be used in 
     combination with the existing code and language features, such as all the 
-    choice constructs, as state values are just normal values.
-    
-    Returning to the example of the FIR filter, we will slightly change the
-    equation belong to it, so as to make the translation to code more obvious.
-    What we will do is change the definition of the vector of input samples.
-    So, instead of having the input sample received at time
-    $t$ stored in $x_t$, $x_0$ now always stores the current sample, and $x_i$
-    stores the $ith$ previous sample. This changes the equation to the
-    following (Note that this is completely equivalent to the original
-    equation, just with a different definition of $x$ that will better suit
-    the the transformation to code):
-
-    \begin{equation}
-    y_t  = \sum\nolimits_{i = 0}^{n - 1} {x_i  \cdot h_i } 
-    \end{equation}
-    
-    Consider that the vector \hs{hs} contains the FIR coefficients and the 
-    vector \hs{xs} contains the current input sample in front and older 
-    samples behind. The function that does this shifting of the input samples 
-    is shown below:
-    
-    \begin{code}
-    x >> xs = x +> tail xs  
-    \end{code}
-    
-    Where the \hs{tail} functions returns all but the first element of a 
-    vector, and the concatenate operator ($\succ$) adds the new element to the 
-    left of a vector. The complete definition of the FIR filter then becomes:
-    
-    \begin{code}
-    fir (State (xs,hs)) x = (State (x >> xs,hs), xs *+* hs)
-    \end{code}
-    
-    The resulting netlist of a 4-taps FIR filter based on the above definition
-    is depicted in \Cref{img:4tapfir}.
-    
-    \begin{figure}
-    \centerline{\includegraphics{4tapfir}}
-    \caption{4-taps FIR Filter}
-    \label{img:4tapfir}
-    \end{figure}
-    
+    choice constructs, as state values are just normal values.    
 \section{\CLaSH\ prototype}
 
 foo\par bar
+
+\section{Use cases}
+Returning to the example of the FIR filter, we will slightly change the
+equation belong to it, so as to make the translation to code more obvious.
+What we will do is change the definition of the vector of input samples.
+So, instead of having the input sample received at time
+$t$ stored in $x_t$, $x_0$ now always stores the current sample, and $x_i$
+stores the $ith$ previous sample. This changes the equation to the
+following (Note that this is completely equivalent to the original
+equation, just with a different definition of $x$ that will better suit
+the the transformation to code):
+
+\begin{equation}
+y_t  = \sum\nolimits_{i = 0}^{n - 1} {x_i  \cdot h_i } 
+\end{equation}
+
+Consider that the vector \hs{hs} contains the FIR coefficients and the 
+vector \hs{xs} contains the current input sample in front and older 
+samples behind. The function that does this shifting of the input samples 
+is shown below:
+
+\begin{code}
+x >> xs = x +> tail xs  
+\end{code}
+
+Where the \hs{tail} function returns all but the first element of a 
+vector, and the concatenate operator ($\succ$) adds a new element to the 
+left of a vector. The complete definition of the FIR filter then becomes:
+
+\begin{code}
+fir (State (xs,hs)) x = (State (x >> xs,hs), xs *+* hs)
+\end{code}
+
+The resulting netlist of a 4-taps FIR filter based on the above definition
+is depicted in \Cref{img:4tapfir}.
+
+\begin{figure}
+\centerline{\includegraphics{4tapfir}}
+\caption{4-taps FIR Filter}
+\label{img:4tapfir}
+\end{figure}
 
 \section{Related work}
 Many functional hardware description languages have been developed over the 
