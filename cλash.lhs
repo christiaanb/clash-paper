@@ -865,7 +865,7 @@ by an (optimizing) \VHDL\ synthesis tool.
     for numerical operations, \hs{Eq} for the equality operators, and
     \hs{Ord} for the comparison/order operators.
 
-  \subsection{Higher-order functions}
+  \subsection{Higher-order functions \& values}
     Another powerful abstraction mechanism in functional languages, is
     the concept of \emph{higher-order functions}, or \emph{functions as
     a first class value}. This allows a function to be treated as a
@@ -919,12 +919,12 @@ by an (optimizing) \VHDL\ synthesis tool.
     using higher-order functions:
 
     \begin{code}
-    xs *+* ys = foldl1 (+) (zipwith (*) xs hs)
+    xs *+* ys = foldl1 (+) (zipWith (*) xs hs)
     \end{code}
 
-    The \hs{zipwith} function is very similar to the \hs{map} function: It 
+    The \hs{zipWith} function is very similar to the \hs{map} function: It 
     takes a function, two vectors, and then applies the function to each of 
-    the elements in the two vectors pairwise (\emph{e.g.}, \hs{zipwith (*) [1, 
+    the elements in the two vectors pairwise (\emph{e.g.}, \hs{zipWith (*) [1, 
     2] [3, 4]} becomes \hs{[1 * 3, 2 * 4]} $\equiv$ \hs{[3,8]}).
 
     The \hs{foldl1} function takes a function, a single vector, and applies 
@@ -932,7 +932,7 @@ by an (optimizing) \VHDL\ synthesis tool.
     function to the result of the first application and the next element from 
     the vector. This continues until the end of the vector is reached. The 
     result of the \hs{foldl1} function is the result of the last application.
-    As you can see, the \hs{zipwith (*)} function is just pairwise 
+    As you can see, the \hs{zipWith (*)} function is just pairwise 
     multiplication and the \hs{foldl1 (+)} function is just summation.
 
     So far, only functions have been used as higher-order values. In
@@ -981,22 +981,26 @@ by an (optimizing) \VHDL\ synthesis tool.
       \item when the function is called, it should not have observable 
       side-effects.
     \end{inparaenum}
-    This purity property is important for functional languages, since it 
-    enables all kinds of mathematical reasoning that could not be guaranteed 
-    correct for impure functions. Pure functions are as such a perfect match 
-    for a combinatorial circuit, where the output solely depends on the 
-    inputs. When a circuit has state however, it can no longer be simply
-    described by a pure function. Simply removing the purity property is not a 
-    valid option, as the language would then lose many of it mathematical 
-    properties. In an effort to include the concept of state in pure 
+    % This purity property is important for functional languages, since it 
+    % enables all kinds of mathematical reasoning that could not be guaranteed 
+    % correct for impure functions. 
+    Pure functions are as such a perfect match or a combinatorial circuit, 
+    where the output solely depends on the  inputs. When a circuit has state 
+    however, it can no longer be simply described by a pure function. 
+    % Simply removing the purity property is not a valid option, as the 
+    % language would then lose many of it mathematical properties. 
+    In an effort to include the concept of state in pure 
     functions, the current value of the state is made an argument of the  
-    function; the updated state becomes part of the result. A simple example 
-    is adding an accumulator register to the earlier multiply-accumulate 
-    circuit, of which the resulting netlist can be seen in 
+    function; the updated state becomes part of the result. In this sense the
+    descriptions made in \CLaSH are the describing the combinatorial parts of 
+    a mealy machine.
+    
+    A simple example is adding an accumulator register to the earlier 
+    multiply-accumulate circuit, of which the resulting netlist can be seen in 
     \Cref{img:mac-state}:
     
     \begin{code}
-    macS a b (State c) = (State c', outp)
+    macS (State c) a b = (State c', outp)
       where
         outp  = mac a b c
         c'    = outp
@@ -1008,30 +1012,54 @@ by an (optimizing) \VHDL\ synthesis tool.
     \label{img:mac-state}
     \end{figure}
     
-    This approach makes the state of a circuit very explicit: which variables 
-    are part of the state is completely determined by the type signature. This 
-    approach to state is well suited to be used in combination with the 
-    existing code and language features, such as all the choice constructs, as 
-    state values are just normal values.
+    The \hs{State} keyword indicates which arguments are part of the current 
+    state, and what part of the output is part of the updated state. This 
+    aspect will also reflected in the type signature of the function. 
+    Abstracting the state of a circuit in this way makes it very explicit: 
+    which variables  are part of the state is completely determined by the 
+    type signature. This approach to state is well suited to be used in 
+    combination with the existing code and language features, such as all the 
+    choice constructs, as state values are just normal values.
     
-    \comment{
-    To make the correspondence between the code and the equation even
-    more obvious, we turn the list of input samples in the equation
-    around. So, instead of having the the input sample received at time
-    $t$ in $x_t$, $x_0$ now always stores the current sample, and $x_i$
+    Returning to the example of the FIR filter, we will slightly change the
+    equation belong to it, so as to make the translation to code more obvious.
+    What we will do is change the definition of the vector of input samples.
+    So, instead of having the input sample received at time
+    $t$ stored in $x_t$, $x_0$ now always stores the current sample, and $x_i$
     stores the $ith$ previous sample. This changes the equation to the
     following (Note that this is completely equivalent to the original
-    equation, just with a different definition of $x$ that better suits
-    the \hs{x} from the code):}
+    equation, just with a different definition of $x$ that will better suit
+    the the transformation to code):
 
     \begin{equation}
     y_t  = \sum\nolimits_{i = 0}^{n - 1} {x_i  \cdot h_i } 
     \end{equation}
-    \comment{
-    Consider that the vector \hs{hs} contains the FIR
-    coefficients and the vector \hs{xs} contains the current input sample
-    in front and older samples behind. How \hs{xs} gets its value will be
-    show in the next section about state.}
+    
+    Consider that the vector \hs{hs} contains the FIR coefficients and the 
+    vector \hs{xs} contains the current input sample in front and older 
+    samples behind. The function that does this shifting of the input samples 
+    is shown below:
+    
+    \begin{code}
+    x >> xs = x +> tail xs  
+    \end{code}
+    
+    Where the \hs{tail} functions returns all but the first element of a 
+    vector, and the concatenate operator ($\succ$) adds the new element to the 
+    left of a vector. The complete definition of the FIR filter then becomes:
+    
+    \begin{code}
+    fir (State (xs,hs)) x = (State (x >> xs,hs), xs *+* hs)
+    \end{code}
+    
+    The resulting netlist of a 4-taps FIR filter based on the above definition
+    is depicted in \Cref{img:4tapfir}.
+    
+    \begin{figure}
+    \centerline{\includegraphics{4tapfir}}
+    \caption{4-taps FIR Filter}
+    \label{img:4tapfir}
+    \end{figure}
     
 \section{\CLaSH\ prototype}
 
