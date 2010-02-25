@@ -10,7 +10,7 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="153.05"
+   width="149.05"
    height="184.13002"
    id="svg2"
    version="1.1"
@@ -24,8 +24,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="2"
-     inkscape:cx="129.37703"
-     inkscape:cy="84.413489"
+     inkscape:cx="116.56774"
+     inkscape:cy="72.903496"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -102,7 +102,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -110,14 +110,14 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-408.06,-664.5295)">
+     transform="translate(-412.06,-664.5295)">
     <rect
        style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none"
        id="rect7593"
-       width="130"
-       height="175"
-       x="50"
-       y="134.43002"
+       width="124.8"
+       height="174.5"
+       x="55.200001"
+       y="134.93002"
        transform="translate(367.86,538.7295)" />
     <g
        id="g2940">
@@ -581,7 +581,7 @@
        sodipodi:nodetypes="ccc" />
     <path
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
-       d="m 408.56,688.15952 22,0"
+       d="m 412.56,688.15952 18,0"
        id="path3826"
        sodipodi:nodetypes="cc" />
     <g
@@ -770,7 +770,7 @@
    style="fill:#000000;stroke-width:0" />
 </g>    <g
        id="g7777"
-       transform="matrix(1,0,0,-1,186.5,1343.9595)"
+       transform="matrix(1,0,0,-1,191.7,1343.9595)"
        xml:space="preserve"
        stroke-miterlimit="10.433"
        font-style="normal"

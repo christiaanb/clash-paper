@@ -907,7 +907,7 @@ by an (optimizing) \VHDL\ synthesis tool.
     
     A FIR filter multiplies fixed constants ($h$) with the current 
     and a few previous input samples ($x$). Each of these multiplications
-    are summed, to produce the result at time $t$. The equation of the FIR 
+    are summed, to produce the result at time $t$. The equation of a FIR 
     filter is indeed equivalent to the equation of the dot-product, which is 
     shown below:
     
@@ -1019,7 +1019,25 @@ by an (optimizing) \VHDL\ synthesis tool.
     which variables  are part of the state is completely determined by the 
     type signature. This approach to state is well suited to be used in 
     combination with the existing code and language features, such as all the 
-    choice constructs, as state values are just normal values.    
+    choice constructs, as state values are just normal values.
+    
+    We can simulate stateful descriptions using the recursive \hs{run} 
+    function:
+    
+    \begin{code}
+    run f s (i:inps) = o : (run f s' inps)
+      where
+        (s', o) = f s i
+    \end{code}
+    
+    The \hs{run} function maps a list of inputs over the function that a 
+    developer wants to simulate, passing the state to each new iteration. Each
+    value in the input list corresponds to exactly one cycle of the (implicit) 
+    clock. The result of the simulation is a list of outputs for every clock
+    cycle. As both the \hs{run} function and the hardware description are 
+    plain hardware, the complete simulation can be compiled by an optimizing
+    Haskell compiler.
+    
 \section{\CLaSH\ prototype}
 
 foo\par bar
