@@ -1013,7 +1013,27 @@ by an (optimizing) \VHDL\ synthesis tool.
     
 \section{\CLaSH\ prototype}
 
-foo\par bar
+The \CLaSH language as presented above can be translated to \VHDL using
+the prototype \CLaSH compiler. This compiler allows experimentation with
+the \CLaSH language and allows for running \CLaSH designs on actual FPGA
+hardware.
+
+\comment{Add clash pipeline image}
+The prototype heavily uses \GHC, the Glasgow Haskell Compiler. Figure
+TODO shows the \CLaSH compiler pipeline. As you can see, the frontend
+is completely reused from \GHC, which allows the \CLaSH prototype to
+support most of the Haskell Language. The \GHC frontend produces the
+program in the \emph{Core} format, which is a very small, functional,
+typed language which is relatively easy to process.
+
+The second step in the compilation process is \emph{normalization}. This
+step runs a number of \emph{meaning preserving} transformations on the
+Core program, to bring it into a \emph{normal form}. This normal form
+has a number of restrictions that make the program similar to hardware.
+In particular, a program in normal form no longer has any polymorphism
+or higher order functions.
+
+The final step is a simple translation to \VHDL.
 
 \section{Use cases}
 As an example of a common hardware design where the use of higher-order
