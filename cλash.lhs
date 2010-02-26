@@ -392,8 +392,9 @@
 % author names and affiliations
 % use a multiple column layout for up to three different
 % affiliations
-\author{\IEEEauthorblockN{Christiaan P.R. Baaij, Matthijs Kooijman, Jan Kuper, Marco E.T. Gerards, Bert Molenkamp, Sabih H. Gerez}
-\IEEEauthorblockA{University of Twente, Department of EEMCS\\
+\author{\IEEEauthorblockN{Christiaan P.R. Baaij, Matthijs Kooijman, Jan Kuper, Marco E.T. Gerards}%, Bert Molenkamp, Sabih H. Gerez}
+\IEEEauthorblockA{Computer Architecture for Embedded Systems (CAES)\\ 
+Department of EEMCS, University of Twente\\
 P.O. Box 217, 7500 AE, Enschede, The Netherlands\\
 c.p.r.baaij@@utwente.nl, matthijs@@stdin.nl, j.kuper@@utwente.nl}}
 % \and
@@ -479,7 +480,7 @@ traditional hardware description languages.
 
 
 \section{Introduction}
-Hardware description languages has allowed the productivity of hardware 
+Hardware description languages have allowed the productivity of hardware 
 engineers to keep pace with the development of chip technology. Standard 
 Hardware description languages, like \VHDL~\cite{VHDL2008} and 
 Verilog~\cite{Verilog}, allowed an engineer to describe circuits using a 
@@ -504,7 +505,7 @@ means that a developer is given a library of Haskell~\cite{Haskell} functions
 and types that together form the language primitives of the domain specific 
 language. As a result of how the signals are modeled and abstracted, the 
 functions used to describe a circuit also build a large domain-specific 
-datatype (hidden from the designer) which can be further processed by an 
+datatype (hidden from the designer) which can then be processed further by an 
 embedded compiler. This compiler actually runs in the same environment as the 
 description; as a result compile-time and run-time become hard to define, as 
 the embedded compiler is usually compiled by the same Haskell compiler as the 
@@ -516,7 +517,7 @@ itself for the purpose of describing hardware. By taking this approach, we can
 capture certain language constructs, such as Haskell's choice elements 
 (if-constructs, case-constructs, pattern matching, etc.), which are not 
 available in the functional hardware description languages that are embedded 
-in Haskell as a domain specific languages. As far as the authors know, such 
+in Haskell as a domain specific language. As far as the authors know, such 
 extensive support for choice-elements is new in the domain of functional 
 hardware description languages. As the hardware descriptions are plain Haskell 
 functions, these descriptions can be compiled for simulation using an 
@@ -525,18 +526,28 @@ optimizing Haskell compiler such as the Glasgow Haskell Compiler (\GHC)~\cite{gh
 Where descriptions in a conventional hardware description language have an 
 explicit clock for the purpose state and synchronicity, the clock is implied 
 in this research. A developer describes the behavior of the hardware between 
-clock cycles, as such, only synchronous systems can be described. Many 
-functional hardware description model signals as a stream of all values over 
-time; state is then modeled as a delay on this stream of values. The approach 
-taken in this research is to make the current state of a circuit part of the 
-input of the function and the updated state part of the output.
+clock cycles. The current abstraction of state and time limits the 
+descriptions to synchronous hardware, there however is room within the 
+language to eventually add a different abstraction mechanism that will allow 
+for the modeling of asynchronous systems. Many functional hardware description 
+model signals as a stream of all values over time; state is then modeled as a 
+delay on this stream of values. The approach taken in this research is to make 
+the current state of a circuit part of the input of the function and the 
+updated state part of the output.
 
 Like the standard hardware description languages, descriptions made in a 
 functional hardware description language must eventually be converted into a 
-netlist. This research also features a prototype translator called \CLaSH\ 
-(pronounced: clash), which converts the Haskell code to equivalently behaving 
-synthesizable \VHDL\ code, ready to be converted to an actual netlist format 
-by an (optimizing) \VHDL\ synthesis tool.
+netlist. This research also features a prototype translator, which has the 
+same name as the language: \CLaSH\footnote{C$\lambda$aSH: CAES Language for 
+Synchronous Hardware} (pronounced: clash). This compiler converts the Haskell 
+code to equivalently behaving synthesizable \VHDL\ code, ready to be converted 
+to an actual netlist format by an (optimizing) \VHDL\ synthesis tool.
+
+Besides trivial circuits such as variants of both the FIR filter and the 
+simple CPU shown in \Cref{sec:usecases}, the \CLaSH\ compiler has also been 
+shown to work for non-trivial descriptions. \CLaSH\ has been able to 
+successfully translate the functional description of a streaming reduction 
+circuit~\cite{reductioncircuit} for floating point numbers.
 
 \section{Hardware description in Haskell}
 
@@ -650,9 +661,10 @@ by an (optimizing) \VHDL\ synthesis tool.
     (\Cref{img:choice}) as the earlier two versions of the example.
     
     \begin{code}
-    sumif Eq a b    | a == b = a + b
-    sumif Neq a b   | a != b = a + b
-    sumif _ _ _     = 0
+    sumif Eq a b    | a == b      = a + b
+                    | otherwise   = 0
+    sumif Neq a b   | a != b      = a + b
+                    | otherwise   = 0
     \end{code}
 
     % \begin{figure}
@@ -1008,7 +1020,7 @@ by an (optimizing) \VHDL\ synthesis tool.
     value in the input list corresponds to exactly one cycle of the (implicit) 
     clock. The result of the simulation is a list of outputs for every clock
     cycle. As both the \hs{run} function and the hardware description are 
-    plain hardware, the complete simulation can be compiled by an optimizing
+    plain Haskell, the complete simulation can be compiled by an optimizing
     Haskell compiler.
     
 \section{\CLaSH\ prototype}
@@ -1041,6 +1053,7 @@ or higher order functions.
 The final step is a simple translation to \VHDL.
 
 \section{Use cases}
+\label{sec:usecases}
 As an example of a common hardware design where the use of higher-order
 functions leads to a very natural description is a FIR filter, which is 
 basically the dot-product of two vectors:
@@ -1149,9 +1162,11 @@ semantic preserving transformations. A designer can model systems using
 heterogeneous models of computation, which include continuous time, 
 synchronous and untimed models of computation. Using so-called domain 
 interfaces a designer can simulate electronic systems which have both analog 
-as digital parts. ForSyDe has several simulation and  synthesis backends, 
-though synthesis is restricted to the synchronous subset of the ForSyDe 
-language. Unlike \CLaSH\ there is no support for the automated synthesis of descriptions that contain polymorphism or higher-order functions.
+as digital parts. ForSyDe has several backends including simulation and 
+automated synthesis, though automated synthesis is restricted to the 
+synchronous model of computation within ForSyDe. Unlike \CLaSH\ there is no 
+support for the automated synthesis of descriptions that contain polymorphism 
+or higher-order functions.
 
 Lava~\cite{Lava} is a hardware description language that focuses on the 
 structural representation of hardware. Besides support for simulation and 
@@ -1300,7 +1315,7 @@ The authors would like to thank...
 % http://www.michaelshell.org/tex/ieeetran/bibtex/
 \bibliographystyle{IEEEtran}
 % argument is your BibTeX string definitions and bibliography database(s)
-\bibliography{IEEEabrv,clash.bib}
+\bibliography{clash}
 %
 % <OR> manually copy in the resultant .bbl file
 % set second argument of \begin to the number of references
