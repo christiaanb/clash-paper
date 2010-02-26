@@ -810,8 +810,8 @@ by an (optimizing) \VHDL\ synthesis tool.
         % value.
       \item[\bf{Multiple constructors with fields}]
         Algebraic datatypes with multiple constructors, where at least
-        one of these constructors has one or more fields are not
-        currently supported.
+        one of these constructors has one or more fields are currently not 
+        supported.
     \end{xlist}
 
   \subsection{Polymorphism}
@@ -1013,18 +1013,23 @@ by an (optimizing) \VHDL\ synthesis tool.
     
 \section{\CLaSH\ prototype}
 
-The \CLaSH language as presented above can be translated to \VHDL using
-the prototype \CLaSH compiler. This compiler allows experimentation with
-the \CLaSH language and allows for running \CLaSH designs on actual FPGA
+The \CLaSH\ language as presented above can be translated to \VHDL\ using
+the prototype \CLaSH\ compiler. This compiler allows experimentation with
+the \CLaSH\ language and allows for running \CLaSH\ designs on actual FPGA
 hardware.
 
-\comment{Add clash pipeline image}
-The prototype heavily uses \GHC, the Glasgow Haskell Compiler. Figure
-TODO shows the \CLaSH compiler pipeline. As you can see, the frontend
-is completely reused from \GHC, which allows the \CLaSH prototype to
-support most of the Haskell Language. The \GHC frontend produces the
-program in the \emph{Core} format, which is a very small, functional,
-typed language which is relatively easy to process.
+\begin{figure}
+\centerline{\includegraphics{compilerpipeline.svg}}
+\caption{\CLaSH\ compiler pipeline}
+\label{img:compilerpipeline}
+\end{figure}
+
+The prototype heavily uses \GHC, the Glasgow Haskell Compiler. 
+\Cref{img:compilerpipeline} shows the \CLaSH\ compiler pipeline. As you can 
+see, the front-end is completely reused from \GHC, which allows the \CLaSH\ 
+prototype to support most of the Haskell Language. The \GHC\ front-end 
+produces the program in the \emph{Core} format, which is a very small, 
+functional, typed language which is relatively easy to process.
 
 The second step in the compilation process is \emph{normalization}. This
 step runs a number of \emph{meaning preserving} transformations on the
@@ -1146,7 +1151,7 @@ synchronous and untimed models of computation. Using so-called domain
 interfaces a designer can simulate electronic systems which have both analog 
 as digital parts. ForSyDe has several simulation and  synthesis backends, 
 though synthesis is restricted to the synchronous subset of the ForSyDe 
-language. Unlike \CLaSH\ there is no support for the automated synthesis of description that contain polymorphism or higher-order functions.
+language. Unlike \CLaSH\ there is no support for the automated synthesis of descriptions that contain polymorphism or higher-order functions.
 
 Lava~\cite{Lava} is a hardware description language that focuses on the 
 structural representation of hardware. Besides support for simulation and 
