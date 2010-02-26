@@ -393,7 +393,7 @@
 % use a multiple column layout for up to three different
 % affiliations
 \author{\IEEEauthorblockN{Christiaan P.R. Baaij, Matthijs Kooijman, Jan Kuper, Marco E.T. Gerards}%, Bert Molenkamp, Sabih H. Gerez}
-\IEEEauthorblockA{Computer Architecture for Embedded Systems (CAES)\\ 
+\IEEEauthorblockA{%Computer Architecture for Embedded Systems (CAES)\\ 
 Department of EEMCS, University of Twente\\
 P.O. Box 217, 7500 AE, Enschede, The Netherlands\\
 c.p.r.baaij@@utwente.nl, matthijs@@stdin.nl, j.kuper@@utwente.nl}}
@@ -564,7 +564,7 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     \end{inparaenum} 
     The output port can have a complex type (such as a tuple), so having just 
     a single output port does not pose any limitation. The arguments of a 
-    function applications are assigned to a signal, which are then mapped to
+    function application are assigned to signals, which are then mapped to
     the corresponding input ports of the component. The output port of the 
     function is also mapped to a signal, which is used as the result of the 
     application itself.
