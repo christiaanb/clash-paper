@@ -342,9 +342,11 @@
 % Macro for certain acronyms in small caps. Doesn't work with the
 % default font, though (it contains no smallcaps it seems).
 \def\acro#1{{\small{#1}}}
+\def\acrotiny#1{{\scriptsize{#1}}}
 \def\VHDL{\acro{VHDL}}
 \def\GHC{\acro{GHC}}
 \def\CLaSH{{\small{C}}$\lambda$a{\small{SH}}}
+\def\CLaSHtiny{{\scriptsize{C}}$\lambda$a{\scriptsize{SH}}}
 
 % Macro for pretty printing haskell snippets. Just monospaced for now, perhaps
 % we'll get something more complex later on.
@@ -526,22 +528,23 @@ optimizing Haskell compiler such as the Glasgow Haskell Compiler (\GHC)~\cite{gh
 Where descriptions in a conventional hardware description language have an 
 explicit clock for the purpose state and synchronicity, the clock is implied 
 in this research. A developer describes the behavior of the hardware between 
-clock cycles. The current abstraction of state and time limits the 
-descriptions to synchronous hardware, there however is room within the 
-language to eventually add a different abstraction mechanism that will allow 
-for the modeling of asynchronous systems. Many functional hardware description 
-model signals as a stream of all values over time; state is then modeled as a 
-delay on this stream of values. The approach taken in this research is to make 
-the current state of a circuit part of the input of the function and the 
-updated state part of the output.
+clock cycles. Many functional hardware description model signals as a stream 
+of all values over time; state is then modeled as a delay on this stream of 
+values. The approach taken in this research is to make the current state of a 
+circuit part of the input of the function and the updated state part of the 
+output. The current abstraction of state and time limits the descriptions to 
+synchronous hardware, there however is room within the language to eventually 
+add a different abstraction mechanism that will allow for the modeling of 
+asynchronous systems.
 
 Like the standard hardware description languages, descriptions made in a 
 functional hardware description language must eventually be converted into a 
 netlist. This research also features a prototype translator, which has the 
-same name as the language: \CLaSH\footnote{C$\lambda$aSH: CAES Language for 
-Synchronous Hardware} (pronounced: clash). This compiler converts the Haskell 
-code to equivalently behaving synthesizable \VHDL\ code, ready to be converted 
-to an actual netlist format by an (optimizing) \VHDL\ synthesis tool.
+same name as the language: \CLaSH\footnote{\CLaSHtiny: \acrotiny{CAES} 
+Language for Synchronous Hardware} (pronounced: clash). This compiler converts 
+the Haskell code to equivalently behaving synthesizable \VHDL\ code, ready to 
+be converted to an actual netlist format by an (optimizing) \VHDL\ synthesis 
+tool.
 
 Besides trivial circuits such as variants of both the FIR filter and the 
 simple CPU shown in \Cref{sec:usecases}, the \CLaSH\ compiler has also been 
@@ -1032,7 +1035,7 @@ hardware.
 
 \begin{figure}
 \centerline{\includegraphics{compilerpipeline.svg}}
-\caption{\CLaSH\ compiler pipeline}
+\caption{\CLaSHtiny\ compiler pipeline}
 \label{img:compilerpipeline}
 \end{figure}
 
@@ -1127,7 +1130,7 @@ is depicted in \Cref{img:4tapfir}.
 
 \begin{figure}
 \centerline{\includegraphics{4tapfir.svg}}
-\caption{4-taps FIR Filter}
+\caption{4-taps \acrotiny{FIR} Filter}
 \label{img:4tapfir}
 \end{figure}
 
