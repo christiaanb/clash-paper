@@ -974,7 +974,7 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     % \comment{TODO: Describe ALU example (no code)}
 
   \subsection{State}
-    A very important concept in hardware it the concept of state. In a 
+    A very important concept in hardware is the concept of state. In a 
     stateful design, the outputs depend on the history of the inputs, or the 
     state. State is usually stored in registers, which retain their value 
     during a clock cycle. As we want to describe more than simple 
@@ -992,26 +992,24 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     % This purity property is important for functional languages, since it 
     % enables all kinds of mathematical reasoning that could not be guaranteed 
     % correct for impure functions. 
-    Pure functions are as such a perfect match or a combinatorial circuit, 
-    where the output solely depends on the  inputs. When a circuit has state 
+    Pure functions are as such a perfect match for combinatorial circuits, 
+    where the output solely depends on the inputs. When a circuit has state 
     however, it can no longer be simply described by a pure function. 
     % Simply removing the purity property is not a valid option, as the 
     % language would then lose many of it mathematical properties. 
-    In an effort to include the concept of state in pure 
-    functions, the current value of the state is made an argument of the  
-    function; the updated state becomes part of the result. In this sense the
-    descriptions made in \CLaSH are the describing the combinatorial parts of 
-    a mealy machine.
+    In \CLaSH\ we deal with the concept of state in pure functions by making 
+    current value of the state an additional argument of the function and the 
+    updated state part of result. In this sense the descriptions made in 
+    \CLaSH\ are the combinatorial parts of a mealy machine.
     
     A simple example is adding an accumulator register to the earlier 
     multiply-accumulate circuit, of which the resulting netlist can be seen in 
     \Cref{img:mac-state}:
     
     \begin{code}
-    macS (State c) a b = (State c', outp)
+    macS (State c) a b = (State c', c')
       where
-        outp  = mac a b c
-        c'    = outp
+        c' = mac a b c
     \end{code}
     
     \begin{figure}
@@ -1022,7 +1020,7 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     
     The \hs{State} keyword indicates which arguments are part of the current 
     state, and what part of the output is part of the updated state. This 
-    aspect will also reflected in the type signature of the function. 
+    aspect will also be reflected in the type signature of the function. 
     Abstracting the state of a circuit in this way makes it very explicit: 
     which variables are part of the state is completely determined by the 
     type signature. This approach to state is well suited to be used in 
@@ -1031,18 +1029,28 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     stateful descriptions using the recursive \hs{run} function:
     
     \begin{code}
-    run f s (i:inps) = o : (run f s' inps)
+    run f s (i : inps) = o : (run f s' inps)
       where
         (s', o) = f s i
     \end{code}
     
-    The \hs{run} function maps a list of inputs over the function that a 
-    developer wants to simulate, passing the state to each new iteration. Each
-    value in the input list corresponds to exactly one cycle of the (implicit) 
-    clock. The result of the simulation is a list of outputs for every clock
-    cycle. As both the \hs{run} function and the hardware description are 
-    plain Haskell, the complete simulation can be compiled by an optimizing
-    Haskell compiler.
+    The \hs{(:)} operator is the list concatenation operator, where the 
+    left-hand side is the head of a list and the right-hand side is the 
+    remainder of the list. The \hs{run} function applies the function the 
+    developer wants to simulate, \hs{f}, to the current state, \hs{s}, and the 
+    first input value, \hs{i}. The result is the first output value, \hs{o}, 
+    and the updated state \hs{s'}. The next iteration of the \hs{run} function 
+    is then called with the updated state, \hs{s'}, and the rest of the 
+    inputs, \hs{inps}. Each value in the input list corresponds to exactly one 
+    cycle of the (implicit) clock.
+    
+    As both the \hs{run} function, the hardware description, and the test 
+    inputs are plain Haskell, the complete simulation can be compiled to an 
+    executable binary by an optimizing Haskell compiler, or executed in an 
+    Haskell interpreter. Both simulation paths are much faster than first 
+    translating the description to \VHDL\ and then running a \VHDL\ 
+    simulation, where the executable binary has an additional simulation speed 
+    bonus in case there is a large set of test inputs.
     
 \section{\CLaSH\ prototype}
 
