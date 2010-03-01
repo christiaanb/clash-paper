@@ -565,8 +565,8 @@ circuit~\cite{reductioncircuit} for floating point numbers.
             and
       \item function applications are translated to component instantiations.
     \end{inparaenum} 
-    The output port can have a complex type (such as a tuple), so having just 
-    a single output port does not pose any limitation. The arguments of a 
+    The output port can have a structured type (such as a tuple), so having 
+    just a single output port does not pose any limitation. The arguments of a 
     function application are assigned to signals, which are then mapped to
     the corresponding input ports of the component. The output port of the 
     function is also mapped to a signal, which is used as the result of the 
@@ -574,9 +574,10 @@ circuit~\cite{reductioncircuit} for floating point numbers.
 
     Since every top level function generates its own component, the
     hierarchy of function calls is reflected in the final netlist,% aswell, 
-    creating a hierarchical description of the hardware. This separation in 
-    different components makes the resulting \VHDL\ output easier to read and 
-    debug.
+    creating a hierarchical description of the hardware. The separation in 
+    different components makes it easier for a developer to understand and 
+    possibly hand-optimize the resulting \VHDL\ output of the \CLaSH\ 
+    compiler.
 
     As an example we can see the netlist of the |mac| function in
     \Cref{img:mac-comb}; the |mac| function applies both the |mul| and |add|
@@ -592,7 +593,7 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     \label{img:mac-comb}
     \end{figure}
     
-    The result of using a complex input type can be seen in 
+    The result of using a structural input type can be seen in 
     \cref{img:mac-comb-nocurry} where the |mac| function now uses a single
     input tuple for the |a|, |b|, and |c| arguments:
     
@@ -609,7 +610,7 @@ circuit~\cite{reductioncircuit} for floating point numbers.
   \subsection{Choice}
     In Haskell, choice can be achieved by a large set of language constructs, 
     consisting of: \hs{case} constructs, \hs{if-then-else} constructs, 
-    pattern matching, and guards. The easiest of these are the \hs{case} 
+    pattern matching, and guards. The most general of these are the \hs{case} 
     constructs (\hs{if} expressions can be very directly translated to 
     \hs{case} expressions). A \hs{case} construct is translated to a 
     multiplexer, where the control value is linked to the selection port and 
@@ -619,17 +620,27 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     % assignment in \VHDL, where the conditions use equality comparisons 
     % against the constructors in the \hs{case} expressions. 
     We can see two versions of a contrived example below, the first 
-    using a \hs{case} construct and the other using a \hs{if-then-else} 
-    constructs, in the code below. 
+    using a \hs{case} construct and the other using an \hs{if-then-else} 
+    construct, in the code below. The examples sums two values when they are 
+    equal or non-equal (depending on the given predicate, the \hs{pred} 
+    variable) and returns 0 otherwise. The \hs{pred} variable has the 
+    following, user-defined, enumeration datatype:
     
     \begin{code}
+    data Pred = Equiv | NotEquiv
+    \end{code}
+
+    The naive netlist corresponding to both versions of the example is 
+    depicted in \Cref{img:choice}.
+
+    \begin{code}    
     sumif pred a b = case pred of
-      Eq ->   case a == b of
-        True    -> a + b
-        False   -> 0
-      Neq ->  case a != b of
-        True    -> a + b
-        False   -> 0
+      Equiv -> case a == b of
+        True      -> a + b
+        False     -> 0
+      NotEquiv  -> case a != b of
+        True      -> a + b
+        False     -> 0
     \end{code}
 
     \begin{code}
@@ -645,23 +656,24 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     \caption{Choice - sumif}
     \label{img:choice}
     \end{figure}
-    
-    The example sums two values when they are equal or non-equal (depending on 
-    the predicate given) and returns 0 otherwise. Both versions of the example 
-    roughly correspond to the same netlist, which is depicted in 
-    \Cref{img:choice}.
 
-    A slightly more complex (but very powerful) form of choice is pattern 
+    A user-friendly and also very powerful form of choice is pattern 
     matching. A function can be defined in multiple clauses, where each clause 
-    specifies a pattern. When the arguments match the pattern, the 
+    corresponds to a pattern. When an argument matches a pattern, the 
     corresponding clause will be used. Expressions can also contain guards, 
-    where the expression is only executed if the guard evaluates to true. Like 
+    where the expression is only executed if the guard evaluates to true, and 
+    continues with the next clause if the guard evaluates to false. Like 
     \hs{if-then-else} constructs, pattern matching and guards have a 
     (straightforward) translation to \hs{case} constructs and can as such be 
     mapped to multiplexers. A third version of the earlier example, using both 
-    pattern matching and guards, can be seen below. The version using pattern 
-    matching and guards also has roughly the same netlist representation 
-    (\Cref{img:choice}) as the earlier two versions of the example.
+    pattern matching and guards, can be seen below. The guard is the 
+    expression that follows the vertical bar (\hs{|}) and precedes the 
+    assignment operator (\hs{=}). The \hs{otherwise} guards always evaluate to 
+    \hs{true}.
+    
+    The version using pattern matching and guards corresponds to the same 
+    naive netlist representation (\Cref{img:choice}) as the earlier two 
+    versions of the example.
     
     \begin{code}
     sumif Eq a b    | a == b      = a + b
