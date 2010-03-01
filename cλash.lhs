@@ -825,9 +825,10 @@ circuit~\cite{reductioncircuit} for floating point numbers.
         Algebraic datatypes with multiple constructors, but without any
         fields are essentially a way to get an enumeration-like type
         containing alternatives. Note that Haskell's \hs{Bool} type is also 
-        defined as an enumeration type, but we have a fixed translation for 
-        that. An example of such an enum type is the type that represents the
-        colors in a traffic light:
+        defined as an enumeration type, but that there a fixed translation for 
+        that type within the \CLaSH\ compiler. An example of such an 
+        enumeration type is the type that represents the colors in a traffic 
+        light:
         \begin{code}
         data TrafficLight = Red | Orange | Green
         \end{code}
@@ -842,14 +843,16 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     \end{xlist}
 
   \subsection{Polymorphism}
-    A powerful construct in most functional languages is polymorphism, it 
-    allows a function to handle values of different data types in a uniform 
-    way. Haskell supports \emph{parametric polymorphism}~\cite{polymorphism}, 
-    meaning functions can be written without mention of any specific type and 
-    can be used transparently with any number of new types.
+    A powerful feature of most (functional) programming languages is 
+    polymorphism, it allows a function to handle values of different data 
+    types in a uniform way. Haskell supports \emph{parametric 
+    polymorphism}~\cite{polymorphism}, meaning functions can be written 
+    without mention of any specific type and can be used transparently with 
+    any number of new types.
 
     As an example of a parametric polymorphic function, consider the type of 
     the following \hs{append} function, which appends an element to a vector:
+    
     \begin{code}
     append :: [a|n] -> a -> [a|n + 1]
     \end{code}
@@ -873,7 +876,7 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     type classes, where a class definition provides the general interface of a 
     function, and class instances define the functionality for the specific 
     types. An example of such a type class is the \hs{Num} class, which 
-    contains all of Haskell's numerical operations. A developer can make use 
+    contains all of Haskell's numerical operations. A designer can make use 
     of this ad-hoc polymorphism by adding a constraint to a parametrically 
     polymorphic type variable. Such a constraint indicates that the type 
     variable can only be instantiated to a type whose members supports the 
@@ -895,14 +898,15 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     In \CLaSH, parametric polymorphism is completely supported. Any function 
     defined can have any number of unconstrained type parameters. The \CLaSH\ 
     compiler will infer the type of every such argument depending on how the 
-    function is applied. There is one exception to this: The top level 
-    function that is translated, can not have any polymorphic arguments (as 
-    they are never applied, so there is no way to find out the actual types 
-    for the type parameters).
+    function is applied. There is however one constraint: the top level 
+    function that is being translated can not have any polymorphic arguments. 
+    The arguments can not be polymorphic as they are never applied and 
+    consequently there is no way to determine the actual types for the type 
+    parameters.
 
     \CLaSH\ does not support user-defined type classes, but does use some
-    of the built-in type classes for its built-in function, such as: \hs{Num} 
-    for numerical operations, \hs{Eq} for the equality operators, and
+    of the standard Haskell type classes for its built-in function, such as: 
+    \hs{Num} for numerical operations, \hs{Eq} for the equality operators, and
     \hs{Ord} for the comparison/order operators.
 
   \subsection{Higher-order functions \& values}
