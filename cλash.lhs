@@ -645,7 +645,7 @@ circuit~\cite{reductioncircuit} for floating point numbers.
 
     \begin{code}
     sumif pred a b = 
-      if pred == Eq then 
+      if pred == Equiv then 
         if a == b then a + b else 0
       else 
         if a != b then a + b else 0
@@ -676,10 +676,10 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     versions of the example.
     
     \begin{code}
-    sumif Eq a b    | a == b      = a + b
-                    | otherwise   = 0
-    sumif Neq a b   | a != b      = a + b
-                    | otherwise   = 0
+    sumif Equiv     a b   | a == b      = a + b
+                          | otherwise   = 0
+    sumif NotEquiv  a b   | a != b      = a + b
+                          | otherwise   = 0
     \end{code}
 
     % \begin{figure}
