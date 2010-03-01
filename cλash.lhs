@@ -691,8 +691,8 @@ circuit~\cite{reductioncircuit} for floating point numbers.
   \subsection{Types}
     Haskell is a statically-typed language, meaning that the type of a 
     variable or function is determined at compile-time. Not all of Haskell's 
-    typing constructs have a clear translation to hardware, as such this 
-    section will only deal with the types that do have a clear correspondence 
+    typing constructs have a clear translation to hardware, this section will 
+    therefor only deal with the types that do have a clear correspondence 
     to hardware. The translatable types are divided into two categories: 
     \emph{built-in} types and \emph{user-defined} types. Built-in types are 
     those types for which a direct translation is defined within the \CLaSH\ 
@@ -717,16 +717,16 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     % using translation rules that are discussed later on.
 
   \subsubsection{Built-in types}
-    The following types have direct translation defined within the \CLaSH\
+    The following types have direct translations defined within the \CLaSH\
     compiler:
     \begin{xlist}
       \item[\bf{Bit}]
-        This is the most basic type available. It can have two values:
-        \hs{Low} and \hs{High}. 
+        the most basic type available. It can have two values:
+        \hs{Low} or \hs{High}. 
         % It is mapped directly onto the \texttt{std\_logic} \VHDL\ type. 
       \item[\bf{Bool}]
-        This is a basic logic type. It can have two values: \hs{True}
-        and \hs{False}. 
+        this is a basic logic type. It can have two values: \hs{True}
+        or \hs{False}. 
         % It is translated to \texttt{std\_logic} exactly like the \hs{Bit} 
         % type (where a value of \hs{True} corresponds to a value of 
         % \hs{High}). 
@@ -734,7 +734,7 @@ circuit~\cite{reductioncircuit} for floating point numbers.
         \hs{if-then-else} construct, which requires a \hs{Bool} value for 
         the condition.
       \item[\bf{SizedWord}, \bf{SizedInt}]
-        These are types to represent integers. A \hs{SizedWord} is unsigned,
+        these are types to represent integers. A \hs{SizedWord} is unsigned,
         while a \hs{SizedInt} is signed. Both are parametrizable in their 
         size. 
         % , so you can define an unsigned word of 32 bits wide as follows:
@@ -750,7 +750,7 @@ circuit~\cite{reductioncircuit} for floating point numbers.
         % types are translated to the \VHDL\ \texttt{unsigned} and 
         % \texttt{signed} respectively.
       \item[\bf{Vector}]
-        This is a vector type that can contain elements of any other type and
+        this is a vector type that can contain elements of any other type and
         has a fixed length. The \hs{Vector} type constructor takes two type 
         arguments: the length of the vector and the type of the elements 
         contained in it. The short-hand notation used for the vector type in  
@@ -770,7 +770,7 @@ circuit~\cite{reductioncircuit} for floating point numbers.
         % \hs{RegisterState} type is a vector of 8 32-bit words. A fixed size 
         % vector is translated to a \VHDL\ array type.
       \item[\bf{Index}]
-        This is another type to describe integers, but unlike the previous
+        this is another type to describe integers, but unlike the previous
         two it has no specific bit-width, but an upper bound. This means that
         its range is not limited to powers of two, but can be any number.
         An \hs{Index} only has an upper bound, its lower bound is
@@ -797,14 +797,14 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     data-types with the \hs{data} keyword, type synonyms with the \hs{type}
     keyword and datatype renaming constructs with the \hs{newtype} keyword. 
     \GHC\ offers a few more advanced ways to introduce types (type families,
-    existential typing, {\small{GADT}}s, etc.) which are not standard Haskell. 
+    existential typing, {\acro{GADT}}s, etc.) which are not standard Haskell. 
     As it is currently unclear how these advanced type constructs correspond 
-    with hardware, they are for now unsupported by the \CLaSH\ compiler
+    to hardware, they are for now unsupported by the \CLaSH\ compiler.
 
     Only an algebraic datatype declaration actually introduces a
-    completely new type. Type synonyms and renaming constructs only define new 
+    completely new type. Type synonyms and type renaming only define new 
     names for existing types, where synonyms are completely interchangeable 
-    and renaming constructs need explicit conversions. Therefore, these do not 
+    and type renaming requires explicit conversions. Therefore, these do not 
     need any particular translation, a synonym or renamed type will just use 
     the same representation as the original type. For algebraic types, we can 
     make the following distinctions: 
