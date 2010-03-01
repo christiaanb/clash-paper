@@ -917,19 +917,19 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     function. The following example should clarify this concept:
     
     \begin{code}
-    negVector xs = map not xs
+    negateVector xs = map not xs
     \end{code}
 
-    The code above defines a function \hs{negVector}, which takes a vector of
-    booleans, and returns a vector where all the values are negated. It 
-    achieves this by calling the \hs{map} function, and passing it 
+    The code above defines the \hs{negateVector} function, which takes a 
+    vector of booleans, \hs{xs}, and returns a vector where all the values are 
+    negated. It achieves this by calling the \hs{map} function, and passing it 
     \emph{another function}, boolean negation, and the vector of booleans, 
     \hs{xs}. The \hs{map} function applies the negation function to all the 
     elements in the vector.
 
     The \hs{map} function is called a higher-order function, since it takes 
     another function as an argument. Also note that \hs{map} is again a 
-    parametric polymorphic function: It does not pose any constraints on the 
+    parametric polymorphic function: it does not pose any constraints on the 
     type of the vector elements, other than that it must be the same type as 
     the input type of the function passed to \hs{map}. The element type of the 
     resulting vector is equal to the return type of the function passed, which 
@@ -964,12 +964,14 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     \end{code}
 
     Finally, higher order arguments are not limited to just built-in
-    functions, but any function defined in \CLaSH\ can have function
+    functions, but any function defined by a developer can have function
     arguments. This allows the hardware designer to use a powerful
     abstraction mechanism in his designs and have an optimal amount of
-    code reuse.
+    code reuse. The only exception is again the top-level function: if a 
+    function-typed argument is not applied with an actual function, no 
+    hardware can be generated.    
 
-    \comment{TODO: Describe ALU example (no code)}
+    % \comment{TODO: Describe ALU example (no code)}
 
   \subsection{State}
     A very important concept in hardware it the concept of state. In a 
