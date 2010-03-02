@@ -1160,6 +1160,44 @@ is depicted in \Cref{img:4tapfir}.
 \label{img:4tapfir}
 \end{figure}
 
+
+\subsection{Higher order CPU}
+
+
+\begin{code}
+type FuState = State Word
+fu :: (a -> a -> a)
+      -> [a]:n
+      -> (RangedWord n, RangedWord n)
+      -> FuState
+      -> (FuState, a)
+fu op inputs (addr1, addr2) (State out) =
+  (State out', out)
+  where
+    in1  = inputs!addr1
+    in2  = inputs!addr2
+    out' = op in1 in2
+\end{code}
+
+\begin{code}
+type CpuState = State [FuState]:4
+cpu :: Word 
+       -> [(RangedWord 7, RangedWord 7)]:4
+       -> CpuState
+       -> (CpuState, Word)
+cpu input addrs (State fuss) =
+  (State fuss', out)
+  where
+    fures = [ fu const inputs!0 fuss!0
+            , fu (+)   inputs!1 fuss!1
+            , fu (-)   inputs!2 fuss!2
+            , fu (*)   inputs!3 fuss!3
+            ]
+    (fuss', outputs) = unzip fures
+    inputs = 0 +> 1 +> input +> outputs
+    out = head outputs
+\end{code}
+
 \section{Related work}
 Many functional hardware description languages have been developed over the 
 years. Early work includes such languages as $\mu$\acro{FP}~\cite{muFP}, an 
