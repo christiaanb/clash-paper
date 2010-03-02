@@ -568,11 +568,11 @@ circuit~\cite{reductioncircuit} for floating point numbers.
       \item function applications are translated to component instantiations.
     \end{inparaenum} 
     The output port can have a structured type (such as a tuple), so having 
-    just a single output port does not pose any limitation. The actual arguments of a 
-    function application are assigned to signals, which are then mapped to
-    the corresponding input ports of the component. The output port of the 
-    function is also mapped to a signal, which is used as the result of the 
-    application itself.
+    just a single output port does not pose any limitation. The actual 
+    arguments of a function application are assigned to signals, which are 
+    then mapped to the corresponding input ports of the component. The output 
+    port of the function is also mapped to a signal, which is used as the 
+    result of the application itself.
 
     Since every top level function generates its own component, the
     hierarchy of function calls is reflected in the final netlist,% aswell, 
@@ -610,7 +610,7 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     \end{figure}
 
   \subsection{Choice}
-    In Haskell, choice can be achieved by a large set of syntacic elements, 
+    In Haskell, choice can be achieved by a large set of syntactic elements, 
     consisting of: \hs{case} expressions, \hs{if-then-else} expressions, 
     pattern matching, and guards. The most general of these are the \hs{case} 
     expressions (\hs{if} expressions can be very directly translated to 
@@ -833,8 +833,8 @@ circuit~\cite{reductioncircuit} for floating point numbers.
         Algebraic datatypes with multiple constructors, but without any
         fields are essentially a way to get an enumeration-like type
         containing alternatives. Note that Haskell's \hs{Bool} type is also 
-        defined as an enumeration type, but that there is a fixed translation for 
-        that type within the \CLaSH\ compiler. An example of such an 
+        defined as an enumeration type, but that there is a fixed translation 
+        for that type within the \CLaSH\ compiler. An example of such an 
         enumeration type is the type that represents the colors in a traffic 
         light:
         \begin{code}
@@ -861,7 +861,7 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     As an example of a parametric polymorphic function, consider the type of 
     the following \hs{append} function, which appends an element to a
     vector:\footnote{The \hs{::} operator is used to annotate a function
-    with its type in \CLaSH}
+    with its type.}
     
     \begin{code}
     append :: [a|n] -> a -> [a|n + 1]
@@ -940,12 +940,12 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     The \hs{map} function is called a higher-order function, since it takes 
     another function as an argument. Also note that \hs{map} is again a 
     parametric polymorphic function: it does not pose any constraints on the 
-    type of the input vector, other than that its elements must have the same type as 
-    the first argument of the function passed to \hs{map}. The element type of the 
-    resulting vector is equal to the return type of the function passed, which 
-    need not necessarily be the same as the element type of the input vector. 
-    All of these characteristics  can readily be inferred from the type 
-    signature belonging to \hs{map}:
+    type of the input vector, other than that its elements must have the same 
+    type as the first argument of the function passed to \hs{map}. The element 
+    type of the resulting vector is equal to the return type of the function 
+    passed, which need not necessarily be the same as the element type of the 
+    input vector. All of these characteristics  can readily be inferred from 
+    the type signature belonging to \hs{map}:
 
     \begin{code}
     map :: (a -> b) -> [a|n] -> [b|n]
@@ -965,9 +965,9 @@ circuit~\cite{reductioncircuit} for floating point numbers.
 
     Here, the expression \hs{(+ 1)} is the partial application of the
     plus operator to the value \hs{1}, which is again a function that
-    adds one to its (next) argument. A lambda expression allows one to introduce an 
-    anonymous function in any expression. Consider the following expression, 
-    which again adds one to every element of a vector:
+    adds one to its (next) argument. A lambda expression allows one to 
+    introduce an anonymous function in any expression. Consider the following 
+    expression, which again adds one to every element of a vector:
 
     \begin{code}
     map (\x -> x + 1) xs
@@ -1002,7 +1002,7 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     % This purity property is important for functional languages, since it 
     % enables all kinds of mathematical reasoning that could not be guaranteed 
     % correct for impure functions. 
-    Pure functions are as such a perfect match for combinaionial circuits, 
+    Pure functions are as such a perfect match for combinational circuits, 
     where the output solely depends on the inputs. When a circuit has state 
     however, it can no longer be simply described by a pure function. 
     % Simply removing the purity property is not a valid option, as the 
@@ -1010,7 +1010,7 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     In \CLaSH\ we deal with the concept of state in pure functions by making 
     current value of the state an additional argument of the function and the 
     updated state part of result. In this sense the descriptions made in 
-    \CLaSH\ are the combinaionial parts of a mealy machine.
+    \CLaSH\ are the combinational parts of a mealy machine.
     
     A simple example is adding an accumulator register to the earlier 
     multiply-accumulate circuit, of which the resulting netlist can be seen in 
@@ -1065,7 +1065,10 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     bonus in case there is a large set of test inputs.
     
 \section{\CLaSH\ compiler}
-An important aspect in this research is the creation of the prototype compiler, which allows us to translate descriptions made in the \CLaSH\ language as described in the previous section to synthesizable \VHDL, allowing a designer to actually run a \CLaSH\ design on an \acro{FPGA}.
+An important aspect in this research is the creation of the prototype 
+compiler, which allows us to translate descriptions made in the \CLaSH\ 
+language as described in the previous section to synthesizable \VHDL, allowing 
+a designer to actually run a \CLaSH\ design on an \acro{FPGA}.
 
 The Glasgow Haskell Compiler (\GHC) is an open-source Haskell compiler that 
 also provides a high level API to most of its internals. The availability of 
@@ -1083,9 +1086,9 @@ the front-end of the prototype compiler pipeline, as depicted in
 
 The output of the \GHC\ front-end is the original Haskell description 
 translated to \emph{Core}~\cite{Sulzmann2007}, which is smaller, typed, 
-functional language that is relatively easier to process than the larger Haskell 
-language. A description in \emph{Core} can still contain properties which have 
-no direct translation to hardware, such as polymorphic types and 
+functional language that is relatively easier to process than the larger 
+Haskell language. A description in \emph{Core} can still contain properties 
+which have no direct translation to hardware, such as polymorphic types and 
 function-valued arguments. Such a description needs to be transformed to a 
 \emph{normal form}, which only contains properties that have a direct 
 translation. The second stage of the compiler, the \emph{normalization} phase 
@@ -1108,16 +1111,16 @@ end-product of the \CLaSH\ compiler a \VHDL\ \emph{netlist} as the resulting
 \subsection{FIR Filter}
 \label{sec:usecases}
 As an example of a common hardware design where the use of higher-order
-functions leads to a very natural description is a FIR filter, which is 
+functions leads to a very natural description is a \acro{FIR} filter, which is 
 basically the dot-product of two vectors:
 
 \begin{equation}
 y_t  = \sum\nolimits_{i = 0}^{n - 1} {x_{t - i}  \cdot h_i } 
 \end{equation}
 
-A FIR filter multiplies fixed constants ($h$) with the current 
+A \acro{FIR} filter multiplies fixed constants ($h$) with the current 
 and a few previous input samples ($x$). Each of these multiplications
-are summed, to produce the result at time $t$. The equation of a FIR 
+are summed, to produce the result at time $t$. The equation of a \acro{FIR} 
 filter is indeed equivalent to the equation of the dot-product, which is 
 shown below:
 
@@ -1145,38 +1148,41 @@ the \hs{foldl1} function is the result of the last application. It is obvious
 that the \hs{zipWith (*)} function is pairwise multiplication and that the 
 \hs{foldl1 (+)} function is summation.
 
-Returning to the actual FIR filter, we will slightly change the equation 
-describing it, so as to make the translation to code more obvious and concise. 
-What we do is change the definition of the vector of input samples and delay 
-the computation by one sample. Instead of having the input sample received at 
-time $t$ stored in $x_t$, $x_0$ now always stores the newest sample, and $x_i$ 
-stores the $ith$ previous sample. This changes the equation to the following 
-(note that this is completely equivalent to the original equation, just with a 
-different definition of $x$ that will better suit the transformation to code):
+Returning to the actual \acro{FIR} filter, we will slightly change the 
+equation describing it, so as to make the translation to code more obvious and 
+concise. What we do is change the definition of the vector of input samples 
+and delay the computation by one sample. Instead of having the input sample 
+received at time $t$ stored in $x_t$, $x_0$ now always stores the newest 
+sample, and $x_i$ stores the $ith$ previous sample. This changes the equation 
+to the following (note that this is completely equivalent to the original 
+equation, just with a different definition of $x$ that will better suit the 
+transformation to code):
 
 \begin{equation}
 y_t  = \sum\nolimits_{i = 0}^{n - 1} {x_i  \cdot h_i } 
 \end{equation}
 
-The complete definition of the FIR filter in code then becomes:
+The complete definition of the \acro{FIR} filter in code then becomes:
 
 \begin{code}
 fir (State (xs,hs)) x = (State (x >> xs,hs), xs *+* hs)
 \end{code}
 
-Where the vector \hs{hs} contains the FIR coefficients and the vector \hs{xs} 
-contains the latest input sample in front and older samples behind. The code 
-for the shift (\hs{>>}) operator that adds the new input sample (\hs{x}) to 
-the list of previous input samples (\hs{xs}) and removes the oldest sample is 
-shown below:
+Where the vector \hs{hs} contains the \acro{FIR} coefficients and the vector 
+\hs{xs} contains the latest input sample in front and older samples behind. 
+The code for the shift (\hs{>>}) operator that adds the new input sample 
+(\hs{x}) to the list of previous input samples (\hs{xs}) and removes the 
+oldest sample is shown below:
 
 \begin{code}
 x >> xs = x +> init xs  
 \end{code}
 
 The \hs{init} function returns all but the last element of a vector, and the 
-concatenate operator ($\succ$) adds a new element to the front of a vector. The 
-resulting netlist of a 4-taps FIR filter, created by specializing the vectors of the above definition to a length of 4, is depicted in \Cref{img:4tapfir}.
+concatenate operator (\hs{+>}) adds a new element to the front of a vector. 
+The resulting netlist of a 4-taps \acro{FIR} filter, created by specializing 
+the vectors of the \acro{FIR} code to a length of 4, is depicted in 
+\Cref{img:4tapfir}.
 
 \begin{figure}
 \centerline{\includegraphics{4tapfir.svg}}
