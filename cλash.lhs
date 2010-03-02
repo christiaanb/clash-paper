@@ -494,36 +494,38 @@ functional languages has been proposed \cite{T-Ruby,Hydra,HML2,Hawk1,Lava,
 ForSyDe1,Wired,reFLect}. The idea of using functional languages for hardware 
 descriptions started in the early 1980s \cite{Cardelli1981, muFP,DAISY,FHDL}, 
 a time which also saw the birth of the currently popular hardware description 
-languages such as \VHDL. The merit of using a functional language to describe 
-hardware comes from the fact that combinatorial circuits can be directly 
-modeled as mathematical functions and that functional languages are very good 
-at describing and composing mathematical functions.
+languages such as \VHDL. Functional languages are especially suited to
+describe hardware because combinational circuits can be directly modeled
+as mathematical functions and that functional languages are very good at
+describing and composing mathematical functions.
 
-In an attempt to decrease the amount of work involved with creating all the 
-required tooling, such as parsers and type-checkers, many functional hardware 
-description languages are embedded as a domain specific language inside the 
-functional language Haskell \cite{Hydra,Hawk1,Lava,ForSyDe1,Wired}. This 
-means that a developer is given a library of Haskell~\cite{Haskell} functions 
-and types that together form the language primitives of the domain specific 
-language. As a result of how the signals are modeled and abstracted, the 
-functions used to describe a circuit also build a large domain-specific 
-datatype (hidden from the designer) which can then be processed further by an 
-embedded compiler. This compiler actually runs in the same environment as the 
-description; as a result compile-time and run-time become hard to define, as 
-the embedded compiler is usually compiled by the same Haskell compiler as the 
-circuit description itself.
+In an attempt to decrease the amount of work involved in creating all the 
+required tooling, such as parsers and type-checkers, many functional
+hardware description languages \cite{Hydra,Hawk1,Lava,ForSyDe1,Wired}
+are embedded as a domain specific language inside the functional
+language Haskell \cite{Haskell}. This means that a developer is given a
+library of Haskell functions and types that together form the language
+primitives of the domain specific language. The primitive functions used
+to describe a circuit do not actually process any signals, but instead
+compose a large domain-specific datatype (which is usually hidden from
+the designer).  This datatype is then further processed by an embedded
+circuit compiler.  This circuit compiler actually runs in the same
+environment as the description; as a result compile-time and run-time
+become hard to define, as the embedded circuit compiler is usually
+compiled by the same Haskell compiler as the circuit description itself.
 
 The approach taken in this research is not to make another domain specific 
 language embedded in Haskell, but to use (a subset of) the Haskell language 
 itself for the purpose of describing hardware. By taking this approach, we can 
 capture certain language constructs, such as Haskell's choice elements 
-(if-constructs, case-constructs, pattern matching, etc.), which are not 
+(if-expressions, case-expressions, pattern matching, etc.), which are not 
 available in the functional hardware description languages that are embedded 
 in Haskell as a domain specific language. As far as the authors know, such 
 extensive support for choice-elements is new in the domain of functional 
 hardware description languages. As the hardware descriptions are plain Haskell 
-functions, these descriptions can be compiled for simulation using an 
-optimizing Haskell compiler such as the Glasgow Haskell Compiler (\GHC)~\cite{ghc}.
+functions, these descriptions can be compiled to an executable binary
+for simulation using an optimizing Haskell compiler such as the Glasgow
+Haskell Compiler (\GHC)~\cite{ghc}.
 
 Where descriptions in a conventional hardware description language have an 
 explicit clock for the purpose state and synchronicity, the clock is implied 
@@ -566,7 +568,7 @@ circuit~\cite{reductioncircuit} for floating point numbers.
       \item function applications are translated to component instantiations.
     \end{inparaenum} 
     The output port can have a structured type (such as a tuple), so having 
-    just a single output port does not pose any limitation. The arguments of a 
+    just a single output port does not pose any limitation. The actual arguments of a 
     function application are assigned to signals, which are then mapped to
     the corresponding input ports of the component. The output port of the 
     function is also mapped to a signal, which is used as the result of the 
@@ -608,26 +610,27 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     \end{figure}
 
   \subsection{Choice}
-    In Haskell, choice can be achieved by a large set of language constructs, 
-    consisting of: \hs{case} constructs, \hs{if-then-else} constructs, 
+    In Haskell, choice can be achieved by a large set of syntacic elements, 
+    consisting of: \hs{case} expressions, \hs{if-then-else} expressions, 
     pattern matching, and guards. The most general of these are the \hs{case} 
-    constructs (\hs{if} expressions can be very directly translated to 
-    \hs{case} expressions). A \hs{case} construct is translated to a 
-    multiplexer, where the control value is linked to the selection port and 
-    the  output of each case is linked to the corresponding input port on the 
-    multiplexer.
+    expressions (\hs{if} expressions can be very directly translated to 
+    \hs{case} expressions). A \hs{case} expression is translated to a 
+    multiplexer, where the control value is fed into a number of
+    comparators and their output is used to compose the selection port
+    of the multiplexer. The result of each alternative is linked to the
+    corresponding input port on the multiplexer.
     % A \hs{case} expression can in turn simply be translated to a conditional 
     % assignment in \VHDL, where the conditions use equality comparisons 
     % against the constructors in the \hs{case} expressions. 
     We can see two versions of a contrived example below, the first 
-    using a \hs{case} construct and the other using an \hs{if-then-else} 
-    construct, in the code below. The examples sums two values when they are 
+    using a \hs{case} expression and the other using an \hs{if-then-else} 
+    expression. Both examples sums two values when they are 
     equal or non-equal (depending on the given predicate, the \hs{pred} 
     variable) and returns 0 otherwise. The \hs{pred} variable has the 
     following, user-defined, enumeration datatype:
     
     \begin{code}
-    data Pred = Equiv | NotEquiv
+    data Pred = Equal | NotEqual
     \end{code}
 
     The naive netlist corresponding to both versions of the example is 
@@ -635,17 +638,17 @@ circuit~\cite{reductioncircuit} for floating point numbers.
 
     \begin{code}    
     sumif pred a b = case pred of
-      Equiv -> case a == b of
+      Equal -> case a == b of
         True      -> a + b
         False     -> 0
-      NotEquiv  -> case a != b of
+      NotEqual  -> case a != b of
         True      -> a + b
         False     -> 0
     \end{code}
 
     \begin{code}
     sumif pred a b = 
-      if pred == Equiv then 
+      if pred == Equal then 
         if a == b then a + b else 0
       else 
         if a != b then a + b else 0
@@ -663,8 +666,8 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     corresponding clause will be used. Expressions can also contain guards, 
     where the expression is only executed if the guard evaluates to true, and 
     continues with the next clause if the guard evaluates to false. Like 
-    \hs{if-then-else} constructs, pattern matching and guards have a 
-    (straightforward) translation to \hs{case} constructs and can as such be 
+    \hs{if-then-else} expressions, pattern matching and guards have a 
+    (straightforward) translation to \hs{case} expressions and can as such be 
     mapped to multiplexers. A third version of the earlier example, using both 
     pattern matching and guards, can be seen below. The guard is the 
     expression that follows the vertical bar (\hs{|}) and precedes the 
@@ -676,9 +679,9 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     versions of the example.
     
     \begin{code}
-    sumif Equiv     a b   | a == b      = a + b
+    sumif Equal     a b   | a == b      = a + b
                           | otherwise   = 0
-    sumif NotEquiv  a b   | a != b      = a + b
+    sumif NotEqual  a b   | a != b      = a + b
                           | otherwise   = 0
     \end{code}
 
@@ -692,14 +695,16 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     Haskell is a statically-typed language, meaning that the type of a 
     variable or function is determined at compile-time. Not all of Haskell's 
     typing constructs have a clear translation to hardware, this section will 
-    therefor only deal with the types that do have a clear correspondence 
+    therefore only deal with the types that do have a clear correspondence 
     to hardware. The translatable types are divided into two categories: 
     \emph{built-in} types and \emph{user-defined} types. Built-in types are 
-    those types for which a direct translation is defined within the \CLaSH\ 
-    compiler; the term user-defined types should not require any further 
-    elaboration. The translatable types are also inferable by the compiler, 
+    those types for which a fixed translation is defined within the \CLaSH\ 
+    compiler. The \CLaSH\ compiler has generic translation rules to
+    translated the user-defined types described below.
+
+    The \CLaSH compiler is able to infer unspecified types,
     meaning that a developer does not have to annotate every function with a 
-    type signature.
+    type signature (though it is good practice to do so anyway).
   
     % Translation of two most basic functional concepts has been
     % discussed: function application and choice. Before looking further
@@ -717,7 +722,7 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     % using translation rules that are discussed later on.
 
   \subsubsection{Built-in types}
-    The following types have direct translations defined within the \CLaSH\
+    The following types have fixed translations defined within the \CLaSH\
     compiler:
     \begin{xlist}
       \item[\bf{Bit}]
@@ -731,7 +736,7 @@ circuit~\cite{reductioncircuit} for floating point numbers.
         % type (where a value of \hs{True} corresponds to a value of 
         % \hs{High}). 
         Supporting the Bool type is required in order to support the
-        \hs{if-then-else} construct, which requires a \hs{Bool} value for 
+        \hs{if-then-else} expression, which requires a \hs{Bool} value for 
         the condition.
       \item[\bf{SizedWord}, \bf{SizedInt}]
         these are types to represent integers. A \hs{SizedWord} is unsigned,
@@ -755,7 +760,9 @@ circuit~\cite{reductioncircuit} for floating point numbers.
         arguments: the length of the vector and the type of the elements 
         contained in it. The short-hand notation used for the vector type in  
         the rest of paper is: \hs{[a|n]}. Where the \hs{a} is the element 
-        type, and \hs{n} is the length of the vector.
+        type, and \hs{n} is the length of the vector. Note that this is
+        a notation used in this paper only, vectors are slightly more
+        elaborate in real \CLaSH programs.
         % The state type of an 8 element register bank would then for example 
         % be:
 
@@ -814,8 +821,9 @@ circuit~\cite{reductioncircuit} for floating point numbers.
         Algebraic datatypes with a single constructor with one or more
         fields, are essentially a way to pack a few values together in a
         record-like structure. Haskell's built-in tuple types are also defined 
-        as single constructor algebraic types  An example of a single 
-        constructor type is the following pair of integers:
+        as single constructor algebraic types (but with a bit of
+        syntactic sugar). An example of a single constructor type is the
+        following pair of integers:
         \begin{code}
         data IntPair = IntPair Int Int
         \end{code}
@@ -825,7 +833,7 @@ circuit~\cite{reductioncircuit} for floating point numbers.
         Algebraic datatypes with multiple constructors, but without any
         fields are essentially a way to get an enumeration-like type
         containing alternatives. Note that Haskell's \hs{Bool} type is also 
-        defined as an enumeration type, but that there a fixed translation for 
+        defined as an enumeration type, but that there is a fixed translation for 
         that type within the \CLaSH\ compiler. An example of such an 
         enumeration type is the type that represents the colors in a traffic 
         light:
@@ -851,7 +859,9 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     any number of new types.
 
     As an example of a parametric polymorphic function, consider the type of 
-    the following \hs{append} function, which appends an element to a vector:
+    the following \hs{append} function, which appends an element to a
+    vector:\footnote{The \hs{::} operator is used to annotate a function
+    with its type in \CLaSH}
     
     \begin{code}
     append :: [a|n] -> a -> [a|n + 1]
@@ -892,15 +902,15 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     types that are \emph{instances} of the \emph{type class} \hs{Num}, so that  
     we know that the addition (+) operator is defined for that type. 
     \CLaSH's built-in numerical types are also instances of the \hs{Num}
-    class, so we can use the addition operator on \hs{SizedWords} as
-    well as on \hs{SizedInts}.
+    class, so we can use the addition operator (and thus the \hs{sum}
+    function) with \hs{SizedWords} as well as with \hs{SizedInts}.
 
     In \CLaSH, parametric polymorphism is completely supported. Any function 
     defined can have any number of unconstrained type parameters. The \CLaSH\ 
     compiler will infer the type of every such argument depending on how the 
     function is applied. There is however one constraint: the top level 
     function that is being translated can not have any polymorphic arguments. 
-    The arguments can not be polymorphic as they are never applied and 
+    The arguments can not be polymorphic as the function is never applied and 
     consequently there is no way to determine the actual types for the type 
     parameters.
 
@@ -930,8 +940,8 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     The \hs{map} function is called a higher-order function, since it takes 
     another function as an argument. Also note that \hs{map} is again a 
     parametric polymorphic function: it does not pose any constraints on the 
-    type of the vector elements, other than that it must be the same type as 
-    the input type of the function passed to \hs{map}. The element type of the 
+    type of the input vector, other than that its elements must have the same type as 
+    the first argument of the function passed to \hs{map}. The element type of the 
     resulting vector is equal to the return type of the function passed, which 
     need not necessarily be the same as the element type of the input vector. 
     All of these characteristics  can readily be inferred from the type 
@@ -955,7 +965,7 @@ circuit~\cite{reductioncircuit} for floating point numbers.
 
     Here, the expression \hs{(+ 1)} is the partial application of the
     plus operator to the value \hs{1}, which is again a function that
-    adds one to its argument. A lambda expression allows one to introduce an 
+    adds one to its (next) argument. A lambda expression allows one to introduce an 
     anonymous function in any expression. Consider the following expression, 
     which again adds one to every element of a vector:
 
@@ -963,8 +973,8 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     map (\x -> x + 1) xs
     \end{code}
 
-    Finally, higher order arguments are not limited to just built-in
-    functions, but any function defined by a developer can have function
+    Finally, not only built-in functions can have higher order
+    arguments, but any function defined in \CLaSH can have function
     arguments. This allows the hardware designer to use a powerful
     abstraction mechanism in his designs and have an optimal amount of
     code reuse. The only exception is again the top-level function: if a 
@@ -978,7 +988,7 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     stateful design, the outputs depend on the history of the inputs, or the 
     state. State is usually stored in registers, which retain their value 
     during a clock cycle. As we want to describe more than simple 
-    combinatorial designs, \CLaSH\ needs an abstraction mechanism for state.
+    combinational designs, \CLaSH\ needs an abstraction mechanism for state.
 
     An important property in Haskell, and in most other functional languages, 
     is \emph{purity}. A function is said to be \emph{pure} if it satisfies two
@@ -992,7 +1002,7 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     % This purity property is important for functional languages, since it 
     % enables all kinds of mathematical reasoning that could not be guaranteed 
     % correct for impure functions. 
-    Pure functions are as such a perfect match for combinatorial circuits, 
+    Pure functions are as such a perfect match for combinaionial circuits, 
     where the output solely depends on the inputs. When a circuit has state 
     however, it can no longer be simply described by a pure function. 
     % Simply removing the purity property is not a valid option, as the 
@@ -1000,7 +1010,7 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     In \CLaSH\ we deal with the concept of state in pure functions by making 
     current value of the state an additional argument of the function and the 
     updated state part of result. In this sense the descriptions made in 
-    \CLaSH\ are the combinatorial parts of a mealy machine.
+    \CLaSH\ are the combinaionial parts of a mealy machine.
     
     A simple example is adding an accumulator register to the earlier 
     multiply-accumulate circuit, of which the resulting netlist can be seen in 
@@ -1025,7 +1035,7 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     which variables are part of the state is completely determined by the 
     type signature. This approach to state is well suited to be used in 
     combination with the existing code and language features, such as all the 
-    choice constructs, as state values are just normal values. We can simulate 
+    choice elements, as state values are just normal values. We can simulate 
     stateful descriptions using the recursive \hs{run} function:
     
     \begin{code}
@@ -1072,8 +1082,8 @@ the front-end of the prototype compiler pipeline, as depicted in
 \end{figure}
 
 The output of the \GHC\ front-end is the original Haskell description 
-translated to \emph{Core}~\cite{Sulzmann2007}, which is smaller, functional, 
-typed language that is relatively easier to process than the larger Haskell 
+translated to \emph{Core}~\cite{Sulzmann2007}, which is smaller, typed, 
+functional language that is relatively easier to process than the larger Haskell 
 language. A description in \emph{Core} can still contain properties which have 
 no direct translation to hardware, such as polymorphic types and 
 function-valued arguments. Such a description needs to be transformed to a 
@@ -1112,14 +1122,14 @@ filter is indeed equivalent to the equation of the dot-product, which is
 shown below:
 
 \begin{equation}
-\mathbf{x}\bullet\mathbf{y} = \sum\nolimits_{i = 0}^{n - 1} {x_i \cdot y_i } 
+\mathbf{a}\bullet\mathbf{b} = \sum\nolimits_{i = 0}^{n - 1} {a_i \cdot b_i } 
 \end{equation}
 
 We can easily and directly implement the equation for the dot-product
 using higher-order functions:
 
 \begin{code}
-xs *+* ys = foldl1 (+) (zipWith (*) xs hs)
+as *+* bs = foldl1 (+) (zipWith (*) as bs)
 \end{code}
 
 The \hs{zipWith} function is very similar to the \hs{map} function seen 
@@ -1132,8 +1142,8 @@ the function to the first two elements of the vector. It then applies the
 function to the result of the first application and the next element in the 
 vector. This continues until the end of the vector is reached. The result of 
 the \hs{foldl1} function is the result of the last application. It is obvious 
-that the \hs{zipWith (*)} function is basically pairwise multiplication and 
-that the \hs{foldl1 (+)} function is just summation.
+that the \hs{zipWith (*)} function is pairwise multiplication and that the 
+\hs{foldl1 (+)} function is summation.
 
 Returning to the actual FIR filter, we will slightly change the equation 
 describing it, so as to make the translation to code more obvious and concise. 
@@ -1165,7 +1175,7 @@ x >> xs = x +> init xs
 \end{code}
 
 The \hs{init} function returns all but the last element of a vector, and the 
-concatenate operator ($\succ$) adds a new element to the left of a vector. The 
+concatenate operator ($\succ$) adds a new element to the front of a vector. The 
 resulting netlist of a 4-taps FIR filter, created by specializing the vectors of the above definition to a length of 4, is depicted in \Cref{img:4tapfir}.
 
 \begin{figure}
