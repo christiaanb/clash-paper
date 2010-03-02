@@ -1083,8 +1083,9 @@ exhaustively applies a set of \emph{meaning-preserving} transformations on the
 \emph{Core} description until this description is in a \emph{normal form}. 
 This set of transformations includes transformations typically found in 
 reduction systems for lambda calculus, such a $\beta$-reduction and 
-$\eta$-expansion, but also includes \emph{defunctionalization} transformations 
-which reduce higher-order functions to `regular' first-order functions.
+$\eta$-expansion, but also includes self-defined transformations that are 
+responsible for the reduction of higher-order functions to `regular' 
+first-order functions.
 
 The final step in the compiler pipeline is the translation to a \VHDL\ 
 \emph{netlist}, which is a straightforward process due to resemblance of a 
