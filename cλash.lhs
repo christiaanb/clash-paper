@@ -1082,10 +1082,10 @@ translation. The second stage of the compiler, the \emph{normalization} phase
 exhaustively applies a set of \emph{meaning-preserving} transformations on the 
 \emph{Core} description until this description is in a \emph{normal form}. 
 This set of transformations includes transformations typically found in 
-reduction systems for lambda calculus, such a $\beta$-reduction and 
-$\eta$-expansion, but also includes self-defined transformations that are 
-responsible for the reduction of higher-order functions to `regular' 
-first-order functions.
+reduction systems for lambda calculus~\cite{lambdacalculus}, such a 
+$\beta$-reduction and $\eta$-expansion, but also includes self-defined 
+transformations that are responsible for the reduction of higher-order 
+functions to `regular' first-order functions.
 
 The final step in the compiler pipeline is the translation to a \VHDL\ 
 \emph{netlist}, which is a straightforward process due to resemblance of a 
@@ -1094,6 +1094,8 @@ end-product of the \CLaSH\ compiler a \VHDL\ \emph{netlist} as the resulting
 \VHDL\ resembles an actual netlist description and not idiomatic \VHDL.
 
 \section{Use cases}
+
+\subsection{FIR Filter}
 \label{sec:usecases}
 As an example of a common hardware design where the use of higher-order
 functions leads to a very natural description is a FIR filter, which is 
@@ -1123,48 +1125,48 @@ xs *+* ys = foldl1 (+) (zipWith (*) xs hs)
 The \hs{zipWith} function is very similar to the \hs{map} function seen 
 earlier: It takes a function, two vectors, and then applies the function to 
 each of the elements in the two vectors pairwise (\emph{e.g.}, \hs{zipWith (*) 
-[1, 2] [3, 4]} becomes \hs{[1 * 3, 2 * 4]} $\equiv$ \hs{[3,8]}).
+[1, 2] [3, 4]} becomes \hs{[1 * 3, 2 * 4]}).
 
-The \hs{foldl1} function takes a function, a single vector, and applies 
+The \hs{foldl1} function takes a binary function, a single vector, and applies 
 the function to the first two elements of the vector. It then applies the
-function to the result of the first application and the next element from 
-the vector. This continues until the end of the vector is reached. The 
-result of the \hs{foldl1} function is the result of the last application.
-As you can see, the \hs{zipWith (*)} function is just pairwise 
-multiplication and the \hs{foldl1 (+)} function is just summation.
+function to the result of the first application and the next element in the 
+vector. This continues until the end of the vector is reached. The result of 
+the \hs{foldl1} function is the result of the last application. It is obvious 
+that the \hs{zipWith (*)} function is basically pairwise multiplication and 
+that the \hs{foldl1 (+)} function is just summation.
 
-Returning to the actual FIR filter, we will slightly change the
-equation belong to it, so as to make the translation to code more obvious.
-What we will do is change the definition of the vector of input samples.
-So, instead of having the input sample received at time
-$t$ stored in $x_t$, $x_0$ now always stores the current sample, and $x_i$
-stores the $ith$ previous sample. This changes the equation to the
-following (Note that this is completely equivalent to the original
-equation, just with a different definition of $x$ that will better suit
-the transformation to code):
+Returning to the actual FIR filter, we will slightly change the equation 
+describing it, so as to make the translation to code more obvious and concise. 
+What we do is change the definition of the vector of input samples and delay 
+the computation by one sample. Instead of having the input sample received at 
+time $t$ stored in $x_t$, $x_0$ now always stores the newest sample, and $x_i$ 
+stores the $ith$ previous sample. This changes the equation to the following 
+(note that this is completely equivalent to the original equation, just with a 
+different definition of $x$ that will better suit the transformation to code):
 
 \begin{equation}
 y_t  = \sum\nolimits_{i = 0}^{n - 1} {x_i  \cdot h_i } 
 \end{equation}
 
-Consider that the vector \hs{hs} contains the FIR coefficients and the 
-vector \hs{xs} contains the current input sample in front and older 
-samples behind. The function that shifts the input samples is shown below:
-
-\begin{code}
-x >> xs = x +> tail xs  
-\end{code}
-
-Where the \hs{tail} function returns all but the first element of a 
-vector, and the concatenate operator ($\succ$) adds a new element to the 
-left of a vector. The complete definition of the FIR filter then becomes:
+The complete definition of the FIR filter in code then becomes:
 
 \begin{code}
 fir (State (xs,hs)) x = (State (x >> xs,hs), xs *+* hs)
 \end{code}
 
-The resulting netlist of a 4-taps FIR filter based on the above definition
-is depicted in \Cref{img:4tapfir}.
+Where the vector \hs{hs} contains the FIR coefficients and the vector \hs{xs} 
+contains the latest input sample in front and older samples behind. The code 
+for the shift (\hs{>>}) operator that adds the new input sample (\hs{x}) to 
+the list of previous input samples (\hs{xs}) and removes the oldest sample is 
+shown below:
+
+\begin{code}
+x >> xs = x +> init xs  
+\end{code}
+
+The \hs{init} function returns all but the last element of a vector, and the 
+concatenate operator ($\succ$) adds a new element to the left of a vector. The 
+resulting netlist of a 4-taps FIR filter, created by specializing the vectors of the above definition to a length of 4, is depicted in \Cref{img:4tapfir}.
 
 \begin{figure}
 \centerline{\includegraphics{4tapfir.svg}}
@@ -1172,9 +1174,7 @@ is depicted in \Cref{img:4tapfir}.
 \label{img:4tapfir}
 \end{figure}
 
-
 \subsection{Higher order CPU}
-
 
 \begin{code}
 type FuState = State Word
