@@ -950,7 +950,7 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     expression, that adds one to every element of a vector:
 
     \begin{code}
-    map ((+) 1) xs
+    map (+ 1) xs
     \end{code}
 
     Here, the expression \hs{(+) 1} is the partial application of the
@@ -1041,8 +1041,10 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     first input value, \hs{i}. The result is the first output value, \hs{o}, 
     and the updated state \hs{s'}. The next iteration of the \hs{run} function 
     is then called with the updated state, \hs{s'}, and the rest of the 
-    inputs, \hs{inps}. Each value in the input list corresponds to exactly one 
-    cycle of the (implicit) clock.
+    inputs, \hs{inps}. It is assumed that there is one input per clock cycle.
+    Also note how the order of the input, output, and state in the \hs{run} 
+    function corresponds with the order of the input, output and state of the 
+    \hs{macS} function described earlier.
     
     As both the \hs{run} function, the hardware description, and the test 
     inputs are plain Haskell, the complete simulation can be compiled to an 
@@ -1052,7 +1054,7 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     simulation, where the executable binary has an additional simulation speed 
     bonus in case there is a large set of test inputs.
     
-\section{\CLaSH\ prototype}
+\section{\CLaSH\ compiler}
 
 The \CLaSH\ language as presented above can be translated to \VHDL\ using
 the prototype \CLaSH\ compiler. This compiler allows experimentation with
@@ -1069,7 +1071,7 @@ The prototype heavily uses \GHC, the Glasgow Haskell Compiler.
 \Cref{img:compilerpipeline} shows the \CLaSH\ compiler pipeline. As you can 
 see, the front-end is completely reused from \GHC, which allows the \CLaSH\ 
 prototype to support most of the Haskell Language. The \GHC\ front-end 
-produces the program in the \emph{Core} format, which is a very small, 
+produces the program in the \emph{Core}~\cite{Sulzmann2007} format, which is a very small, 
 functional, typed language which is relatively easy to process.
 
 The second step in the compilation process is \emph{normalization}. This
