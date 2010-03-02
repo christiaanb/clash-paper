@@ -953,7 +953,7 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     map (+ 1) xs
     \end{code}
 
-    Here, the expression \hs{(+) 1} is the partial application of the
+    Here, the expression \hs{(+ 1)} is the partial application of the
     plus operator to the value \hs{1}, which is again a function that
     adds one to its argument. A lambda expression allows one to introduce an 
     anonymous function in any expression. Consider the following expression, 
@@ -1055,11 +1055,9 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     bonus in case there is a large set of test inputs.
     
 \section{\CLaSH\ compiler}
+An important aspect in this research is the creation of the prototype compiler, which allows us to translate descriptions made in the \CLaSH\ language as described in the previous section to synthesizable \VHDL, allowing a designer to actually run a \CLaSH\ design on an \acro{FPGA}.
 
-The \CLaSH\ language as presented above can be translated to \VHDL\ using
-the prototype \CLaSH\ compiler. This compiler allows experimentation with
-the \CLaSH\ language and allows for running \CLaSH\ designs on actual FPGA
-hardware.
+The Glasgow Haskell Compiler (\GHC) is an open-source Haskell compiler that also provides a high level API to most of its internals. The availability of this high-level API obviated the need to design many of the tedious parts of the prototype compiler, such as the parser, semantic checker, and especially the type-checker. The parser, semantic checker, and type-checker together form the front-end of the prototype compiler pipeline, as depicted in \Cref{img:compilerpipeline}.
 
 \begin{figure}
 \centerline{\includegraphics{compilerpipeline.svg}}
@@ -1067,21 +1065,9 @@ hardware.
 \label{img:compilerpipeline}
 \end{figure}
 
-The prototype heavily uses \GHC, the Glasgow Haskell Compiler. 
-\Cref{img:compilerpipeline} shows the \CLaSH\ compiler pipeline. As you can 
-see, the front-end is completely reused from \GHC, which allows the \CLaSH\ 
-prototype to support most of the Haskell Language. The \GHC\ front-end 
-produces the program in the \emph{Core}~\cite{Sulzmann2007} format, which is a very small, 
-functional, typed language which is relatively easy to process.
+The output of the \GHC\ front-end is the original Haskell description translated to \emph{Core}~\cite{Sulzmann2007}, which is smaller, functional, typed language that is relatively easier to process than the larger Haskell language. A description in \emph{Core} can still contain properties which have no direct translation to hardware, such as polymorphic types and function-valued arguments. Such a description needs to be transformed to a \emph{normal form}, which only contains properties that have a direct translation. The second stage of the compiler, the \emph{normalization} phase exhaustively applies a set of \emph{meaning-preserving} transformations on the \emph{Core} description until this description is in a \emph{normal form}. This set of transformations includes transformations typically found in reduction systems for lambda calculus, such a $\beta$-reduction and $\eta$-expansion, but also includes \emph{defunctionalization} transformations which reduce higher-order functions to `regular' first-order functions.
 
-The second step in the compilation process is \emph{normalization}. This
-step runs a number of \emph{meaning preserving} transformations on the
-Core program, to bring it into a \emph{normal form}. This normal form
-has a number of restrictions that make the program similar to hardware.
-In particular, a program in normal form no longer has any polymorphism
-or higher order functions.
-
-The final step is a simple translation to \VHDL.
+The final step in the compiler pipeline is the translation to a \VHDL\ \emph{netlist}, which is a straightforward process due to resemblance of a normalized description and a set of concurrent signal assignments. We call the end-product of the \CLaSH\ compiler a \VHDL\ \emph{netlist} as the resulting \VHDL\ resembles an actual netlist description and not idiomatic \VHDL.
 
 \section{Use cases}
 \label{sec:usecases}
