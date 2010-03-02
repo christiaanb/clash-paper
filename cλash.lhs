@@ -548,9 +548,9 @@ the Haskell code to equivalently behaving synthesizable \VHDL\ code, ready to
 be converted to an actual netlist format by an (optimizing) \VHDL\ synthesis 
 tool.
 
-Besides trivial circuits such as variants of both the FIR filter and the 
-simple CPU shown in \Cref{sec:usecases}, the \CLaSH\ compiler has also been 
-shown to work for non-trivial descriptions. \CLaSH\ has been able to 
+Besides trivial circuits such as variants of both the \acro{FIR} filter and 
+the simple \acro{CPU} shown in \Cref{sec:usecases}, the \CLaSH\ compiler has 
+also been shown to work for non-trivial descriptions. \CLaSH\ has been able to 
 successfully translate the functional description of a streaming reduction 
 circuit~\cite{reductioncircuit} for floating point numbers.
 
@@ -702,9 +702,9 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     compiler. The \CLaSH\ compiler has generic translation rules to
     translated the user-defined types described below.
 
-    The \CLaSH compiler is able to infer unspecified types,
+    The \CLaSH\ compiler is able to infer unspecified types,
     meaning that a developer does not have to annotate every function with a 
-    type signature (though it is good practice to do so anyway).
+    type signature (even if it is good practice to do so).
   
     % Translation of two most basic functional concepts has been
     % discussed: function application and choice. Before looking further
@@ -762,7 +762,7 @@ circuit~\cite{reductioncircuit} for floating point numbers.
         the rest of paper is: \hs{[a|n]}. Where the \hs{a} is the element 
         type, and \hs{n} is the length of the vector. Note that this is
         a notation used in this paper only, vectors are slightly more
-        elaborate in real \CLaSH programs.
+        elaborate in real \CLaSH\ programs.
         % The state type of an 8 element register bank would then for example 
         % be:
 
@@ -1107,9 +1107,8 @@ end-product of the \CLaSH\ compiler a \VHDL\ \emph{netlist} as the resulting
 \VHDL\ resembles an actual netlist description and not idiomatic \VHDL.
 
 \section{Use cases}
-
-\subsection{FIR Filter}
 \label{sec:usecases}
+\subsection{FIR Filter}
 As an example of a common hardware design where the use of higher-order
 functions leads to a very natural description is a \acro{FIR} filter, which is 
 basically the dot-product of two vectors:
@@ -1237,7 +1236,7 @@ circuits, and has a particular focus on layout.
 functional language \acro{ML}, and has support for polymorphic types and 
 higher-order functions. Published work suggests that there is no direct 
 simulation support for \acro{HML}, but that a description in \acro{HML} has to 
-be translated to \VHDL\ and that the translated description can than be 
+be translated to \VHDL\ and that the translated description can then be 
 simulated in a \VHDL\ simulator. Also not all of the mentioned language 
 features of \acro{HML} could be translated to hardware. The \CLaSH\ compiler 
 on the other hand can correctly translate all of the language constructs 
