@@ -1057,7 +1057,13 @@ circuit~\cite{reductioncircuit} for floating point numbers.
 \section{\CLaSH\ compiler}
 An important aspect in this research is the creation of the prototype compiler, which allows us to translate descriptions made in the \CLaSH\ language as described in the previous section to synthesizable \VHDL, allowing a designer to actually run a \CLaSH\ design on an \acro{FPGA}.
 
-The Glasgow Haskell Compiler (\GHC) is an open-source Haskell compiler that also provides a high level API to most of its internals. The availability of this high-level API obviated the need to design many of the tedious parts of the prototype compiler, such as the parser, semantic checker, and especially the type-checker. The parser, semantic checker, and type-checker together form the front-end of the prototype compiler pipeline, as depicted in \Cref{img:compilerpipeline}.
+The Glasgow Haskell Compiler (\GHC) is an open-source Haskell compiler that 
+also provides a high level API to most of its internals. The availability of 
+this high-level API obviated the need to design many of the tedious parts of 
+the prototype compiler, such as the parser, semantic checker, and especially 
+the type-checker. The parser, semantic checker, and type-checker together form 
+the front-end of the prototype compiler pipeline, as depicted in 
+\Cref{img:compilerpipeline}.
 
 \begin{figure}
 \centerline{\includegraphics{compilerpipeline.svg}}
@@ -1065,9 +1071,26 @@ The Glasgow Haskell Compiler (\GHC) is an open-source Haskell compiler that also
 \label{img:compilerpipeline}
 \end{figure}
 
-The output of the \GHC\ front-end is the original Haskell description translated to \emph{Core}~\cite{Sulzmann2007}, which is smaller, functional, typed language that is relatively easier to process than the larger Haskell language. A description in \emph{Core} can still contain properties which have no direct translation to hardware, such as polymorphic types and function-valued arguments. Such a description needs to be transformed to a \emph{normal form}, which only contains properties that have a direct translation. The second stage of the compiler, the \emph{normalization} phase exhaustively applies a set of \emph{meaning-preserving} transformations on the \emph{Core} description until this description is in a \emph{normal form}. This set of transformations includes transformations typically found in reduction systems for lambda calculus, such a $\beta$-reduction and $\eta$-expansion, but also includes \emph{defunctionalization} transformations which reduce higher-order functions to `regular' first-order functions.
+The output of the \GHC\ front-end is the original Haskell description 
+translated to \emph{Core}~\cite{Sulzmann2007}, which is smaller, functional, 
+typed language that is relatively easier to process than the larger Haskell 
+language. A description in \emph{Core} can still contain properties which have 
+no direct translation to hardware, such as polymorphic types and 
+function-valued arguments. Such a description needs to be transformed to a 
+\emph{normal form}, which only contains properties that have a direct 
+translation. The second stage of the compiler, the \emph{normalization} phase 
+exhaustively applies a set of \emph{meaning-preserving} transformations on the 
+\emph{Core} description until this description is in a \emph{normal form}. 
+This set of transformations includes transformations typically found in 
+reduction systems for lambda calculus, such a $\beta$-reduction and 
+$\eta$-expansion, but also includes \emph{defunctionalization} transformations 
+which reduce higher-order functions to `regular' first-order functions.
 
-The final step in the compiler pipeline is the translation to a \VHDL\ \emph{netlist}, which is a straightforward process due to resemblance of a normalized description and a set of concurrent signal assignments. We call the end-product of the \CLaSH\ compiler a \VHDL\ \emph{netlist} as the resulting \VHDL\ resembles an actual netlist description and not idiomatic \VHDL.
+The final step in the compiler pipeline is the translation to a \VHDL\ 
+\emph{netlist}, which is a straightforward process due to resemblance of a 
+normalized description and a set of concurrent signal assignments. We call the 
+end-product of the \CLaSH\ compiler a \VHDL\ \emph{netlist} as the resulting 
+\VHDL\ resembles an actual netlist description and not idiomatic \VHDL.
 
 \section{Use cases}
 \label{sec:usecases}
