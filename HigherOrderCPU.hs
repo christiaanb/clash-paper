@@ -1,5 +1,4 @@
-{-# LANGUAGE TypeOperators, TemplateHaskell, TypeFamilies, 
-             ScopedTypeVariables, RecordWildCards, FlexibleContexts #-}
+{-# LANGUAGE TypeOperators, TemplateHaskell, TypeFamilies, ScopedTypeVariables #-}
 
 module HigherOrderCPU where
 
