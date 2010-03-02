@@ -1193,12 +1193,11 @@ the vectors of the \acro{FIR} code to a length of 4, is depicted in
 \subsection{Higher order CPU}
 
 \begin{code}
-type FuState = State Word
 fu :: (a -> a -> a)
-      -> [a]:n
-      -> (RangedWord n, RangedWord n)
-      -> FuState
-      -> (FuState, a)
+      -> [a | n]
+      -> (Index (n - 1), Index (n - 1))
+      -> a
+      -> (a, a)
 fu op inputs (addr1, addr2) (State out) =
   (State out', out)
   where
@@ -1208,22 +1207,22 @@ fu op inputs (addr1, addr2) (State out) =
 \end{code}
 
 \begin{code}
-type CpuState = State [FuState]:4
+type CpuState = State [Word | 4]
+
 cpu :: Word 
-       -> [(RangedWord 7, RangedWord 7)]:4
+       -> [(Index 6, Index 6) | 4]
        -> CpuState
        -> (CpuState, Word)
-cpu input addrs (State fuss) =
-  (State fuss', out)
+cpu input addrs (State fuss) = (State fuss', out)
   where
-    fures = [ fu const inputs!0 fuss!0
-            , fu (+)   inputs!1 fuss!1
-            , fu (-)   inputs!2 fuss!2
-            , fu (*)   inputs!3 fuss!3
-            ]
-    (fuss', outputs) = unzip fures
-    inputs = 0 +> 1 +> input +> outputs
-    out = head outputs
+    fures =   [ fu const  inputs (addrs!0) (fuss!0)
+              , fu (+)    inputs (addrs!1) (fuss!1)
+              , fu (-)    inputs (addrs!2) (fuss!2)
+              , fu (*)    inputs (addrs!3) (fuss!3)
+              ]
+    (fuss', outputs)  = unzip fures
+    inputs            = 0 +> (1 +> (input +> outputs))
+    out               = head outputs
 \end{code}
 
 \section{Related work}
