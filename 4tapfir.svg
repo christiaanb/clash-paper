@@ -11,7 +11,7 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="193.39"
-   height="152.82002"
+   height="151.05229"
    id="svg2"
    version="1.1"
    inkscape:version="0.47 r22583"
@@ -25,10 +25,10 @@
      inkscape:pageshadow="2"
      inkscape:zoom="2.8284271"
      inkscape:cx="71.67237"
-     inkscape:cy="88.470287"
+     inkscape:cy="86.702549"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
-     showgrid="true"
+     showgrid="false"
      inkscape:snap-grids="true"
      inkscape:window-width="1091"
      inkscape:window-height="778"
@@ -116,10 +116,10 @@
     <rect
        style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none"
        id="rect7593"
-       width="169.5"
-       height="143.49997"
-       x="402.06"
-       y="673.65955" />
+       width="172.84"
+       height="141.31805"
+       x="398.72"
+       y="674.07373" />
     <g
        id="g3312"
        transform="matrix(0,1,1,0,-270.49455,260.89951)">
@@ -785,7 +785,7 @@
 </g>    </g>
     <g
        id="g7777"
-       transform="matrix(1,0,0,-1,168.73999,1347.3645)"
+       transform="matrix(1,0,0,-1,167.44,1347.3645)"
        xml:space="preserve"
        stroke-miterlimit="10.433"
        font-style="normal"
