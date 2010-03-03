@@ -1203,17 +1203,18 @@ fu op inputs (addr1, addr2) = regIn
 \end{code}
 
 \begin{code}
-cpu :: Word -> [(Index 6, Index 6) | 4] 
-  -> State [Word | 4] -> (State [Word | 4], Word)
-cpu input addrs (State fuss) = (State fuss', out)
+cpu :: State [Word | 4] -> Word 
+  -> [(Index 6, Index 6) | 4]
+  -> (State [Word | 4], Word)
+cpu (State regsOut) input addrs = (State regsIn, out)
   where
-    fuss' =   [ fu const  inputs (addrs!0)
-              , fu (+)    inputs (addrs!1)
-              , fu (-)    inputs (addrs!2)
-              , fu (*)    inputs (addrs!3)
-              ]
-    inputs    = 0 +> (1 +> (input +> fuss))
-    out       = head fuss
+    regsIn    =   [ fu const  inputs (addrs!0)
+                  , fu (+)    inputs (addrs!1)
+                  , fu (-)    inputs (addrs!2)
+                  , fu (*)    inputs (addrs!3)
+                  ]
+    inputs    =   0 +> (1 +> (input +> regsOut))
+    out       =   head regsOut
 \end{code}
 
 \section{Related work}
