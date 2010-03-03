@@ -1219,7 +1219,7 @@ output of the entire cpu.
 Looking at the code, the function unit is the most simple. It arranges
 the operand selection for the function unit. Note that it does not
 define the actual operation that takes place inside the function unit,
-but simply accepts the (higher order) argument "op" which is a function
+but simply accepts the (higher order) argument \hs{op} which is a function
 of two arguments that defines the operation.
 
 \begin{code}
