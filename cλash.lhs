@@ -1210,9 +1210,10 @@ fu op inputs (addr1, addr2) = regIn
 \end{code}
 
 \begin{code}
-cpu :: State [Word | 4] -> Word 
-  -> [(Index 6, Index 6) | 4]
-  -> (State [Word | 4], Word)
+type CpuState = State [Word | 4]
+
+cpu :: CpuState -> Word -> [(Index 6, Index 6) | 4]
+  -> (CpuState, Word)
 cpu (State regsOut) input addrs = (State regsIn, out)
   where
     regsIn    =   [ fu const  inputs (addrs!0)
@@ -1422,7 +1423,7 @@ earlier mentioned properties do indeed exist.
 % number - used to balance the columns on the last page
 % adjust value as needed - may need to be readjusted if
 % the document is modified later
-%\IEEEtriggeratref{8}
+\IEEEtriggeratref{14}
 % The "triggered" command can be changed if desired:
 %\IEEEtriggercmd{\enlargethispage{-5in}}
 
