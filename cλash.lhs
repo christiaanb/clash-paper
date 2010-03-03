@@ -1368,10 +1368,11 @@ for generics has been extended to types and subprograms, allowing a developer to
 
 
 \section{Conclusion}
-The conclusion goes here.
+This research demonstrates once more that functional languages are well suited for hardware descriptions: function applications provide an elegant notation for component instantiation. Where this research goes beyond the existing functional hardware descriptions languages is the inclusion of various choice elements that are well suited to describe the conditional assignments in control-oriented hardware. Besides being able to translate these basic constructs to synthesizable \VHDL, the prototype compiler can also correctly translate descriptions that contain both polymorphic types and function-valued arguments.
 
+Where recent functional hardware description languages have mostly opted to embed themselves in an existing functional language, this research features a `true' compiler. As a result there is a clear distinction between compile-time and run-time, which allows a myriad of choice constructs to be part of an actual circuit description; a feature the embedded languages do not offer.
 
-
+\section{Future Work}
 
 % conference papers do not normally have an appendix
 
