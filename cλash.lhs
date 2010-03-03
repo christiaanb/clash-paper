@@ -762,7 +762,7 @@ circuit~\cite{reductioncircuit} for floating point numbers.
         the rest of paper is: \hs{[a|n]}. Where the \hs{a} is the element 
         type, and \hs{n} is the length of the vector. Note that this is
         a notation used in this paper only, vectors are slightly more
-        elaborate in real \CLaSH\ programs.
+        verbose in real \CLaSH\ descriptions.
         % The state type of an 8 element register bank would then for example 
         % be:
 
