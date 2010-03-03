@@ -1272,11 +1272,7 @@ mentioned in this section.
 The merits of polymorphic typing, combined with higher-order functions, are 
 now also recognized in the `main-stream' hardware description languages, 
 exemplified by the new \VHDL-2008 standard~\cite{VHDL2008}. \VHDL-2008 support 
-for generics has been extended to types, allowing a developer to describe 
-polymorphic components. Note that those types still require an explicit 
-generic map, whereas types can be automatically inferred in \CLaSH. There are 
-also no (generally available) \VHDL\ synthesis tools that currently support 
-the \VHDL-2008 standard, and thus the synthesis of polymorphic types.
+for generics has been extended to types and subprograms, allowing a developer to describe components with polymorphic ports and function-valued arguments. Note that the types and subprograms still require an explicit generic map, whereas types can be automatically inferred, and function-values can be automatically propagated by the \CLaSH\ compiler. There are also no (generally available) \VHDL\ synthesis tools that currently support the \VHDL-2008 standard, and thus the synthesis of polymorphic types and function-valued arguments.
 
 % Wired~\cite{Wired},, T-Ruby~\cite{T-Ruby}, Hydra~\cite{Hydra}. 
 % 
