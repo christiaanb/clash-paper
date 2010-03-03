@@ -1192,12 +1192,11 @@ the vectors of the \acro{FIR} code to a length of 4, is depicted in
 \subsection{Higher order CPU}
 
 \begin{code}
-fu op inputs (addr1, addr2) (State out) =
-  (State out', out)
+fu op inputs (addr1, addr2) regOut = (regIn, regOut)
   where
-    in1  = inputs!addr1
-    in2  = inputs!addr2
-    out' = op in1 in2
+    in1     = inputs!addr1
+    in2     = inputs!addr2
+    regIn   = op in1 in2
 \end{code}
 
 \begin{code}
