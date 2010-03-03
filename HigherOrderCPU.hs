@@ -24,11 +24,11 @@ type CpuState = State (Vector D4 Word)
 
 {-# ANN cpu TopEntity #-}
 {-# ANN cpu (InitState 'cpuState) #-}
-cpu :: CpuState -> Word -> Vector D4 (Index D6, Index D6)
+cpu :: CpuState -> Word -> Vector D4 (Index D6, Index D6) -> Opcode
   -> (CpuState, Word)
-cpu (State fuss) input addrs = (State fuss', out)
+cpu (State fuss) input addrs opc = (State fuss', out)
   where
-    fuss'   = (fu const inputs (addrs!(0 :: Index D3))) +> (
+    fuss'   = (fu (multiop opc) inputs (addrs!(0 :: Index D3))) +> (
               (fu (+)   inputs (addrs!(1 :: Index D3))) +> (
               (fu (-)   inputs (addrs!(2 :: Index D3))) +> (
               (fu (*)   inputs (addrs!(3 :: Index D3))) +> empty)))
@@ -37,3 +37,16 @@ cpu (State fuss) input addrs = (State fuss', out)
 
 cpuState :: Vector D4 Word
 cpuState = copy 0
+
+data Opcode = Shift | Xor | Equal
+
+multiop :: Opcode -> Word -> Word -> Word
+multiop opc a b = case opc of
+  Shift             -> shift a b
+  Xor               -> xor a b 
+  Equal | a == b    -> 1
+        | otherwise -> 0
+
+-- Placeholders, since we don't have these operations
+xor = const
+shift = const

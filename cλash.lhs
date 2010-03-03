@@ -1200,6 +1200,27 @@ the vectors of the \acro{FIR} code to a length of 4, is depicted in
 \end{figure}
 
 \subsection{Higher order CPU}
+The following simple CPU is an example of user-defined higher order
+functions and pattern matching. The CPU consists of four function units,
+of which three have a fixed function and one can perform some less
+common operations.
+
+The CPU contains a number of data sources, represented by the horizontal
+lines in figure TODO:REF. These data sources offer the previous outputs
+of each function units, along with the single data input the cpu has and
+two fixed intialization values.
+
+Each of the function units has both its operands connected to all data
+sources, and can be programmed to select any data source for either
+operand. In addition, the leftmost function unit has an additional
+opcode input to select the operation it performs. Its output is also the
+output of the entire cpu.
+
+Looking at the code, the function unit is the most simple. It arranges
+the operand selection for the function unit. Note that it does not
+define the actual operation that takes place inside the function unit,
+but simply accepts the (higher order) argument "op" which is a function
+of two arguments that defines the operation.
 
 \begin{code}
 fu op inputs (addr1, addr2) = regIn
@@ -1209,21 +1230,58 @@ fu op inputs (addr1, addr2) = regIn
     regIn   = op in1 in2
 \end{code}
 
+The multiop function defines the operation that takes place in the
+leftmost function unit. It is essentially a simple three operation alu
+that makes good use of pattern matching and guards in its description.
+The \hs{shift} function used here shifts its first operand by the number
+of bits indicated in the second operand, the \hs{xor} function produces
+the bitwise xor of its operands.
+
+\begin{code}
+data Opcode = Shift | Xor | Equal
+
+multiop :: Opcode -> Word -> Word -> Word
+multiop opc a b = case opc of
+  Shift             -> shift a b
+  Xor               -> xor a b 
+  Equal | a == b    -> 1
+        | otherwise -> 0
+\end{code}
+
+The cpu function ties everything together. It applies the \hs{fu}
+function four times, to create a different function unit each time. The
+first application is interesting, because it does not just pass a
+function to \hs{fu}, but a partial application of \hs{multiop}. This
+shows how the first funcition unit effectively gets an extra input,
+compared to the others.
+
+The vector \hs{inputs} is the set of data sources, which is passed to
+each function unit for operand selection. The cpu also receives a vector
+of address pairs, which are used by each function unit to select their
+operand. The application of the function units to the \hs{inputs} and
+\hs{addrs} arguments seems quite repetive and could be rewritten to use
+a combination of the \hs{map} and \hs{zipwith} functions instead.
+However, the prototype does not currently support working with lists of
+functions, so the more explicit version of the code is given instead).
+
 \begin{code}
 type CpuState = State [Word | 4]
 
-cpu :: CpuState -> Word -> [(Index 6, Index 6) | 4]
-  -> (CpuState, Word)
-cpu (State regsOut) input addrs = (State regsIn, out)
+cpu :: CpuState -> Word -> [(Index 6, Index 6) | 4] 
+       -> Opcode -> (CpuState, Word)
+cpu (State s) input addrs opc = (State s', out)
   where
-    regsIn    =   [ fu const  inputs (addrs!0)
-                  , fu (+)    inputs (addrs!1)
-                  , fu (-)    inputs (addrs!2)
-                  , fu (*)    inputs (addrs!3)
-                  ]
-    inputs    =   0 +> (1 +> (input +> regsOut))
-    out       =   head regsOut
+    s'    =   [ fu (multiop opc)  inputs (addrs!0)
+              , fu (+)            inputs (addrs!1)
+              , fu (-)            inputs (addrs!2)
+              , fu (*)            inputs (addrs!3)
+              ]
+    inputs    =   0 +> (1 +> (input +> s))
+    out       =   head s'
 \end{code}
+
+Of course, this is still a simple example, but it could form the basis
+of an actual design, in which the same techniques can be reused.
 
 \section{Related work}
 This section describes the features of existing (functional) hardware 
