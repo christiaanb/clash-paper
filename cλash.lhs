@@ -1369,11 +1369,39 @@ for generics has been extended to types and subprograms, allowing a developer to
 
 
 \section{Conclusion}
-This research demonstrates once more that functional languages are well suited for hardware descriptions: function applications provide an elegant notation for component instantiation. Where this research goes beyond the existing functional hardware descriptions languages is the inclusion of various choice elements that are well suited to describe the conditional assignments in control-oriented hardware. Besides being able to translate these basic constructs to synthesizable \VHDL, the prototype compiler can also correctly translate descriptions that contain both polymorphic types and function-valued arguments.
+This research demonstrates once more that functional languages are well suited 
+for hardware descriptions: function applications provide an elegant notation 
+for component instantiation. Where this research goes beyond the existing 
+(functional) hardware descriptions languages is the inclusion of various 
+choice elements, such as patter matching, that are well suited to describe the 
+conditional assignments in control-oriented hardware. Besides being able to 
+translate these basic constructs to synthesizable \VHDL, the prototype 
+compiler can also correctly translate descriptions that contain both 
+polymorphic types and function-valued arguments.
 
-Where recent functional hardware description languages have mostly opted to embed themselves in an existing functional language, this research features a `true' compiler. As a result there is a clear distinction between compile-time and run-time, which allows a myriad of choice constructs to be part of an actual circuit description; a feature the embedded languages do not offer.
+Where recent functional hardware description languages have mostly opted to 
+embed themselves in an existing functional language, this research features a 
+`true' compiler. As a result there is a clear distinction between compile-time 
+and run-time, which allows a myriad of choice constructs to be part of the 
+actual circuit description; a feature the embedded hardware description 
+languages do not offer.
 
 \section{Future Work}
+The choice of describing state explicitly as extra arguments and results can 
+be seen as a mixed blessing. Even though the description that use state are 
+usually very clear, one finds that dealing with unpacking, passing, receiving 
+and repacking can become tedious and even error-prone, especially in the case 
+of sub-states. Removing this boilerplate, or finding a more suitable 
+abstraction mechanism would make \CLaSH\ easier to use.
+
+The transformations in normalization phase of the prototype compiler were 
+developed in an ad-hoc manner, which makes the existence of many desirable 
+properties unclear. Such properties include whether the complete set of 
+transformations will always lead to a normal form or if the normalization 
+process always terminates. Though various use cases suggests that these 
+properties usually hold, they have not been formally proven. A systematic 
+approach to defining the set of transformations allows one to proof that the 
+earlier mentioned properties do indeed exist.
 
 % conference papers do not normally have an appendix
 
