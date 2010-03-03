@@ -1272,9 +1272,9 @@ cpu :: CpuState -> Word -> [(Index 6, Index 6) | 4]
 cpu (State s) input addrs opc = (State s', out)
   where
     s'    =   [ fu (multiop opc)  inputs (addrs!0)
-              , fu (+)            inputs (addrs!1)
-              , fu (-)            inputs (addrs!2)
-              , fu (*)            inputs (addrs!3)
+              , fu add            inputs (addrs!1)
+              , fu sub            inputs (addrs!2)
+              , fu mul            inputs (addrs!3)
               ]
     inputs    =   0 +> (1 +> (input +> s))
     out       =   head s'
