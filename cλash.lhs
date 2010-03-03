@@ -1207,10 +1207,10 @@ cpu :: Word -> [(Index 6, Index 6) | 4]
   -> State [Word | 4] -> (State [Word | 4], Word)
 cpu input addrs (State fuss) = (State fuss', out)
   where
-    fuss' =   [ fu const  inputs (addrs!0) (fuss!0)
-              , fu (+)    inputs (addrs!1) (fuss!1)
-              , fu (-)    inputs (addrs!2) (fuss!2)
-              , fu (*)    inputs (addrs!3) (fuss!3)
+    fuss' =   [ fu const  inputs (addrs!0)
+              , fu (+)    inputs (addrs!1)
+              , fu (-)    inputs (addrs!2)
+              , fu (*)    inputs (addrs!3)
               ]
     inputs    = 0 +> (1 +> (input +> fuss))
     out       = head fuss
