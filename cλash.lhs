@@ -1192,7 +1192,7 @@ the vectors of the \acro{FIR} code to a length of 4, is depicted in
 \subsection{Higher order CPU}
 
 \begin{code}
-fu op inputs (addr1, addr2) regOut = (regIn, regOut)
+fu op inputs (addr1, addr2) = regIn
   where
     in1     = inputs!addr1
     in2     = inputs!addr2
@@ -1204,14 +1204,13 @@ cpu :: Word -> [(Index 6, Index 6) | 4]
   -> State [Word | 4] -> (State [Word | 4], Word)
 cpu input addrs (State fuss) = (State fuss', out)
   where
-    fures =   [ fu const  inputs (addrs!0) (fuss!0)
+    fuss' =   [ fu const  inputs (addrs!0) (fuss!0)
               , fu (+)    inputs (addrs!1) (fuss!1)
               , fu (-)    inputs (addrs!2) (fuss!2)
               , fu (*)    inputs (addrs!3) (fuss!3)
               ]
-    (fuss', outputs)  = unzip fures
-    inputs            = 0 +> (1 +> (input +> outputs))
-    out               = head outputs
+    inputs    = 0 +> (1 +> (input +> fuss))
+    out       = head fuss
 \end{code}
 
 \section{Related work}
