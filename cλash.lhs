@@ -400,7 +400,7 @@
 Department of EEMCS, University of Twente\\
 P.O. Box 217, 7500 AE, Enschede, The Netherlands\\
 c.p.r.baaij@@utwente.nl, matthijs@@stdin.nl, j.kuper@@utwente.nl}
-% \thanks{Supported through FP7 project: S(o)OS (248465)}
+\thanks{Supported through the FP7 project: S(o)OS (248465)}
 }
 % \and
 % \IEEEauthorblockN{Homer Simpson}
@@ -452,14 +452,21 @@ c.p.r.baaij@@utwente.nl, matthijs@@stdin.nl, j.kuper@@utwente.nl}
 \begin{abstract}
 %\boldmath
 \CLaSH\ is a functional hardware description language that borrows both its 
-syntax and semantics from the functional programming language Haskell. Circuit 
-descriptions can be translated to synthesizable VHDL using the prototype 
-\CLaSH\ compiler. As the circuit descriptions are made in plain Haskell, 
-simulations can also be compiled by a Haskell compiler.
+syntax and semantics from the functional programming language Haskell. Due to 
+the abstraction and generality offered by polymorphism and higher-order 
+functions, a circuit designer can describe circuits in a more natural way than 
+he could in the traditional hardware description languages.
 
-The use of polymorphism and higher-order functions allow a circuit designer to 
-describe more abstract and general specifications than are possible in the 
-traditional hardware description languages.
+Circuit descriptions can be translated to synthesizable VHDL using the 
+prototype \CLaSH\ compiler. As the circuit descriptions, simulation code, and 
+test input are plain Haskell, complete simulations can be compiled to an 
+executable binary by a Haskell compiler allowing high-speed simulation and 
+analysis.
+
+Stateful descriptions are supported by explicitly making the current state an 
+argument of the function, and the updated state part of the result. In this 
+sense, the descriptions made in \CLaSH\ are the combinational parts of a mealy 
+machine.
 \end{abstract}
 % IEEEtran.cls defaults to using nonbold math in the Abstract.
 % This preserves the distinction between vectors and scalars. However,
