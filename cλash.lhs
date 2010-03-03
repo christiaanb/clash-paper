@@ -1091,7 +1091,7 @@ Haskell language. A description in \emph{Core} can still contain properties
 which have no direct translation to hardware, such as polymorphic types and 
 function-valued arguments. Such a description needs to be transformed to a 
 \emph{normal form}, which only contains properties that have a direct 
-translation. The second stage of the compiler, the \emph{normalization} phase 
+translation. The second stage of the compiler, the \emph{normalization} phase, 
 exhaustively applies a set of \emph{meaning-preserving} transformations on the 
 \emph{Core} description until this description is in a \emph{normal form}. 
 This set of transformations includes transformations typically found in 
@@ -1168,10 +1168,10 @@ fir (State (xs,hs)) x = (State (x >> xs,hs), xs *+* hs)
 \end{code}
 
 Where the vector \hs{hs} contains the \acro{FIR} coefficients and the vector 
-\hs{xs} contains the latest input sample in front and older samples behind. 
-The code for the shift (\hs{>>}) operator that adds the new input sample 
+\hs{xs} contains the previous input sample in front and older samples behind. 
+The code for the shift (\hs{>>}) operator, that adds the new input sample 
 (\hs{x}) to the list of previous input samples (\hs{xs}) and removes the 
-oldest sample is shown below:
+oldest sample, is shown below:
 
 \begin{code}
 x >> xs = x +> init xs  
@@ -1225,6 +1225,10 @@ cpu input addrs (State fuss) = (State fuss', out)
 \end{code}
 
 \section{Related work}
+This section describes the features of existing (functional) hardware 
+description languages and highlights the advantages that this research has 
+over existing work.
+
 Many functional hardware description languages have been developed over the 
 years. Early work includes such languages as $\mu$\acro{FP}~\cite{muFP}, an 
 extension of Backus' \acro{FP} language to synchronous streams, designed 
@@ -1278,9 +1282,12 @@ mentioned in this section.
 
 The merits of polymorphic typing, combined with higher-order functions, are 
 now also recognized in the `main-stream' hardware description languages, 
-exemplified by the new \VHDL-2008 standard~\cite{VHDL2008}. \VHDL-2008 support for generics has been extended to types, allowing a developer to describe 
+exemplified by the new \VHDL-2008 standard~\cite{VHDL2008}. \VHDL-2008 support 
+for generics has been extended to types, allowing a developer to describe 
 polymorphic components. Note that those types still require an explicit 
-generic map, whereas types can be automatically inferred in \CLaSH.
+generic map, whereas types can be automatically inferred in \CLaSH. There are 
+also no (generally available) \VHDL\ synthesis tools that currently support 
+the \VHDL-2008 standard, and thus the synthesis of polymorphic types.
 
 % Wired~\cite{Wired},, T-Ruby~\cite{T-Ruby}, Hydra~\cite{Hydra}. 
 % 
@@ -1382,14 +1389,9 @@ The conclusion goes here.
 
 
 % use section* for acknowledgement
-\section*{Acknowledgment}
-
-
-The authors would like to thank...
-
-
-
-
+% \section*{Acknowledgment}
+% 
+% The authors would like to thank...
 
 % trigger a \newpage just before the given reference
 % number - used to balance the columns on the last page
