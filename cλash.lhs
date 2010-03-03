@@ -65,6 +65,7 @@
 %
 
 \documentclass[conference,pdf,a4paper,10pt,final,twoside,twocolumn]{IEEEtran}
+\IEEEoverridecommandlockouts
 % Add the compsoc option for Computer Society conferences.
 %
 % If IEEEtran.cls has not been installed into the LaTeX system files,
@@ -398,7 +399,9 @@
 \IEEEauthorblockA{%Computer Architecture for Embedded Systems (CAES)\\ 
 Department of EEMCS, University of Twente\\
 P.O. Box 217, 7500 AE, Enschede, The Netherlands\\
-c.p.r.baaij@@utwente.nl, matthijs@@stdin.nl, j.kuper@@utwente.nl}}
+c.p.r.baaij@@utwente.nl, matthijs@@stdin.nl, j.kuper@@utwente.nl}
+% \thanks{Supported through FP7 project: S(o)OS (248465)}
+}
 % \and
 % \IEEEauthorblockN{Homer Simpson}
 % \IEEEauthorblockA{Twentieth Century Fox\\
