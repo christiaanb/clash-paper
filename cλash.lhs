@@ -343,6 +343,7 @@
 % Macro for certain acronyms in small caps. Doesn't work with the
 % default font, though (it contains no smallcaps it seems).
 \def\acro#1{{\small{#1}}}
+\def\acrop#1{\acro{#1}s}
 \def\acrotiny#1{{\scriptsize{#1}}}
 \def\VHDL{\acro{VHDL}}
 \def\GHC{\acro{GHC}}
@@ -400,7 +401,7 @@
 Department of EEMCS, University of Twente\\
 P.O. Box 217, 7500 AE, Enschede, The Netherlands\\
 c.p.r.baaij@@utwente.nl, matthijs@@stdin.nl, j.kuper@@utwente.nl}
-\thanks{Supported through the FP7 project: S(o)OS (248465)}
+% \thanks{Supported through the FP7 project: S(o)OS (248465)}
 }
 % \and
 % \IEEEauthorblockN{Homer Simpson}
@@ -451,21 +452,20 @@ c.p.r.baaij@@utwente.nl, matthijs@@stdin.nl, j.kuper@@utwente.nl}
 \begin{abstract}
 %\boldmath
 \CLaSH\ is a functional hardware description language that borrows both its 
-syntax and semantics from the functional programming language Haskell. Due to 
-the abstraction and generality offered by polymorphism and higher-order 
-functions, a circuit designer can describe circuits in a more natural way than 
-he could in the traditional hardware description languages.
+syntax and semantics from the functional programming language Haskell. 
+Polymorphism and higher-order functions provide a level of abstraction and 
+generality that allow a circuit designer to describe circuits in a more 
+natural way than possible in a traditional hardware description language.
 
 Circuit descriptions can be translated to synthesizable VHDL using the 
 prototype \CLaSH\ compiler. As the circuit descriptions, simulation code, and 
-test input are also valid Haskell, complete simulations can be compiled to an 
+test input are also valid Haskell, complete simulations can be compiled as an 
 executable binary by a Haskell compiler allowing high-speed simulation and 
 analysis.
 
 Stateful descriptions are supported by explicitly making the current state an 
 argument of the function, and the updated state part of the result. In this 
-sense, the descriptions made in \CLaSH\ are the combinational parts of a mealy 
-machine.
+sense, \CLaSH\ descriptions are the combinational parts of a mealy machine.
 \end{abstract}
 % IEEEtran.cls defaults to using nonbold math in the Abstract.
 % This preserves the distinction between vectors and scalars. However,
@@ -490,77 +490,78 @@ machine.
 \IEEEpeerreviewmaketitle
 
 \section{Introduction}
-Hardware description languages have allowed the productivity of hardware 
-engineers to keep pace with the development of chip technology. Standard 
-Hardware description languages, like \VHDL~\cite{VHDL2008} and 
-Verilog~\cite{Verilog}, allowed an engineer to describe circuits using a 
-programming language. These standard languages are very good at describing 
-detailed hardware properties such as timing behavior, but are generally 
-cumbersome in expressing higher-level abstractions. In an attempt to raise the 
-abstraction level of the descriptions, a great number of approaches based on 
-functional languages has been proposed \cite{T-Ruby,Hydra,HML2,Hawk1,Lava,
-ForSyDe1,Wired,reFLect}. The idea of using functional languages for hardware 
-descriptions started in the early 1980s \cite{Cardelli1981, muFP,DAISY,FHDL}, 
-a time which also saw the birth of the currently popular hardware description 
-languages such as \VHDL. Functional languages are especially suited to
-describe hardware because combinational circuits can be directly modeled
-as mathematical functions. Furthermore, functional languages are very good at
-describing and composing mathematical functions.
+Hardware description languages (\acrop{HDL}) have allowed the productivity of 
+hardware engineers to keep pace with the development of chip technology. 
+Standard \acrop{HDL}, like \VHDL~\cite{VHDL2008} and Verilog~\cite{Verilog}, 
+allowed an engineer to describe circuits using a `programming' language. These 
+standard languages are very good at describing detailed hardware properties 
+such as timing behavior, but are generally cumbersome in expressing 
+higher-level abstractions. In an attempt to raise the abstraction level of the 
+descriptions, a great number of approaches based on functional languages has 
+been proposed \cite{Cardelli1981, muFP,DAISY,FHDL,T-Ruby,Hydra,HML2,Hawk1,
+Lava,ForSyDe1,Wired,reFLect}. The idea of using functional languages for 
+hardware descriptions started in the early 1980s \cite{Cardelli1981,muFP,
+DAISY,FHDL}, a time which also saw the birth of the currently popular hardware 
+description languages such as \VHDL. Functional languages are especially well 
+suited to describe hardware because combinational circuits can be directly 
+modeled as mathematical functions. Furthermore, functional languages are very 
+good at describing and composing mathematical functions.
 
 In an attempt to decrease the amount of work involved in creating all the 
 required tooling, such as parsers and type-checkers, many functional
-hardware description languages \cite{Hydra,Hawk1,Lava,ForSyDe1,Wired}
-are embedded as a domain specific language inside the functional
-language Haskell \cite{Haskell}. This means that a developer is given a
-library of Haskell functions and types that together form the language
-primitives of the domain specific language. The primitive functions used
-to describe a circuit do not actually process any signals, but instead
-compose a large domain-specific datatype (which is usually hidden from
-the designer).  This datatype is then further processed by an embedded
-circuit compiler.  This circuit compiler actually runs in the same
-environment as the description; as a result compile-time and run-time
-become hard to define, as the embedded circuit compiler is usually
-compiled by the same Haskell compiler as the circuit description itself.
+\acrop{HDL} \cite{Hydra,Hawk1,Lava,ForSyDe1,Wired} are embedded as a domain 
+specific language (\acro{DSL}) inside the functional language Haskell 
+\cite{Haskell}. This means that a developer is given a library of Haskell 
+functions and types that together form the language primitives of the 
+\acro{DSL}. The primitive functions used to describe a circuit do not actually 
+process any signals, but instead compose a large domain-specific datatype 
+(which is usually hidden from the designer).  This datatype is then further 
+processed by an embedded circuit compiler.  This circuit compiler actually 
+runs in the same environment as the description; as a result compile-time and 
+run-time become hard to define, as the embedded circuit compiler is usually
+compiled by the same Haskell compiler as the circuit description itself. 
+Though the embedded language approach still allows for the support of 
+polymorphism and higher-order functions, it impossible to capture Haskell's 
+choice elements within a circuit description.
 
-The approach taken in this research is not to make another domain specific 
-language embedded in Haskell, but to use (a subset of) the Haskell language 
-\emph{itself} for the purpose of describing hardware. By taking this approach, 
-we can capture certain language constructs, such as Haskell's choice elements 
-(if-expressions, case-expressions, pattern matching, etc.), which are not 
-available in the functional hardware description languages that are embedded 
-in Haskell as a domain specific language. As far as the authors know, such 
-extensive support for choice-elements is new in the domain of functional 
-hardware description languages. As the hardware descriptions are plain Haskell 
-functions, these descriptions can be compiled to an executable binary
-for simulation using an optimizing Haskell compiler such as the Glasgow
-Haskell Compiler (\GHC)~\cite{ghc}.
+The approach taken in this research is not to make another \acro{DSL} embedded 
+in Haskell, but to use (a subset of) the Haskell language \emph{itself} for 
+the purpose of describing hardware. By taking this approach, we \emph{can} 
+capture certain language constructs, such as Haskell's choice elements 
+(\hs{if}-expressions, \hs{case}-expressions, pattern matching, etc.), within 
+circuit descriptions. To the best knowledge of the authors, supporting 
+polymorphism, higher-order functions and such an extensive array of 
+choice-elements is new in the domain of functional \acrop{HDL}. 
+% As the hardware descriptions are plain Haskell 
+% functions, these descriptions can be compiled to an executable binary
+% for simulation using an optimizing Haskell compiler such as the Glasgow
+% Haskell Compiler (\GHC)~\cite{ghc}.
 
-Where descriptions in a conventional hardware description language have an 
-explicit clock for the purposes state and synchronicity, in the research 
-presented in this paper the clock is implied. A developer describes the 
-behavior of the hardware between clock cycles. Many functional hardware 
-description model signals as a stream of all values over time; state is then 
-modeled as a delay on this stream of values. The approach taken in this 
-research is to make the current state of a circuit part of the input of the 
-function and the updated state part of the output. The current abstraction of 
-state and time limits the descriptions to synchronous hardware, there however 
-is room within the language to eventually add a different abstraction 
-mechanism that will allow for the modeling of asynchronous systems.
+Where descriptions in a conventional \acro{HDL} have an explicit clock for the 
+purposes state and synchronicity, the clock is implied in the context of the 
+research presented in this paper. A circuit designer describes the behavior of 
+the hardware between clock cycles. Many functional \acrop{HDL} model signals 
+as a stream of all values over time; state is then modeled as a delay on this 
+stream of values. The approach taken in this research is to make the current 
+state of a circuit part of the input of the function and the updated state 
+part of the output. The current abstraction of state and time limits the 
+descriptions to synchronous hardware, there is however room within the 
+language to eventually add a different abstraction mechanism that will allow 
+for the modeling of asynchronous systems.
 
-Like the standard hardware description languages, descriptions made in a 
-functional hardware description language must eventually be converted into a 
-netlist. This research also features a prototype translator, which has the 
-same name as the language: \CLaSH\footnote{\CLaSHtiny: \acrotiny{CAES} 
-Language for Synchronous Hardware} (pronounced: clash). This compiler converts 
-the Haskell code to equivalently behaving synthesizable \VHDL\ code, ready to 
-be converted to an actual netlist format by an (optimizing) \VHDL\ synthesis 
-tool.
+Like the traditional \acrop{HDL}, descriptions made in a functional \acro{HDL} 
+must eventually be converted into a netlist. This research also features a 
+prototype translator, which has the same name as the language: 
+\CLaSH\footnote{\CLaSHtiny: \acrotiny{CAES} Language for Synchronous Hardware} 
+(pronounced: clash). This compiler converts the Haskell code to equivalently 
+behaving synthesizable \VHDL\ code, ready to be converted to an actual netlist 
+format by an (optimizing) \VHDL\ synthesis tool.
 
 Besides trivial circuits such as variants of both the \acro{FIR} filter and 
 the simple \acro{CPU} shown in \Cref{sec:usecases}, the \CLaSH\ compiler has 
-also been shown to work for non-trivial descriptions. \CLaSH\ has been able to 
-successfully translate the functional description of a streaming reduction 
-circuit~\cite{reductioncircuit} for floating point numbers.
+also been able to successfully translate non-trivial functional descriptions 
+such as a streaming reduction circuit~\cite{reductioncircuit} for floating 
+point numbers.
 
 \section{Hardware description in Haskell}
 
@@ -603,7 +604,6 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     \centerline{\includegraphics{mac.svg}}
     \caption{Combinatorial Multiply-Accumulate}
     \label{img:mac-comb}
-    \vspace{-1.5em}
     \end{figure}
     
     The use of a composite result value is demonstrated in the next example, 
@@ -621,7 +621,6 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     \centerline{\includegraphics{mac-nocurry.svg}}
     \caption{Combinatorial Multiply-Accumulate (composite output)}
     \label{img:mac-comb-composite}
-    \vspace{-1.5em}
     \end{figure}
 
   \subsection{Choice}
@@ -675,7 +674,6 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     \centerline{\includegraphics{choice-case.svg}}
     \caption{Choice - sumif}
     \label{img:choice}
-    \vspace{-1.5em}
     \end{figure}
 
     A user-friendly and also very powerful form of choice that is not found in 
@@ -1044,7 +1042,6 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     \centerline{\includegraphics{mac-state.svg}}
     \caption{Stateful Multiply-Accumulate}
     \label{img:mac-state}
-    \vspace{-1.5em}
     \end{figure}
     
     Note that the \hs{macS} function returns bot the new state and the value
@@ -1100,7 +1097,6 @@ the type-checker. These parts together form the front-end of the prototype compi
 \centerline{\includegraphics{compilerpipeline.svg}}
 \caption{\CLaSHtiny\ compiler pipeline}
 \label{img:compilerpipeline}
-\vspace{-1.5em}
 \end{figure}
 
 The output of the \GHC\ front-end consists of the translation of the original Haskell description in \emph{Core}~\cite{Sulzmann2007}, which is a smaller, typed, functional language. This \emph{Core} language is relatively easy to process compared to the larger Haskell language. A description in \emph{Core} can still contain elements which have no direct translation to hardware, such as polymorphic types and function-valued arguments. Such a description needs to be transformed to a \emph{normal form}, which only contains elements that have a direct translation. The second stage of the compiler, the \emph{normalization} phase, exhaustively applies a set of \emph{meaning-preserving} transformations on the \emph{Core} description until this description is in a \emph{normal form}. This set of transformations includes transformations typically found in reduction systems and lambda calculus~\cite{lambdacalculus}, such as $\beta$-reduction and $\eta$-expansion. It also includes self-defined transformations that are responsible for the reduction of higher-order functions to `regular' first-order functions.
@@ -1186,30 +1182,29 @@ the vectors of the \acro{FIR} code to a length of 4, is depicted in
 \centerline{\includegraphics{4tapfir.svg}}
 \caption{4-taps \acrotiny{FIR} Filter}
 \label{img:4tapfir}
-\vspace{-1.5em}
 \end{figure}
 
 \subsection{Higher-order CPU}
-The following simple CPU is an example of user-defined higher order
-functions and pattern matching. The CPU consists of four function units,
-of which three have a fixed function and one can perform some less
+The following simple \acro{CPU} is an example of user-defined higher order
+functions and pattern matching. The \acro{CPU} consists of four function 
+units, of which three have a fixed function and one can perform certain less
 common operations.
 
-The CPU contains a number of data sources, represented by the horizontal
-lines in \Cref{img:highordcpu}. These data sources offer the previous outputs
-of each function units, along with the single data input the cpu has and
-two fixed intialization values.
+The \acro{CPU} contains a number of data sources, represented by the 
+horizontal wires in \Cref{img:highordcpu}. These data sources offer the 
+previous outputs of each function units, along with the single data input the 
+\acro{CPU} has and two fixed initialization values.
 
 Each of the function units has both its operands connected to all data
 sources, and can be programmed to select any data source for either
 operand. In addition, the leftmost function unit has an additional
-opcode input to select the operation it performs. Its output is also the
-output of the entire cpu.
+opcode input to select the operation it performs. The output of the rightmost 
+function unit is also the output of the entire \acro{CPU}.
 
-Looking at the code, the function unit is the most simple. It arranges
-the operand selection for the function unit. Note that it does not
+Looking at the code, the function unit (\hs{fu}) is the most simple. It 
+arranges the operand selection for the function unit. Note that it does not
 define the actual operation that takes place inside the function unit,
-but simply accepts the (higher order) argument \hs{op} which is a function
+but simply accepts the (higher-order) argument \hs{op} which is a function
 of two arguments that defines the operation.
 
 \begin{code}
@@ -1220,8 +1215,8 @@ fu op inputs (addr1, addr2) = regIn
     regIn   = op in1 in2
 \end{code}
 
-The multiop function defines the operation that takes place in the
-leftmost function unit. It is essentially a simple three operation alu
+The \hs{multiop} function defines the operation that takes place in the
+leftmost function unit. It is essentially a simple three operation \acro{ALU}
 that makes good use of pattern matching and guards in its description.
 The \hs{shift} function used here shifts its first operand by the number
 of bits indicated in the second operand, the \hs{xor} function produces
@@ -1237,7 +1232,7 @@ multiop Equal   a b   | a == b      = 1
                       | otherwise   = 0
 \end{code}
 
-The cpu function ties everything together. It applies the \hs{fu}
+The \acro{CPU} function ties everything together. It applies the \hs{fu}
 function four times, to create a different function unit each time. The
 first application is interesting, because it does not just pass a
 function to \hs{fu}, but a partial application of \hs{multiop}. This
@@ -1245,13 +1240,12 @@ shows how the first function unit effectively gets an extra input,
 compared to the others.
 
 The vector \hs{inputs} is the set of data sources, which is passed to
-each function unit for operand selection. The cpu also receives a vector
-of address pairs, which are used by each function unit to select their
-operand. The application of the function units to the \hs{inputs} and
-\hs{addrs} arguments seems quite repetive and could be rewritten to use
+each function unit as a set of possible operants. The \acro{CPU} also receives 
+a vector of address pairs, which are used by each function unit to select 
+their operand. The application of the function units to the \hs{inputs} and
+\hs{addrs} arguments seems quite repetitive and could be rewritten to use
 a combination of the \hs{map} and \hs{zipwith} functions instead.
-However, the prototype does not currently support working with lists of
-functions, so the more explicit version of the code is given instead).
+However, the prototype compiler does not currently support working with lists of functions, so a more explicit version of the code is given instead.
 
 \begin{code}
 type CpuState = State [Word | 4]
@@ -1273,10 +1267,9 @@ cpu (State s) input addrs opc = (State s', out)
 \centerline{\includegraphics{highordcpu.svg}}
 \caption{CPU with higher-order Function Units}
 \label{img:highordcpu}
-\vspace{-1.5em}
 \end{figure}
 
-Of course, this is still a simple example, but it could form the basis
+This is still a simple example, but it could form the basis
 of an actual design, in which the same techniques can be reused.
 
 \section{Related work}
