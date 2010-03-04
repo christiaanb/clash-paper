@@ -603,6 +603,7 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     \centerline{\includegraphics{mac.svg}}
     \caption{Combinatorial Multiply-Accumulate}
     \label{img:mac-comb}
+    \vspace{-1.5em}
     \end{figure}
     
     The use of a composite result value is demonstrated in the next example, 
@@ -620,6 +621,7 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     \centerline{\includegraphics{mac-nocurry.svg}}
     \caption{Combinatorial Multiply-Accumulate (composite output)}
     \label{img:mac-comb-composite}
+    \vspace{-1.5em}
     \end{figure}
 
   \subsection{Choice}
@@ -673,6 +675,7 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     \centerline{\includegraphics{choice-case.svg}}
     \caption{Choice - sumif}
     \label{img:choice}
+    \vspace{-1.5em}
     \end{figure}
 
     A user-friendly and also very powerful form of choice that is not found in 
@@ -1041,6 +1044,7 @@ circuit~\cite{reductioncircuit} for floating point numbers.
     \centerline{\includegraphics{mac-state.svg}}
     \caption{Stateful Multiply-Accumulate}
     \label{img:mac-state}
+    \vspace{-1.5em}
     \end{figure}
     
     Note that the \hs{macS} function returns bot the new state and the value
@@ -1096,6 +1100,7 @@ the type-checker. These parts together form the front-end of the prototype compi
 \centerline{\includegraphics{compilerpipeline.svg}}
 \caption{\CLaSHtiny\ compiler pipeline}
 \label{img:compilerpipeline}
+\vspace{-1.5em}
 \end{figure}
 
 The output of the \GHC\ front-end consists of the translation of the original Haskell description in \emph{Core}~\cite{Sulzmann2007}, which is a smaller, typed, functional language. This \emph{Core} language is relatively easy to process compared to the larger Haskell language. A description in \emph{Core} can still contain elements which have no direct translation to hardware, such as polymorphic types and function-valued arguments. Such a description needs to be transformed to a \emph{normal form}, which only contains elements that have a direct translation. The second stage of the compiler, the \emph{normalization} phase, exhaustively applies a set of \emph{meaning-preserving} transformations on the \emph{Core} description until this description is in a \emph{normal form}. This set of transformations includes transformations typically found in reduction systems and lambda calculus~\cite{lambdacalculus}, such as $\beta$-reduction and $\eta$-expansion. It also includes self-defined transformations that are responsible for the reduction of higher-order functions to `regular' first-order functions.
@@ -1181,6 +1186,7 @@ the vectors of the \acro{FIR} code to a length of 4, is depicted in
 \centerline{\includegraphics{4tapfir.svg}}
 \caption{4-taps \acrotiny{FIR} Filter}
 \label{img:4tapfir}
+\vspace{-1.5em}
 \end{figure}
 
 \subsection{Higher-order CPU}
@@ -1190,7 +1196,7 @@ of which three have a fixed function and one can perform some less
 common operations.
 
 The CPU contains a number of data sources, represented by the horizontal
-lines in figure TODO:REF. These data sources offer the previous outputs
+lines in \Cref{img:highordcpu}. These data sources offer the previous outputs
 of each function units, along with the single data input the cpu has and
 two fixed intialization values.
 
@@ -1225,18 +1231,17 @@ the bitwise xor of its operands.
 data Opcode = Shift | Xor | Equal
 
 multiop :: Opcode -> Word -> Word -> Word
-multiop opc a b = case opc of
-  Shift             -> shift a b
-  Xor               -> xor a b 
-  Equal | a == b    -> 1
-        | otherwise -> 0
+multiop Shift   a b                 = shift a b
+multiop Xor     a b                 = xor a b
+multiop Equal   a b   | a == b      = 1
+                      | otherwise   = 0
 \end{code}
 
 The cpu function ties everything together. It applies the \hs{fu}
 function four times, to create a different function unit each time. The
 first application is interesting, because it does not just pass a
 function to \hs{fu}, but a partial application of \hs{multiop}. This
-shows how the first funcition unit effectively gets an extra input,
+shows how the first function unit effectively gets an extra input,
 compared to the others.
 
 The vector \hs{inputs} is the set of data sources, which is passed to
@@ -1263,6 +1268,13 @@ cpu (State s) input addrs opc = (State s', out)
     inputs    =   0 +> (1 +> (input +> s))
     out       =   head s'
 \end{code}
+
+\begin{figure}
+\centerline{\includegraphics{highordcpu.svg}}
+\caption{CPU with higher-order Function Units}
+\label{img:highordcpu}
+\vspace{-1.5em}
+\end{figure}
 
 Of course, this is still a simple example, but it could form the basis
 of an actual design, in which the same techniques can be reused.
