@@ -476,9 +476,7 @@ test input are also valid Haskell, complete simulations can be compiled as an
 executable binary by a Haskell compiler allowing high-speed simulation and 
 analysis.
 
-Stateful descriptions are supported by explicitly making the current state an 
-argument of the function, and the updated state part of the result. In this 
-sense, \CLaSH\ descriptions are the combinational parts of a mealy machine.
+\CLaSH\ supports stateful descriptions by explicitly making the current state an argument of the function, and the updated state part of the result. This makes \CLaSH\ descriptions in essence the combinational parts of a mealy machine.
 \end{abstract}
 % IEEEtran.cls defaults to using nonbold math in the Abstract.
 % This preserves the distinction between vectors and scalars. However,
@@ -506,7 +504,7 @@ sense, \CLaSH\ descriptions are the combinational parts of a mealy machine.
 Hardware description languages (\acrop{HDL}) have allowed the productivity of 
 hardware engineers to keep pace with the development of chip technology. 
 Standard \acrop{HDL}, like \VHDL~\cite{VHDL2008} and Verilog~\cite{Verilog}, 
-allowed an engineer to describe circuits using a `programming' language. These 
+allow an engineer to describe circuits using a `programming' language. These 
 standard languages are very good at describing detailed hardware properties 
 such as timing behavior, but are generally cumbersome in expressing 
 higher-level abstractions. In an attempt to raise the abstraction level of the 
@@ -517,8 +515,8 @@ hardware descriptions started in the early 1980s \cite{Cardelli1981,muFP,
 DAISY,FHDL}, a time which also saw the birth of the currently popular hardware 
 description languages such as \VHDL. Functional languages are especially well 
 suited to describe hardware because combinational circuits can be directly 
-modeled as mathematical functions. Furthermore, functional languages are very 
-good at describing and composing mathematical functions.
+modeled as mathematical functions. Functional languages are very 
+good at describing and composing these mathematical functions.
 
 In an attempt to decrease the amount of work involved in creating all the 
 required tooling, such as parsers and type-checkers, many functional
@@ -528,23 +526,19 @@ specific language (\acro{DSL}) inside the functional language Haskell
 functions and types that together form the language primitives of the 
 \acro{DSL}. The primitive functions used to describe a circuit do not actually 
 process any signals, but instead compose a large domain-specific datatype 
-(which is usually hidden from the designer).  This datatype is then further 
-processed by an embedded circuit compiler.  This circuit compiler actually 
-runs in the same environment as the description; as a result compile-time and 
-run-time become hard to define, as the embedded circuit compiler is usually
-compiled by the same Haskell compiler as the circuit description itself. 
-Though the embedded language approach still allows for the support of 
-polymorphism and higher-order functions, it impossible to capture Haskell's 
-choice elements within a circuit description.
+(which is usually hidden from the designer). This datatype is then further 
+processed by an embedded circuit compiler. As Haskell's choice elements 
+(\hs{if}-expressions, \hs{case}-expressions, pattern matching, etc.) are 
+evaluated at the time the domain-specific datatype is being build, they are no 
+longer visible to the embedded compiler that processes the datatype. Consequently, it is impossible the capture Haskell's choice elements within a circuit description when taking the embedded language approach. Descriptions can however still contain polymorphism and higher-order functions.
 
 The approach taken in this research is not to make another \acro{DSL} embedded 
 in Haskell, but to use (a subset of) the Haskell language \emph{itself} for 
 the purpose of describing hardware. By taking this approach, we \emph{can} 
-capture certain language constructs, such as Haskell's choice elements 
-(\hs{if}-expressions, \hs{case}-expressions, pattern matching, etc.), within 
+capture certain language constructs, such as Haskell's choice elements, within 
 circuit descriptions. To the best knowledge of the authors, supporting 
 polymorphism, higher-order functions and such an extensive array of 
-choice-elements is new in the domain of functional \acrop{HDL}. 
+choice-elements is new in the domain of (functional) \acrop{HDL}. 
 % As the hardware descriptions are plain Haskell 
 % functions, these descriptions can be compiled to an executable binary
 % for simulation using an optimizing Haskell compiler such as the Glasgow
