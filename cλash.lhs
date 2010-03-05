@@ -386,6 +386,19 @@
 %include polycode.fmt
 %include clash.fmt
 
+\newcounter{Codecount}
+\setcounter{Codecount}{0}
+
+\newenvironment{example}
+  {
+    \refstepcounter{equation}
+  }
+  {
+      \begin{flushright}
+      (\arabic{equation})
+      \end{flushright}
+  }
+
 \begin{document}
 %
 % paper title
@@ -588,17 +601,25 @@ point numbers.
     % to understand and possibly hand-optimize the resulting \VHDL\ output of 
     % the \CLaSH\ compiler.
 
-    The short example demonstrated below gives an indication of the level of 
-    conciseness that can be achieved with functional hardware description 
-    languages when compared with the more traditional hardware description 
-    languages. The example is a combinational multiply-accumulate circuit that 
-    works for \emph{any} word length (this type of polymorphism will be 
-    further elaborated in \Cref{sec:polymorhpism}). The corresponding netlist 
-    is depicted in \Cref{img:mac-comb}.
+    The short example (\ref{lst:code1}) demonstrated below gives an indication 
+    of the level of conciseness that can be achieved with functional hardware 
+    description languages when compared with the more traditional hardware 
+    description languages. The example is a combinational multiply-accumulate 
+    circuit that works for \emph{any} word length (this type of polymorphism 
+    will be further elaborated in \Cref{sec:polymorhpism}). The corresponding 
+    netlist is depicted in \Cref{img:mac-comb}.
     
+    \hspace{-1.7em}
+    \begin{minipage}{0.93\linewidth}
     \begin{code}
     mac a b c = add (mul a b) c
     \end{code}
+    \end{minipage}
+    \begin{minipage}{0.07\linewidth}
+      \begin{example}
+      \label{lst:code1}
+      \end{example}
+    \end{minipage}
     
     \begin{figure}
     \centerline{\includegraphics{mac.svg}}
@@ -606,16 +627,24 @@ point numbers.
     \label{img:mac-comb}
     \end{figure}
     
-    The use of a composite result value is demonstrated in the next example, 
-    where the multiply-accumulate circuit not only returns the accumulation 
-    result, but also the intermediate multiplication result. Its corresponding
-    netlist can be see in \Cref{img:mac-comb-composite}.
+    The use of a composite result value is demonstrated in the next example 
+    (\ref{lst:code2}), where the multiply-accumulate circuit not only returns 
+    the accumulation result, but also the intermediate multiplication result. 
+    Its corresponding netlist can be see in \Cref{img:mac-comb-composite}.
     
+    \hspace{-1.7em}
+    \begin{minipage}{0.93\linewidth}
     \begin{code}
     mac a b c = (z, add z c)
       where
         z = mul a b
     \end{code}
+    \end{minipage}
+    \begin{minipage}{0.07\linewidth}
+      \begin{example}
+      \label{lst:code2}
+      \end{example}
+    \end{minipage}
     
     \begin{figure}
     \centerline{\includegraphics{mac-nocurry.svg}}
@@ -636,12 +665,12 @@ point numbers.
     % A \hs{case} expression can in turn simply be translated to a conditional 
     % assignment in \VHDL, where the conditions use equality comparisons 
     % against the constructors in the \hs{case} expressions. 
-    We can see two versions of a contrived example below, the first 
-    using a \hs{case} expression and the other using an \hs{if-then-else} 
-    expression. Both examples sums two values when they are 
-    equal or non-equal (depending on the given predicate, the \hs{pred} 
-    variable) and returns 0 otherwise. The \hs{pred} variable has the 
-    following, user-defined, enumeration datatype:
+    We can see two versions of a contrived example below, the first  
+    (\ref{lst:code3}) using a \hs{case} expression, and the other 
+    (\ref{lst:code4}) using an \hs{if-then-else} expression . Both examples 
+    sums two values when they are equal or non-equal (depending on the given 
+    predicate, the \hs{pred} variable) and returns 0 otherwise. The \hs{pred} 
+    variable has the following, user-defined, enumeration datatype:
     
     \begin{code}
     data Pred = Equal | NotEqual
@@ -652,6 +681,8 @@ point numbers.
     compared to the \hs{Equal} value, as an inequality immediately implies 
     that the \hs{pred} variable has a \hs{NotEqual} value.
 
+    \hspace{-1.7em}
+    \begin{minipage}{0.93\linewidth}
     \begin{code}    
     sumif pred a b = case pred of
       Equal -> case a == b of
@@ -661,7 +692,15 @@ point numbers.
         True      -> a + b
         False     -> 0
     \end{code}
+    \end{minipage}
+    \begin{minipage}{0.07\linewidth}
+      \begin{example}
+      \label{lst:code3}
+      \end{example}
+    \end{minipage}
 
+    \hspace{-1.7em}
+    \begin{minipage}{0.93\linewidth}
     \begin{code}
     sumif pred a b = 
       if pred == Equal then 
@@ -669,6 +708,12 @@ point numbers.
       else 
         if a != b then a + b else 0
     \end{code}
+    \end{minipage}
+    \begin{minipage}{0.07\linewidth}
+      \begin{example}
+      \label{lst:code4}
+      \end{example}
+    \end{minipage}
 
     \begin{figure}
     \centerline{\includegraphics{choice-case.svg}}
@@ -685,21 +730,30 @@ point numbers.
     clause if the guard evaluates to false. Like \hs{if-then-else} 
     expressions, pattern matching and guards have a (straightforward) 
     translation to \hs{case} expressions and can as such be mapped to 
-    multiplexers. A third version of the earlier example, using both pattern 
-    matching and guards, can be seen below. The guard is the expression that 
-    follows the vertical bar (\hs{|}) and precedes the assignment operator 
-    (\hs{=}). The \hs{otherwise} guards always evaluate to \hs{true}.
+    multiplexers. A third version (\ref{lst:code5}) of the earlier example, 
+    using both pattern matching and guards, can be seen below. The guard is 
+    the expression that follows the vertical bar (\hs{|}) and precedes the 
+    assignment operator (\hs{=}). The \hs{otherwise} guards always evaluate to 
+    \hs{true}.
     
     The version using pattern matching and guards corresponds to the same 
     naive netlist representation (\Cref{img:choice}) as the earlier two 
     versions of the example.
     
+    \hspace{-1.7em}
+    \begin{minipage}{0.93\linewidth}
     \begin{code}
     sumif Equal     a b   | a == b      = a + b
                           | otherwise   = 0
     sumif NotEqual  a b   | a != b      = a + b
                           | otherwise   = 0
     \end{code}
+    \end{minipage}
+    \begin{minipage}{0.07\linewidth}
+      \begin{example}
+      \label{lst:code5}
+      \end{example}
+    \end{minipage}
 
     % \begin{figure}
     % \centerline{\includegraphics{choice-ifthenelse}}
@@ -942,10 +996,18 @@ point numbers.
     value and be passed around, even as the argument of another
     function. The following example should clarify this concept:
     
-%format not = "\mathit{not}"
+    \hspace{-1.7em}
+    \begin{minipage}{0.93\linewidth}
+    %format not = "\mathit{not}"
     \begin{code}
     negateVector xs = map not xs
     \end{code}
+    \end{minipage}
+    \begin{minipage}{0.07\linewidth}
+      \begin{example}
+      \label{lst:code6}
+      \end{example}
+    \end{minipage}
 
     The code above defines the \hs{negateVector} function, which takes a 
     vector of booleans, \hs{xs}, and returns a vector where all the values are 
@@ -976,9 +1038,17 @@ point numbers.
     that takes one argument less). As an example, consider the following
     expression, that adds one to every element of a vector:
 
+    \hspace{-1.7em}
+    \begin{minipage}{0.93\linewidth}
     \begin{code}
     map (add 1) xs
     \end{code}
+    \end{minipage}
+    \begin{minipage}{0.07\linewidth}
+      \begin{example}
+      \label{lst:code7}
+      \end{example}
+    \end{minipage}
 
     Here, the expression \hs{(add 1)} is the partial application of the
     addition function to the value \hs{1}, which is again a function that
@@ -986,9 +1056,17 @@ point numbers.
     introduce an anonymous function in any expression. Consider the following 
     expression, which again adds one to every element of a vector:
 
+    \hspace{-1.7em}
+    \begin{minipage}{0.93\linewidth}
     \begin{code}
     map (\x -> x + 1) xs
     \end{code}
+    \end{minipage}
+    \begin{minipage}{0.07\linewidth}
+      \begin{example}
+      \label{lst:code8}
+      \end{example}
+    \end{minipage}
 
     Finally, not only built-in functions can have higher order
     arguments, but any function defined in \CLaSH can have function
@@ -1032,11 +1110,19 @@ point numbers.
     multiply-accumulate circuit, of which the resulting netlist can be seen in 
     \Cref{img:mac-state}:
     
+    \hspace{-1.7em}
+    \begin{minipage}{0.93\linewidth}
     \begin{code}
     macS (State c) a b = (State c', c')
       where
         c' = mac a b c
     \end{code}
+    \end{minipage}
+    \begin{minipage}{0.07\linewidth}
+      \begin{example}
+      \label{lst:code9}
+      \end{example}
+    \end{minipage}
     
     \begin{figure}
     \centerline{\includegraphics{mac-state.svg}}
@@ -1055,11 +1141,19 @@ point numbers.
     choice elements, as state values are just normal values. We can simulate 
     stateful descriptions using the recursive \hs{run} function:
     
+    \hspace{-1.7em}
+    \begin{minipage}{0.93\linewidth}
     \begin{code}
     run f s (i : inps) = o : (run f s' inps)
       where
         (s', o) = f s i
     \end{code}
+    \end{minipage}
+    \begin{minipage}{0.07\linewidth}
+      \begin{example}
+      \label{lst:code10}
+      \end{example}
+    \end{minipage}
     
     The \hs{(:)} operator is the list concatenation operator, where the 
     left-hand side is the head of a list and the right-hand side is the 
@@ -1131,9 +1225,17 @@ shown below:
 We can easily and directly implement the equation for the dot-product
 using higher-order functions:
 
+\hspace{-1.7em}
+\begin{minipage}{0.93\linewidth}
 \begin{code}
 as *+* bs = foldl1 (+) (zipWith (*) as bs)
 \end{code}
+\end{minipage}
+\begin{minipage}{0.07\linewidth}
+  \begin{example}
+  \label{lst:code13}
+  \end{example}
+\end{minipage}
 
 The \hs{zipWith} function is very similar to the \hs{map} function seen 
 earlier: It takes a function, two vectors, and then applies the function to 
@@ -1162,16 +1264,32 @@ that the \hs{zipWith (*)} function is pairwise multiplication and that the
 % \end{equation}
 The complete definition of the \acro{FIR} filter in code then becomes:
 
+\hspace{-1.7em}
+\begin{minipage}{0.93\linewidth}
 \begin{code}
 fir (State (xs,hs)) x = 
   (State (x >> xs,hs), (x +> xs) *+* hs)
 \end{code}
+\end{minipage}
+\begin{minipage}{0.07\linewidth}
+  \begin{example}
+  \label{lst:code14}
+  \end{example}
+\end{minipage}
 
 Where the vector \hs{xs} contains the previous input samples, the vector \hs{hs} contains the \acro{FIR} coefficients, and \hs{x} is the current input sample. The concatenate operator (\hs{+>}) creates a new vector by placing the current sample (\hs{x}) in front of the previous samples vector (\hs{xs}). The code for the shift (\hs{>>}) operator, that adds the new input sample (\hs{x}) to the list of previous input samples (\hs{xs}) and removes the oldest sample, is shown below:
 
+\hspace{-1.7em}
+\begin{minipage}{0.93\linewidth}
 \begin{code}
 x >> xs = x +> init xs  
 \end{code}
+\end{minipage}
+\begin{minipage}{0.07\linewidth}
+  \begin{example}
+  \label{lst:code15}
+  \end{example}
+\end{minipage}
 
 Where the \hs{init} function returns all but the last element of a vector. 
 The resulting netlist of a 4-taps \acro{FIR} filter, created by specializing 
@@ -1182,6 +1300,7 @@ the vectors of the \acro{FIR} code to a length of 4, is depicted in
 \centerline{\includegraphics{4tapfir.svg}}
 \caption{4-taps \acrotiny{FIR} Filter}
 \label{img:4tapfir}
+\vspace{-1.5em}
 \end{figure}
 
 \subsection{Higher-order CPU}
@@ -1207,6 +1326,8 @@ define the actual operation that takes place inside the function unit,
 but simply accepts the (higher-order) argument \hs{op} which is a function
 of two arguments that defines the operation.
 
+\hspace{-1.7em}
+\begin{minipage}{0.93\linewidth}
 \begin{code}
 fu op inputs (addr1, addr2) = regIn
   where
@@ -1214,6 +1335,12 @@ fu op inputs (addr1, addr2) = regIn
     in2     = inputs!addr2
     regIn   = op in1 in2
 \end{code}
+\end{minipage}
+\begin{minipage}{0.07\linewidth}
+  \begin{example}
+  \label{lst:code16}
+  \end{example}
+\end{minipage}
 
 The \hs{multiop} function defines the operation that takes place in the
 leftmost function unit. It is essentially a simple three operation \acro{ALU}
@@ -1222,6 +1349,8 @@ The \hs{shift} function used here shifts its first operand by the number
 of bits indicated in the second operand, the \hs{xor} function produces
 the bitwise xor of its operands.
 
+\hspace{-1.7em}
+\begin{minipage}{0.93\linewidth}
 \begin{code}
 data Opcode = Shift | Xor | Equal
 
@@ -1231,6 +1360,12 @@ multiop Xor     a b                 = xor a b
 multiop Equal   a b   | a == b      = 1
                       | otherwise   = 0
 \end{code}
+\end{minipage}
+\begin{minipage}{0.07\linewidth}
+  \begin{example}
+  \label{lst:code17}
+  \end{example}
+\end{minipage}
 
 The \acro{CPU} function ties everything together. It applies the \hs{fu}
 function four times, to create a different function unit each time. The
@@ -1247,6 +1382,8 @@ their operand. The application of the function units to the \hs{inputs} and
 a combination of the \hs{map} and \hs{zipwith} functions instead.
 However, the prototype compiler does not currently support working with lists of functions, so a more explicit version of the code is given instead.
 
+\hspace{-1.7em}
+\begin{minipage}{0.93\linewidth}
 \begin{code}
 type CpuState = State [Word | 4]
 
@@ -1262,12 +1399,12 @@ cpu (State s) input addrs opc = (State s', out)
     inputs    =   0 +> (1 +> (input +> s))
     out       =   head s'
 \end{code}
-
-\begin{figure}
-\centerline{\includegraphics{highordcpu.svg}}
-\caption{CPU with higher-order Function Units}
-\label{img:highordcpu}
-\end{figure}
+\end{minipage}
+\begin{minipage}{0.07\linewidth}
+  \begin{example}
+  \label{lst:code18}
+  \end{example}
+\end{minipage}
 
 This is still a simple example, but it could form the basis
 of an actual design, in which the same techniques can be reused.
@@ -1283,6 +1420,12 @@ extension of Backus' \acro{FP} language to synchronous streams, designed
 particularly for describing and reasoning about regular circuits. The 
 Ruby~\cite{Ruby} language uses relations, instead of functions, to describe 
 circuits, and has a particular focus on layout. 
+
+\begin{figure}
+\centerline{\includegraphics{highordcpu.svg}}
+\caption{CPU with higher-order Function Units}
+\label{img:highordcpu}
+\end{figure}
 
 \acro{HML}~\cite{HML2} is a hardware modeling language based on the strict 
 functional language \acro{ML}, and has support for polymorphic types and 
