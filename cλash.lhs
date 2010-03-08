@@ -414,7 +414,7 @@
 Department of EEMCS, University of Twente\\
 P.O. Box 217, 7500 AE, Enschede, The Netherlands\\
 matthijs@@stdin.nl, c.p.r.baaij@@utwente.nl, j.kuper@@utwente.nl}
-\thanks{Supported through the FP7 project: S(o)OS (248465)}
+% \thanks{Supported through the FP7 project: S(o)OS (248465)}
 }
 % \and
 % \IEEEauthorblockN{Homer Simpson}
@@ -516,35 +516,36 @@ functional languages has been proposed \cite{Cardelli1981,muFP,DAISY,FHDL,
 T-Ruby,Hydra,HML2,Hawk1,Lava,ForSyDe1,Wired,reFLect}. The idea of using 
 functional languages for hardware descriptions started in the early 1980s 
 \cite{Cardelli1981,muFP,DAISY,FHDL}, a time which also saw the birth of the 
-currently popular hardware description languages such as \VHDL. Functional 
+currently popular hardware description languages, such as \VHDL. Functional 
 languages are especially well suited to describe hardware because 
-combinational circuits can be directly modeled as mathematical functions. 
-Functional languages are very good at describing and composing these 
+combinational circuits can be directly modeled as mathematical functions and
+functional languages are very good at describing and composing these 
 mathematical functions.
 
 In an attempt to decrease the amount of work involved in creating all the 
 required tooling, such as parsers and type-checkers, many functional
 \acrop{HDL} \cite{Hydra,Hawk1,Lava,ForSyDe1,Wired} are embedded as a domain 
-specific language (\acro{DSL}) inside the functional language Haskell 
+specific language (\acro{DSL}) within the functional language Haskell 
 \cite{Haskell}. This means that a developer is given a library of Haskell 
 functions and types that together form the language primitives of the 
 \acro{DSL}. The primitive functions used to describe a circuit do not actually 
-process any signals, but instead compose a large domain-specific datatype 
+process any signals, they instead compose a large domain-specific datatype 
 (which is usually hidden from the designer). This datatype is then further 
-processed by an embedded circuit compiler. As Haskell's choice elements 
-(\hs{if}-expressions, \hs{case}-expressions, pattern matching, etc.) are 
-evaluated at the time the domain-specific datatype is being build, they are no 
-longer visible to the embedded compiler that processes the datatype. 
-Consequently, it is impossible the capture Haskell's choice elements within a 
-circuit description when taking the embedded language approach. However, 
-descriptions can still contain polymorphism and higher-order functions.
+processed by an embedded circuit compiler which can perform for example 
+simulation or synthesis. As Haskell's choice elements (\hs{if}-expressions, 
+\hs{case}-expressions, etc.) are evaluated at the time the domain-specific 
+datatype is being build, they are no longer visible to the embedded compiler 
+that processes the datatype. Consequently, it is impossible the capture 
+Haskell's choice elements within a circuit description when taking the 
+embedded language approach. Descriptions can however still contain 
+polymorphism and higher-order functions.
 
 The approach taken in this research is not to make another \acro{DSL} embedded 
 in Haskell, but to use (a subset of) the Haskell language \emph{itself} for 
-the purpose of describing hardware. By taking this approach, we \emph{can} 
-capture certain language constructs, such as Haskell's choice elements, within 
-circuit descriptions. To the best knowledge of the authors, supporting 
-polymorphism, higher-order functions and such an extensive array of 
+the purpose of describing hardware. By taking this approach, this research 
+\emph{can} capture certain language constructs, such as Haskell's choice 
+elements, within circuit descriptions. To the best knowledge of the authors, 
+supporting polymorphism, higher-order functions and such an extensive array of 
 choice-elements is new in the domain of (functional) \acrop{HDL}. 
 % As the hardware descriptions are plain Haskell 
 % functions, these descriptions can be compiled to an executable binary
@@ -558,7 +559,7 @@ the hardware between clock cycles. Many functional \acrop{HDL} model signals
 as a stream of all values over time; state is then modeled as a delay on this 
 stream of values. The approach taken in this research is to make the current 
 state an additional input and the updated state a part of the output of a 
-function. The current abstraction of state and time limits the descriptions to 
+function. This abstraction of state and time limits the descriptions to 
 synchronous hardware, there is however room within the language to eventually 
 add a different abstraction mechanism that will allow for the modeling of 
 asynchronous systems.
@@ -601,7 +602,7 @@ eventual netlist representation is also highlighted.
     port of the function is also mapped to a signal, which is used as the 
     result of the application itself. Since every top level function generates 
     its own component, the hierarchy of function calls is reflected in the 
-    final netlist, creating a hierarchical description of the hardware. 
+    final netlist. %, creating a hierarchical description of the hardware. 
     % The separation in different components makes it easier for a developer 
     % to understand and possibly hand-optimize the resulting \VHDL\ output of 
     % the \CLaSH\ compiler.
@@ -636,7 +637,7 @@ eventual netlist representation is also highlighted.
     The use of a composite result value is demonstrated in the next example 
     (\ref{lst:code2}), where the multiply-accumulate circuit not only returns 
     the accumulation result, but also the intermediate multiplication result. 
-    Its corresponding netlist can be see in \Cref{img:mac-comb-composite}.
+    Its corresponding netlist can be seen in \Cref{img:mac-comb-composite}.
     
     \hspace{-1.7em}
     \begin{minipage}{0.93\linewidth}
@@ -653,6 +654,7 @@ eventual netlist representation is also highlighted.
     \end{minipage}
     
     \begin{figure}
+    \vspace{1em}
     \centerline{\includegraphics{mac-nocurry.svg}}
     \caption{Combinational Multiply-Accumulate (composite output)}
     \label{img:mac-comb-composite}
@@ -666,19 +668,19 @@ eventual netlist representation is also highlighted.
     expressions (\hs{if} expressions can be directly translated to 
     \hs{case} expressions). When transforming a \CLaSH\ description to a   
     netlist, a \hs{case} expression is translated to a multiplexer. The 
-    control value is fed into a number of comparators and their output forms 
-    the selection port of the multiplexer. The result of each alternative in 
-    the \hs{case} expression is linked to the corresponding input port on the 
-    multiplexer.
+    control value of the \hs{case} expression is fed into a number of 
+    comparators and their combined output forms the selection port of the 
+    multiplexer. The result of each alternative in the \hs{case} expression is 
+    linked to the corresponding input port of the multiplexer.
     % A \hs{case} expression can in turn simply be translated to a conditional 
     % assignment in \VHDL, where the conditions use equality comparisons 
     % against the constructors in the \hs{case} expressions. 
-    We can see two versions of a contrived example below, the first  
-    (\ref{lst:code3}) using a \hs{case} expression, and the other 
-    (\ref{lst:code4}) using an \hs{if-then-else} expression . Both examples 
-    sums two values when they are equal or non-equal (depending on the given 
-    predicate, the \hs{pred} variable) and returns 0 otherwise. The \hs{pred} 
-    variable if of the following, user-defined, enumeration datatype:
+    Two versions of a contrived example are displayed below, the first  
+    (\ref{lst:code3}) using a \hs{case} expression and the second 
+    (\ref{lst:code4}) using an \hs{if-then-else} expression. Both examples 
+    sum two values when they are equal or non-equal (depending on the given 
+    predicate, the \hs{pred} variable) and return 0 otherwise. The \hs{pred} 
+    variable is of the following, user-defined, enumeration datatype:
     
     \begin{code}
     data Pred = Equal | NotEqual
@@ -686,8 +688,8 @@ eventual netlist representation is also highlighted.
 
     The naive netlist corresponding to both versions of the example is 
     depicted in \Cref{img:choice}. Note that the \hs{pred} variable is only
-    compared to the \hs{Equal} value, as an inequality immediately implies 
-    that the \hs{pred} variable has a \hs{NotEqual} value.
+    compared to \hs{Equal}, as an inequality immediately implies that the 
+    \hs{pred} variable is \hs{NotEqual}.
 
     \hspace{-1.7em}
     \begin{minipage}{0.93\linewidth}
@@ -724,7 +726,6 @@ eventual netlist representation is also highlighted.
     \end{minipage}
 
     \begin{figure}
-    \vspace{1em}
     \centerline{\includegraphics{choice-case.svg}}
     \caption{Choice - sumif}
     \label{img:choice}
@@ -866,7 +867,7 @@ eventual netlist representation is also highlighted.
         An \hs{Index} only has an upper bound, its lower bound is
         implicitly zero. If a value of this type exceeds either bounds, an 
         error will be thrown at simulation-time. The main purpose of the 
-        \hs{Index} type is to be used as an index to a \hs{Vector}.
+        \hs{Index} type is to be used as an index into a \hs{Vector}.
 
         % \comment{TODO: Perhaps remove this example?} To define an index for 
         % the 8 element vector above, we would do:
@@ -987,8 +988,9 @@ eventual netlist representation is also highlighted.
     types that are \emph{instances} of the \emph{type class} \hs{Num}, so that  
     we know that the addition (+) operator is defined for that type. 
     \CLaSH's built-in numerical types are also instances of the \hs{Num}
-    class, so we can use the addition operator (and thus the \hs{sum}
-    function) with \hs{Signed} as well as with \hs{Unsigned}.
+    class. 
+    % so we can use the addition operator (and thus the \hs{sum}
+    % function) with \hs{Signed} as well as with \hs{Unsigned}.
 
     \CLaSH\ supports both parametric polymorphism and ad-hoc polymorphism. Any 
     function defined can have any number of unconstrained type parameters. A
