@@ -688,8 +688,8 @@ eventual netlist representation is also highlighted.
 
     The naive netlist corresponding to both versions of the example is 
     depicted in \Cref{img:choice}. Note that the \hs{pred} variable is only
-    compared to \hs{Equal}, as an inequality immediately implies that the 
-    \hs{pred} variable is \hs{NotEqual}.
+    compared to \hs{Equal}, as an inequality immediately implies that 
+    \hs{pred} is \hs{NotEqual}.
 
     \hspace{-1.7em}
     \begin{minipage}{0.93\linewidth}
@@ -781,14 +781,14 @@ eventual netlist representation is also highlighted.
     \emph{built-in} types and \emph{user-defined} types. Built-in types are 
     those types for which a fixed translation is defined within the \CLaSH\ 
     compiler. The \CLaSH\ compiler has generic translation rules to
-    translate the user-defined types described later on.
+    translate the user-defined types, which are described later on.
 
     The \CLaSH\ compiler is able to infer unspecified (polymorphic) types,
     meaning that a developer does not have to annotate every function with a 
     type signature. % (even if it is good practice to do so).
     Given that the top-level entity of a circuit design is annotated with 
-    concrete types, the \CLaSH\ compiler can specialize polymorphic functions 
-    to functions with concrete types.
+    concrete/monomorphic types, the \CLaSH\ compiler can specialize 
+    polymorphic functions to functions with concrete types.
   
     % Translation of two most basic functional concepts has been
     % discussed: function application and choice. Before looking further
@@ -840,7 +840,7 @@ eventual netlist representation is also highlighted.
         % \texttt{signed} respectively.
       \item[\bf{Vector}]
         this is a vector type that can contain elements of any other type and
-        has a fixed length. The \hs{Vector} type constructor takes two type 
+        has a static length. The \hs{Vector} type constructor takes two type 
         arguments: the length of the vector and the type of the elements 
         contained in it. The short-hand notation used for the vector type in  
         the rest of paper is: \hs{[a|n]}, where \hs{a} is the element 
@@ -978,17 +978,18 @@ eventual netlist representation is also highlighted.
     variable can only be instantiated to a type whose members supports the 
     overloaded functions associated with the type class. 
     
-    As an example we will take a look at type signature of the function 
-    \hs{sum}, which sums the values in a vector:
+    An example of a type signature that includes such a constraint if the 
+    signature of the \hs{sum} function, which sums the values in a vector:
     \begin{code}
     sum :: Num a => [a|n] -> a
     \end{code}
 
     This type is again parameterized by \hs{a}, but it can only contain
     types that are \emph{instances} of the \emph{type class} \hs{Num}, so that  
-    we know that the addition (+) operator is defined for that type. 
-    \CLaSH's built-in numerical types are also instances of the \hs{Num}
-    class. 
+    the compiler knows that the addition (+) operator is defined for that 
+    type. 
+    % \CLaSH's built-in numerical types are also instances of the \hs{Num} 
+    % class. 
     % so we can use the addition operator (and thus the \hs{sum}
     % function) with \hs{Signed} as well as with \hs{Unsigned}.
 
@@ -998,12 +999,14 @@ eventual netlist representation is also highlighted.
     instances. The \CLaSH\ compiler will infer the type of every polymorphic 
     argument depending on how the function is applied. There is however one 
     constraint: the top level function that is being translated can not have 
-    any polymorphic arguments. The arguments can not be polymorphic as the 
-    function is never applied and consequently there is no way to determine 
-    the actual types for the type parameters. The members of some standard 
-    Haskell type classes are supported as built-in functions, including: 
-    \hs{Num} for numerical operations, \hs{Eq} for the equality operators, and 
-    \hs{Ord} for the comparison/order operators.
+    any polymorphic arguments. The arguments of the top-level can not be 
+    polymorphic as the function is never applied and consequently there is no 
+    way to determine the actual types for the type parameters. 
+    
+    With regard to the built-in types, it should be noted that members of 
+    some of the standard Haskell type classes are supported as built-in 
+    functions. These include: the numerial operators of \hs{Num}, the equality 
+    operators of \hs{Eq}, and the comparison/order operators of \hs{Ord}.
 
   \subsection{Higher-order functions \& values}
     Another powerful abstraction mechanism in functional languages, is
@@ -1084,13 +1087,12 @@ eventual netlist representation is also highlighted.
       \end{example}
     \end{minipage}
 
-    Finally, not only built-in functions can have higher order
-    arguments, but any function defined in \CLaSH\ may have functions as
-    arguments. This allows the hardware designer to use a powerful
-    abstraction mechanism in his designs and have an optimal amount of
-    code reuse. The only exception is again the top-level function: if a 
-    function-typed argument is not applied with an actual function, no 
-    hardware can be generated.    
+    Finally, not only built-in functions can have higher order arguments (such 
+    as the \hs{map} function), but any function defined in \CLaSH\ may have 
+    functions as arguments. This allows the circuit designer to use a 
+    powerful amount of code reuse. The only exception is again the top-level 
+    function: if a function-typed argument is not applied with an actual 
+    function, no hardware can be generated.    
 
     % \comment{TODO: Describe ALU example (no code)}
 
