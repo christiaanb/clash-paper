@@ -990,19 +990,18 @@ eventual netlist representation is also highlighted.
     class, so we can use the addition operator (and thus the \hs{sum}
     function) with \hs{Signed} as well as with \hs{Unsigned}.
 
-    In \CLaSH, parametric polymorphism is completely supported. Any function 
-    defined can have any number of unconstrained type parameters. The \CLaSH\ 
-    compiler will infer the type of every such argument depending on how the 
-    function is applied. There is however one constraint: the top level 
-    function that is being translated can not have any polymorphic arguments. 
-    The arguments can not be polymorphic as the function is never applied and 
-    consequently there is no way to determine the actual types for the type 
-    parameters.
-
-    \CLaSH\ does \emph{currently} not support\emph{ user-defined} type 
-    classes, but does use some of the standard Haskell type classes for its 
-    built-in function, such as: \hs{Num} for numerical operations, \hs{Eq} for 
-    the equality operators, and \hs{Ord} for the comparison/order operators.
+    \CLaSH\ supports both parametric polymorphism and ad-hoc polymorphism. Any 
+    function defined can have any number of unconstrained type parameters. A
+    developer can also specify his own type classes and corresponding 
+    instances. The \CLaSH\ compiler will infer the type of every polymorphic 
+    argument depending on how the function is applied. There is however one 
+    constraint: the top level function that is being translated can not have 
+    any polymorphic arguments. The arguments can not be polymorphic as the 
+    function is never applied and consequently there is no way to determine 
+    the actual types for the type parameters. The members of some standard 
+    Haskell type classes are supported as built-in functions, including: 
+    \hs{Num} for numerical operations, \hs{Eq} for the equality operators, and 
+    \hs{Ord} for the comparison/order operators.
 
   \subsection{Higher-order functions \& values}
     Another powerful abstraction mechanism in functional languages, is
