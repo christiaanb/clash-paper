@@ -1502,9 +1502,8 @@ automated synthesis is restricted to the synchronous model of computation.
 Though ForSyDe offers higher-order functions and polymorphism, ForSyDe's 
 choice elements are limited to \hs{if} and \hs{case} expressions. ForSyDe's 
 explicit conversions, where function have to be wrapped in processes and 
-process have to be wrapped in systems, combined with the explicit 
-instantiations of components also makes ForSyDe more verbose than 
-\CLaSH.
+processes have to be wrapped in systems, combined with the explicit 
+instantiations of components, also makes ForSyDe more verbose than \CLaSH.
 
 Lava~\cite{Lava} is a hardware description language, embedded in Haskell, and 
 focuses on the structural representation of hardware. Like \CLaSH, Lava has 
@@ -1516,9 +1515,7 @@ elements to be captured within the circuit descriptions. In this respect
 \CLaSH\ differs from Lava, in that all of Haskell's choice elements, such as 
 \hs{case}-expressions and pattern matching, are synthesized to choice elements 
 in the eventual circuit. Consequently, descriptions containing rich control 
-structures can be specified in a far more user-friendly way in \CLaSH\ than 
-possible within Lava. As a result, the control structures are also less 
-error-prone.
+structures can be specified in a more user-friendly way in \CLaSH\ than possible within Lava, and are hence less error-prone.
 
 Bluespec~\cite{Bluespec} is a high-level synthesis language that features 
 guarded atomic transactions and allows for the automated derivation of control 
