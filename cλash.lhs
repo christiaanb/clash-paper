@@ -409,11 +409,11 @@
 % author names and affiliations
 % use a multiple column layout for up to three different
 % affiliations
-\author{\IEEEauthorblockN{Matthijs Kooijman, Christiaan P.R. Baaij, Jan Kuper, Marco E.T. Gerards}%, Bert Molenkamp, Sabih H. Gerez}
+\author{\IEEEauthorblockN{Christiaan P.R. Baaij, Matthijs Kooijman, Jan Kuper, Marco E.T. Gerards}%, Bert Molenkamp, Sabih H. Gerez}
 \IEEEauthorblockA{%Computer Architecture for Embedded Systems (CAES)\\ 
 Department of EEMCS, University of Twente\\
 P.O. Box 217, 7500 AE, Enschede, The Netherlands\\
-matthijs@@stdin.nl, c.p.r.baaij@@utwente.nl, j.kuper@@utwente.nl}
+c.p.r.baaij@@utwente.nl, matthijs@@stdin.nl, j.kuper@@utwente.nl}
 % \thanks{Supported through the FP7 project: S(o)OS (248465)}
 }
 % \and
@@ -522,50 +522,42 @@ combinational circuits can be directly modeled as mathematical functions and
 functional languages are very good at describing and composing these
 functions.
 
-In an attempt to decrease the amount of work involved in creating all the 
-required tooling, such as parsers and type-checkers, many functional
-\acrop{HDL} \cite{Hydra,Hawk1,Lava,Wired} are embedded as a domain 
+In an attempt to ease the prototyping process of the language, such as 
+creating all the required tooling, like parsers and type-checkers, many 
+functional \acrop{HDL} \cite{Hydra,Hawk1,Lava,Wired} are embedded as a domain 
 specific language (\acro{DSL}) within the functional language Haskell 
 \cite{Haskell}. This means that a developer is given a library of Haskell 
 functions and types that together form the language primitives of the 
 \acro{DSL}. The primitive functions used to describe a circuit do not actually 
-process any signals, they instead compose a large domain-specific datatype 
-(which is usually hidden from the designer). This datatype is then further 
+process any signals, they instead compose a large domain-specific graph 
+(which is usually hidden from the designer). This graph is then further 
 processed by an embedded circuit compiler which can perform for example 
-simulation or synthesis. As Haskell's choice elements (\hs{if}-expressions, 
-\hs{case}-expressions, etc.) are evaluated at the time the domain-specific 
-datatype is being build, they are no longer visible to the embedded compiler 
-that processes the datatype. Consequently, it is impossible to capture 
-Haskell's choice elements within a circuit description when taking the 
-embedded language approach. This does not mean that circuits specified in an 
-embedded language can not contain choice, just that choice elements only 
-exists as functions, e.g. a multiplexer function, and not as language 
-elements.
+simulation or synthesis. As Haskell's choice elements (\hs{case}-expressions, 
+pattern-matching etc.) are evaluated at the time the domain-specific graph is 
+being build, they are no longer visible to the embedded compiler that 
+processes the datatype. Consequently, it is impossible to capture Haskell's 
+choice elements within a circuit description when taking the embedded language 
+approach. This does not mean that circuits specified in an embedded language 
+can not contain choice, just that choice elements only exists as functions, 
+e.g. a multiplexer function, and not as language elements.
 
-The approach taken in this research is not to make another \acro{DSL} embedded 
-in Haskell, but to use (a subset of) the Haskell language \emph{itself} for 
-the purpose of describing hardware. By taking this approach, this research 
-\emph{can} capture certain language constructs, such as Haskell's choice 
-elements, within circuit descriptions. To the best knowledge of the authors, 
-supporting polymorphism, higher-order functions and such an extensive array of 
-choice-elements, combined with a very concise way of specifying circuits is 
-new in the domain of (functional) \acrop{HDL}. 
+The approach taken in this research is to use (a subset of) the Haskell 
+language \emph{itself} for the purpose of describing hardware. By taking this 
+approach, this research \emph{can} capture certain language constructs, like 
+all of Haskell's choice elements, within circuit descriptions. The more 
+advanced features of Haskel, such as polymorphic typing and higher-order 
+function, are also supported.
+
+% supporting polymorphism, higher-order functions and such an extensive array 
+% of choice-elements, combined with a very concise way of specifying circuits 
+% is new in the domain of (functional) \acrop{HDL}. 
 % As the hardware descriptions are plain Haskell 
 % functions, these descriptions can be compiled to an executable binary
 % for simulation using an optimizing Haskell compiler such as the Glasgow
 % Haskell Compiler (\GHC)~\cite{ghc}.
 
 Where descriptions in a conventional \acro{HDL} have an explicit clock for the 
-purposes state and synchronicity, the clock is implied in the context of the 
-research presented in this paper. A circuit designer describes the behavior of 
-the hardware between clock cycles. Many functional \acrop{HDL} model signals 
-as a stream of all values over time; state is then modeled as a delay on this 
-stream of values. The approach taken in this research is to make the current 
-state an additional input and the updated state a part of the output of a 
-function. This abstraction of state and time limits the descriptions to 
-synchronous hardware, there is however room within the language to eventually 
-add a different abstraction mechanism that will allow for the modeling of 
-asynchronous systems.
+purposes state and synchronicity, the clock is implicit for the descriptions and research presented in this paper. A circuit designer describes the behavior of the hardware between clock cycles. Many functional \acrop{HDL} model signals as a stream of all values over time; state is then modeled as a delay on this stream of values. Descriptions presented in this research make the current state an additional input and the updated state a part of their output. This abstraction of state and time limits the descriptions to synchronous hardware, there is however room within the language to eventually add a different abstraction mechanism that will allow for the modeling of asynchronous systems.
 
 Like the traditional \acrop{HDL}, descriptions made in a functional \acro{HDL} 
 must eventually be converted into a netlist. This research also features a 
@@ -575,11 +567,16 @@ prototype translator, which has the same name as the language:
 behaving synthesizable \VHDL\ code, ready to be converted to an actual netlist 
 format by an (optimizing) \VHDL\ synthesis tool.
 
-Besides trivial circuits such as variants of both the \acro{FIR} filter and 
-the simple \acro{CPU} shown in \Cref{sec:usecases}, the \CLaSH\ compiler has 
-also been able to successfully translate non-trivial functional descriptions 
-such as a streaming reduction circuit~\cite{reductioncircuit} for floating 
-point numbers.
+Besides simple circuits such as variants of both the \acro{FIR} filter and 
+the higher-order \acro{CPU} shown in \Cref{sec:usecases}, the \CLaSH\ compiler 
+has also been able to translate non-trivial functional descriptions such as a 
+streaming reduction circuit~\cite{reductioncircuit} for floating point 
+numbers.
+
+To the best knowledge of the authors, \CLaSH\ is the only (functional) 
+\acro{HDL} that allows circuit specification to be written in a very concise 
+way and at the same time support such advanced features as polymorphic typing, 
+higher order functions and pattern matching.
 
 \section{Hardware description in Haskell}
 The following section describes the basic language elements of \CLaSH\ and the 
@@ -588,9 +585,8 @@ various subsections, the relation between the language elements and their
 eventual netlist representation is also highlighted. 
 
   \subsection{Function application}
-    Two basic syntactic elements of a functional program are functions
-    and function application. These have a single obvious translation to a 
-    netlist format: 
+    Two basic elements of a functional program are functions and function 
+    application. These have a single obvious translation to a netlist format: 
     \begin{inparaenum}
       \item every function is translated to a component, 
       \item every function argument is translated to an input port,
@@ -677,32 +673,39 @@ eventual netlist representation is also highlighted.
     % A \hs{case} expression can in turn simply be translated to a conditional 
     % assignment in \VHDL, where the conditions use equality comparisons 
     % against the constructors in the \hs{case} expressions. 
-    Two versions of a contrived example are displayed below, the first  
-    (\ref{lst:code3}) using a \hs{case} expression and the second 
-    (\ref{lst:code4}) using an \hs{if-then-else} expression. Both examples 
-    sum two values when they are equal or non-equal (depending on the given 
-    predicate, the \hs{pred} variable) and return 0 otherwise. The \hs{pred} 
-    variable is of the following, user-defined, enumeration datatype:
+    
+    % Two versions of a contrived example are displayed below, the first  
+    % (\ref{lst:code3}) using a \hs{case} expression and the second 
+    % (\ref{lst:code4}) using an \hs{if-then-else} expression. Both examples 
+    % sum two values when they are equal or non-equal (depending on the given 
+    % predicate, the \hs{pred} variable) and return 0 otherwise. 
+    
+    An code example (\ref{lst:code3}) that uses a \hs{case} expression and 
+    \hs{if-then-else} expressions is shown below. The function counts up or 
+    down depending on the \hs{direction} variable, and has a \hs{wrap} 
+    variable that determines both the upper bound and wrap-around point of the 
+    counter. The \hs{direction} variable is of the following, user-defined, 
+    enumeration datatype:
     
     \begin{code}
-    data Pred = Equal | NotEqual
+    data Direction = Up | Down
     \end{code}
 
-    The naive netlist corresponding to both versions of the example is 
-    depicted in \Cref{img:choice}. Note that the \hs{pred} variable is only
-    compared to \hs{Equal}, as an inequality immediately implies that 
-    \hs{pred} is \hs{NotEqual}.
+    The naive netlist corresponding to this example is depicted in 
+    \Cref{img:choice}. Note that the \hs{direction} variable is only
+    compared to \hs{Up}, as an inequality immediately implies that 
+    \hs{direction} is \hs{Down}.
 
     \hspace{-1.7em}
     \begin{minipage}{0.93\linewidth}
     \begin{code}    
-    sumif pred a b = case pred of
-      Equal -> case a == b of
-        True      -> a + b
-        False     -> 0
-      NotEqual  -> case a != b of
-        True      -> a + b
-        False     -> 0
+    counter direction wrap x = case direction of
+        Up    -> if   x < wrap  then 
+                      x + 1     else 
+                      0
+        Down  -> if   x > 0   then 
+                      x - 1   else 
+                      wrap
     \end{code}
     \end{minipage}
     \begin{minipage}{0.07\linewidth}
@@ -711,21 +714,21 @@ eventual netlist representation is also highlighted.
       \end{example}
     \end{minipage}
 
-    \hspace{-1.7em}
-    \begin{minipage}{0.93\linewidth}
-    \begin{code}
-    sumif pred a b = 
-      if pred == Equal then 
-        if a == b then a + b else 0
-      else 
-        if a != b then a + b else 0
-    \end{code}
-    \end{minipage}
-    \begin{minipage}{0.07\linewidth}
-      \begin{example}
-      \label{lst:code4}
-      \end{example}
-    \end{minipage}
+    % \hspace{-1.7em}
+    % \begin{minipage}{0.93\linewidth}
+    % \begin{code}
+    % sumif pred a b = 
+    %   if pred == Equal then 
+    %     if a == b then a + b else 0
+    %   else 
+    %     if a != b then a + b else 0
+    % \end{code}
+    % \end{minipage}
+    % \begin{minipage}{0.07\linewidth}
+    %   \begin{example}
+    %   \label{lst:code4}
+    %   \end{example}
+    % \end{minipage}
 
     \begin{figure}
     \vspace{1em}
@@ -744,23 +747,22 @@ eventual netlist representation is also highlighted.
     clause if the guard evaluates to false. Like \hs{if-then-else} 
     expressions, pattern matching and guards have a (straightforward) 
     translation to \hs{case} expressions and can as such be mapped to 
-    multiplexers. A third version (\ref{lst:code5}) of the earlier example, 
+    multiplexers. A second version (\ref{lst:code5}) of the earlier example, 
     now using both pattern matching and guards, can be seen below. The guard 
     is the expression that follows the vertical bar (\hs{|}) and precedes the 
     assignment operator (\hs{=}). The \hs{otherwise} guards always evaluate to 
     \hs{true}.
     
     The version using pattern matching and guards corresponds to the same 
-    naive netlist representation (\Cref{img:choice}) as the earlier two 
-    versions of the example.
+    naive netlist representation (\Cref{img:choice}) as the earlier example.
     
     \hspace{-1.7em}
     \begin{minipage}{0.93\linewidth}
     \begin{code}
-    sumif Equal     a b   | a == b      = a + b
+    counter Up    wrap x  | x < wrap    = x + 1
                           | otherwise   = 0
-    sumif NotEqual  a b   | a != b      = a + b
-                          | otherwise   = 0
+    counter Down  wrap x  | x > 0       = x - 1
+                          | otherwise   = wrap
     \end{code}
     \end{minipage}
     \begin{minipage}{0.07\linewidth}
@@ -864,13 +866,12 @@ eventual netlist representation is also highlighted.
         % \hs{RegisterState} type is a vector of 8 32-bit words. A fixed size 
         % vector is translated to a \VHDL\ array type.
       \item[\bf{Index}]
-        this is another type to describe integers, but unlike the previous
-        two it has no specific bit-width, but an upper bound. This means that
-        its range is not limited to powers of two, but can be any number.
-        An \hs{Index} only has an upper bound, its lower bound is
-        implicitly zero. If a value of this type exceeds either bounds, an 
-        error will be thrown at simulation-time. The main purpose of the 
-        \hs{Index} type is to be used as an index into a \hs{Vector}.
+        the main purpose of the \hs{Index} type is to be used as an index into 
+        a \hs{Vector}, and has no specified bit-size, but a specified upper 
+        bound. This means that its range is not limited to powers of two, but 
+        can be any number. An \hs{Index} only has an upper bound, its lower 
+        bound is implicitly zero. If a value of this type exceeds either 
+        bounds, an error will be thrown at simulation-time. 
 
         % \comment{TODO: Perhaps remove this example?} To define an index for 
         % the 8 element vector above, we would do:
@@ -888,21 +889,23 @@ eventual netlist representation is also highlighted.
     \end{xlist}
 
   \subsubsection{User-defined types}
-    There are three ways to define new types in Haskell: algebraic
-    data-types with the \hs{data} keyword, type synonyms with the \hs{type}
-    keyword and datatype renaming constructs with the \hs{newtype} keyword. 
+    % There are three ways to define new types in Haskell: algebraic
+    % data-types with the \hs{data} keyword, type synonyms with the \hs{type}
+    % keyword and datatype renaming constructs with the \hs{newtype} keyword. 
     % \GHC\ offers a few more advanced ways to introduce types (type families,
     % existential typing, {\acro{GADT}}s, etc.) which are not standard 
     % Haskell. As it is currently unclear how these advanced type constructs 
     % correspond to hardware, they are for now unsupported by the \CLaSH\ 
     % compiler.
-
-    Only an algebraic datatype declaration actually introduces a
-    completely new type. Type synonyms and type renaming only define new 
-    names for existing types, where synonyms are completely interchangeable 
-    and a type renaming requires an explicit conversion. Type synonyms and 
-    type renaming do not need any particular translation, a synonym or 
-    renamed type will just use the same representation as the original type. 
+    A completely new type is introduced by an algebraic datatype declaration 
+    which is defined using the \hs{data} keyword. Type synonyms can be 
+    introduced using the \hs{type} keyword.
+    % Only an algebraic datatype declaration actually introduces a
+    % completely new type. Type synonyms and type renaming only define new 
+    % names for existing types, where synonyms are completely interchangeable 
+    % and a type renaming requires an explicit conversion. 
+    Type synonyms do not need any particular translation, as a synonym  will 
+    just use the same representation as the original type. 
     
     For algebraic types, we can make the following distinctions:
     \begin{xlist}
@@ -953,7 +956,7 @@ eventual netlist representation is also highlighted.
     with its type.}
     
     \begin{code}
-    append :: [a|n] -> a -> [a|n + 1]
+    append :: [a|n] -> a -> [a|n+1]
     \end{code}
 
     This type is parameterized by \hs{a}, which can contain any type at
