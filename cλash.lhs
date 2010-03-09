@@ -516,11 +516,11 @@ functional languages has been proposed \cite{Cardelli1981,muFP,DAISY,
 T-Ruby,HML2,Hydra,Hawk1,Lava,Wired,ForSyDe1,reFLect}. The idea of using 
 functional languages for hardware descriptions started in the early 1980s 
 \cite{Cardelli1981,muFP,DAISY}, a time which also saw the birth of the 
-currently popular hardware description languages, such as \VHDL. Functional 
+currently popular \acrop{HDL}, such as \VHDL. Functional 
 languages are especially well suited to describe hardware because 
 combinational circuits can be directly modeled as mathematical functions and
-functional languages are very good at describing and composing these 
-mathematical functions.
+functional languages are very good at describing and composing these
+functions.
 
 In an attempt to decrease the amount of work involved in creating all the 
 required tooling, such as parsers and type-checkers, many functional
@@ -535,7 +535,7 @@ processed by an embedded circuit compiler which can perform for example
 simulation or synthesis. As Haskell's choice elements (\hs{if}-expressions, 
 \hs{case}-expressions, etc.) are evaluated at the time the domain-specific 
 datatype is being build, they are no longer visible to the embedded compiler 
-that processes the datatype. Consequently, it is impossible the capture 
+that processes the datatype. Consequently, it is impossible to capture 
 Haskell's choice elements within a circuit description when taking the 
 embedded language approach. This does not mean that circuits specified in an 
 embedded language can not contain choice, just that choice elements only 
@@ -548,7 +548,8 @@ the purpose of describing hardware. By taking this approach, this research
 \emph{can} capture certain language constructs, such as Haskell's choice 
 elements, within circuit descriptions. To the best knowledge of the authors, 
 supporting polymorphism, higher-order functions and such an extensive array of 
-choice-elements is new in the domain of (functional) \acrop{HDL}. 
+choice-elements, combined with a very concise way of specifying circuits is 
+new in the domain of (functional) \acrop{HDL}. 
 % As the hardware descriptions are plain Haskell 
 % functions, these descriptions can be compiled to an executable binary
 % for simulation using an optimizing Haskell compiler such as the Glasgow
