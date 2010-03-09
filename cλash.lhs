@@ -512,10 +512,10 @@ Verilog~\cite{Verilog}, allowed an engineer to describe circuits using a
 detailed hardware properties such as timing behavior, but are generally 
 cumbersome in expressing higher-level abstractions. In an attempt to raise the 
 abstraction level of the descriptions, a great number of approaches based on 
-functional languages has been proposed \cite{Cardelli1981,muFP,DAISY,FHDL,
-T-Ruby,Hydra,HML2,Hawk1,Lava,ForSyDe1,Wired,reFLect}. The idea of using 
+functional languages has been proposed \cite{Cardelli1981,muFP,DAISY,
+T-Ruby,HML2,Hydra,Hawk1,Lava,Wired,ForSyDe1,reFLect}. The idea of using 
 functional languages for hardware descriptions started in the early 1980s 
-\cite{Cardelli1981,muFP,DAISY,FHDL}, a time which also saw the birth of the 
+\cite{Cardelli1981,muFP,DAISY}, a time which also saw the birth of the 
 currently popular hardware description languages, such as \VHDL. Functional 
 languages are especially well suited to describe hardware because 
 combinational circuits can be directly modeled as mathematical functions and
@@ -524,7 +524,7 @@ mathematical functions.
 
 In an attempt to decrease the amount of work involved in creating all the 
 required tooling, such as parsers and type-checkers, many functional
-\acrop{HDL} \cite{Hydra,Hawk1,Lava,ForSyDe1,Wired} are embedded as a domain 
+\acrop{HDL} \cite{Hydra,Hawk1,Lava,Wired} are embedded as a domain 
 specific language (\acro{DSL}) within the functional language Haskell 
 \cite{Haskell}. This means that a developer is given a library of Haskell 
 functions and types that together form the language primitives of the 
@@ -537,8 +537,10 @@ simulation or synthesis. As Haskell's choice elements (\hs{if}-expressions,
 datatype is being build, they are no longer visible to the embedded compiler 
 that processes the datatype. Consequently, it is impossible the capture 
 Haskell's choice elements within a circuit description when taking the 
-embedded language approach. Descriptions can however still contain 
-polymorphism and higher-order functions.
+embedded language approach. This does not mean that circuits specified in an 
+embedded language can not contain choice, just that choice elements only 
+exists as functions, e.g. a multiplexer function, and not as language 
+elements.
 
 The approach taken in this research is not to make another \acro{DSL} embedded 
 in Haskell, but to use (a subset of) the Haskell language \emph{itself} for 
@@ -654,7 +656,6 @@ eventual netlist representation is also highlighted.
     \end{minipage}
     
     \begin{figure}
-    \vspace{1em}
     \centerline{\includegraphics{mac-nocurry.svg}}
     \caption{Combinational Multiply-Accumulate (composite output)}
     \label{img:mac-comb-composite}
@@ -726,6 +727,7 @@ eventual netlist representation is also highlighted.
     \end{minipage}
 
     \begin{figure}
+    \vspace{1em}
     \centerline{\includegraphics{choice-case.svg}}
     \caption{Choice - sumif}
     \label{img:choice}
@@ -1458,19 +1460,12 @@ This section describes the features of existing (functional) hardware
 description languages and highlights the advantages that this research has 
 over existing work.
 
-Many functional hardware description languages have been developed over the 
-years. Early work includes such languages as $\mu$\acro{FP}~\cite{muFP}, an 
-extension of Backus' \acro{FP} language to synchronous streams, designed 
-particularly for describing and reasoning about regular circuits. The 
-Ruby~\cite{Ruby} language uses relations, instead of functions, to describe 
-circuits, and has a particular focus on layout. 
-
-\begin{figure}
-\centerline{\includegraphics{highordcpu.svg}}
-\caption{CPU with higher-order Function Units}
-\label{img:highordcpu}
-\vspace{-1.5em}
-\end{figure}
+% Many functional hardware description languages have been developed over the 
+% years. Early work includes such languages as $\mu$\acro{FP}~\cite{muFP}, an 
+% extension of Backus' \acro{FP} language to synchronous streams, designed 
+% particularly for describing and reasoning about regular circuits. The 
+% Ruby~\cite{Ruby} language uses relations, instead of functions, to describe 
+% circuits, and has a particular focus on layout. 
 
 \acro{HML}~\cite{HML2} is a hardware modeling language based on the strict 
 functional language \acro{ML}, and has support for polymorphic types and 
@@ -1482,12 +1477,20 @@ functions are however not supported by the \VHDL\ translator~\cite{HML3}. The
 \CLaSH\ compiler on the other hand can correctly translate all of the language 
 constructs mentioned in this paper. % to a netlist format.
 
-Like the work presented in this paper, many functional hardware description 
-languages have some sort of foundation in the functional programming language 
-Haskell. Hawk~\cite{Hawk1} uses Haskell to describe system-level executable 
-specifications used to model the behavior of superscalar microprocessors. Hawk 
-specifications can be simulated; to the best knowledge of the authors there is 
-however no support for automated circuit synthesis. 
+\begin{figure}
+\centerline{\includegraphics{highordcpu.svg}}
+\caption{CPU with higher-order Function Units}
+\label{img:highordcpu}
+\vspace{-1.5em}
+\end{figure}
+
+Like the research presented in this paper, many functional hardware 
+description languages have some sort of foundation in the functional 
+programming language Haskell. Hawk~\cite{Hawk1} uses Haskell to describe 
+system-level executable specifications used to model the behavior of 
+superscalar microprocessors. Hawk specifications can be simulated; to the best 
+knowledge of the authors there is however no support for automated circuit 
+synthesis. 
 
 The ForSyDe~\cite{ForSyDe2} system uses Haskell to specify abstract system 
 models. A designer can model systems using heterogeneous models of 
@@ -1496,35 +1499,45 @@ computation. Using so-called domain interfaces a designer can simulate
 electronic systems which have both analog as digital parts. ForSyDe has 
 several backends including simulation and automated synthesis, though 
 automated synthesis is restricted to the synchronous model of computation. 
-Unlike \CLaSH\ there is no support for the automated synthesis of descriptions 
-that contain polymorphism or higher-order functions.
+Though ForSyDe offers higher-order functions and polymorphism, ForSyDe's 
+choice elements are limited to \hs{if} and \hs{case} expressions. ForSyDe's 
+explicit conversions, where function have to be wrapped in processes and 
+process have to be wrapped in systems, combined with the explicit 
+instantiations of components also makes ForSyDe more verbose than 
+\CLaSH.
 
-Lava~\cite{Lava} is a hardware description language that focuses on the 
-structural representation of hardware. Besides support for simulation and 
-circuit synthesis, Lava descriptions can be interfaced with formal method 
-tools for formal verification. Lava descriptions are actually circuit 
-generators when viewed from a synthesis viewpoint, in that the language 
-elements of Haskell, such as choice, can be used to guide the circuit 
-generation. If a developer wants to insert a choice element inside an actual 
-circuit he will have to explicitly instantiate a multiplexer-like component. 
+Lava~\cite{Lava} is a hardware description language, embedded in Haskell, and 
+focuses on the structural representation of hardware. Like \CLaSH, Lava has 
+support for polymorphic types and higher-order functions. Besides support for 
+simulation and circuit synthesis, Lava descriptions can be interfaced with 
+formal method tools for formal verification. As discussed in the introduction, 
+taking the embedded language approach does not allow for Haskell's choice 
+elements to be captured within the circuit descriptions. In this respect 
+\CLaSH\ differs from Lava, in that all of Haskell's choice elements, such as 
+\hs{case}-expressions and pattern matching, are synthesized to choice elements 
+in the eventual circuit. Consequently, descriptions containing rich control 
+structures can be specified in a far more user-friendly way in \CLaSH\ than 
+possible within Lava. As a result, the control structures are also less 
+error-prone.
 
-In this respect \CLaSH\ differs from Lava, in that all the choice elements, 
-such as case-statements and pattern matching, are synthesized to choice 
-elements in the eventual circuit. As such, richer control structures can both 
-be specified and synthesized in \CLaSH\ compared to any of the embedded 
-languages, such as: Hawk, ForSyDe, or Lava.
+Bluespec~\cite{Bluespec} is a high-level synthesis language that features 
+guarded atomic transactions and allows for the automated derivation of control 
+structures based on these atomic transactions. Bluespec, like \CLaSH, supports 
+polymorphic typing and function-valued arguments. Bluespec's syntax and 
+language features \emph{had} their basis in Haskell. However, in order to 
+appeal to the users of the traditional \acrop{HDL}, Bluespec has adapted 
+imperative features and a syntax that resembles Verilog. As a result, Bluespec 
+is (unnecessarily) verbose when compared to \CLaSH.
 
-The merits of polymorphic typing, combined with higher-order functions, are 
-now also recognized in the `main-stream' hardware description languages, 
-exemplified by the new \VHDL-2008 standard~\cite{VHDL2008}. \VHDL-2008 support 
-for generics has been extended to types and subprograms, allowing a developer 
-to describe components with polymorphic ports and function-valued arguments. 
-Note that the types and subprograms still require an explicit generic map, 
-whereas types can be automatically inferred, and function-values can be 
-automatically propagated by the \CLaSH\ compiler. There are also no (generally 
-available) \VHDL\ synthesis tools that currently support the \VHDL-2008 
-standard, and thus the synthesis of polymorphic types and function-valued 
-arguments.
+The merits of polymorphic typing and function-valued arguments are now also 
+recognized in the traditional \acrop{HDL}, exemplified by the new \VHDL-2008 
+standard~\cite{VHDL2008}. \VHDL-2008 support for generics has been extended to 
+types and subprograms, allowing a designer to describe components with 
+polymorphic ports and function-valued arguments. Note that the types and 
+subprograms still require an explicit generic map, whereas types can be 
+automatically inferred, and function-values can be automatically propagated 
+by the \CLaSH\ compiler. There are also no (generally available) \VHDL\ 
+synthesis tools that currently support the \VHDL-2008 standard.
 
 % Wired~\cite{Wired},, T-Ruby~\cite{T-Ruby}, Hydra~\cite{Hydra}. 
 % 
