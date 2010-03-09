@@ -692,7 +692,7 @@ eventual netlist representation is also highlighted.
     \end{code}
 
     The naive netlist corresponding to this example is depicted in 
-    \Cref{img:choice}. Note that the \hs{direction} variable is only
+    \Cref{img:counter}. Note that the \hs{direction} variable is only
     compared to \hs{Up}, as an inequality immediately implies that 
     \hs{direction} is \hs{Down}.
 
@@ -730,11 +730,19 @@ eventual netlist representation is also highlighted.
     %   \end{example}
     % \end{minipage}
 
+    % \begin{figure}
+    % \vspace{1em}
+    % \centerline{\includegraphics{choice-case.svg}}
+    % \caption{Choice - sumif}
+    % \label{img:choice}
+    % \vspace{-1.5em}
+    % \end{figure}
+
     \begin{figure}
     \vspace{1em}
-    \centerline{\includegraphics{choice-case.svg}}
-    \caption{Choice - sumif}
-    \label{img:choice}
+    \centerline{\includegraphics{counter.svg}}
+    \caption{Counter netlist}
+    \label{img:counter}
     \vspace{-1.5em}
     \end{figure}
 
@@ -754,7 +762,7 @@ eventual netlist representation is also highlighted.
     \hs{true}.
     
     The version using pattern matching and guards corresponds to the same 
-    naive netlist representation (\Cref{img:choice}) as the earlier example.
+    naive netlist representation (\Cref{img:counter}) as the earlier example.
     
     \hspace{-1.7em}
     \begin{minipage}{0.93\linewidth}
@@ -1426,11 +1434,12 @@ compared to the others.
 The vector \hs{inputs} is the set of data sources, which is passed to
 each function unit as a set of possible operants. The \acro{CPU} also receives 
 a vector of address pairs, which are used by each function unit to select 
-their operand. The application of the function units to the \hs{inputs} and
-\hs{addrs} arguments seems quite repetitive and could be rewritten to use
-a combination of the \hs{map} and \hs{zipwith} functions instead.
-However, the prototype compiler does not currently support working with lists 
-of functions, so a more explicit version of the code is given instead.
+their operand. 
+% The application of the function units to the \hs{inputs} and
+% \hs{addrs} arguments seems quite repetitive and could be rewritten to use
+% a combination of the \hs{map} and \hs{zipwith} functions instead.
+% However, the prototype compiler does not currently support working with 
+% lists of functions, so a more explicit version of the code is given instead.
 
 \hspace{-1.7em}
 \begin{minipage}{0.93\linewidth}
