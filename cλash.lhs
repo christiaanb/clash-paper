@@ -606,13 +606,13 @@ eventual netlist representation is also highlighted.
     % to understand and possibly hand-optimize the resulting \VHDL\ output of 
     % the \CLaSH\ compiler.
 
-    The short example (\ref{lst:code1}) demonstrated below gives an indication 
-    of the level of conciseness that can be achieved with functional hardware 
-    description languages when compared with the more traditional hardware 
-    description languages. The example is a combinational multiply-accumulate 
-    circuit that works for \emph{any} word length (this type of polymorphism 
-    will be further elaborated in \Cref{sec:polymorhpism}). The corresponding 
-    netlist is depicted in \Cref{img:mac-comb}.
+    The short example (\ref{lst:code1}) seen below gives a demonstration of 
+    the conciseness that can be achieved with \CLaSH\ when compared with 
+    other (more traditional) \acrop{HDL}. The example is a combinational 
+    multiply-accumulate circuit that works for \emph{any} word length (this 
+    type of polymorphism will be further elaborated in 
+    \Cref{sec:polymorhpism}). The corresponding netlist is depicted in 
+    \Cref{img:mac-comb}.
     
     \hspace{-1.7em}
     \begin{minipage}{0.93\linewidth}
@@ -651,8 +651,10 @@ eventual netlist representation is also highlighted.
       \label{lst:code2}
       \end{example}
     \end{minipage}
+    \vspace{-1.5em}
     
     \begin{figure}
+    \vspace{1em}
     \centerline{\includegraphics{mac-nocurry.svg}}
     \caption{Combinational Multiply-Accumulate (composite output)}
     \label{img:mac-comb-composite}
@@ -713,7 +715,7 @@ eventual netlist representation is also highlighted.
       \label{lst:code3}
       \end{example}
     \end{minipage}
-
+    
     % \hspace{-1.7em}
     % \begin{minipage}{0.93\linewidth}
     % \begin{code}
@@ -739,11 +741,10 @@ eventual netlist representation is also highlighted.
     % \end{figure}
 
     \begin{figure}
-    \vspace{1em}
     \centerline{\includegraphics{counter.svg}}
     \caption{Counter netlist}
     \label{img:counter}
-    \vspace{-1.5em}
+    \vspace{-2em}
     \end{figure}
 
     A user-friendly and also very powerful form of choice that is not found in 
@@ -879,7 +880,7 @@ eventual netlist representation is also highlighted.
         bound. This means that its range is not limited to powers of two, but 
         can be any number. An \hs{Index} only has an upper bound, its lower 
         bound is implicitly zero. If a value of this type exceeds either 
-        bounds, an error will be thrown at simulation-time. 
+        bounds, an error will be thrown at \emph{simulation}-time. 
 
         % \comment{TODO: Perhaps remove this example?} To define an index for 
         % the 8 element vector above, we would do:
@@ -919,11 +920,11 @@ eventual netlist representation is also highlighted.
     \begin{xlist}
       \item[\bf{Single constructor}]
         Algebraic datatypes with a single constructor with one or more
-        fields, are essentially a way to pack a few values together in a
-        record-like structure. Haskell's built-in tuple types are also defined 
-        as single constructor algebraic types (but with a bit of
-        syntactic sugar). An example of a single constructor type with 
-        multiple fields is the following pair of integers:
+        fields allow values to be packed together in a record-like structure. 
+        Haskell's built-in tuple types are also defined as single constructor 
+        algebraic types (using a bit of syntactic sugar). An example of a 
+        single constructor type with multiple fields is the following pair of 
+        integers:
         \begin{code}
         data IntPair = IntPair Int Int
         \end{code}
@@ -931,12 +932,11 @@ eventual netlist representation is also highlighted.
         % for every field in the constructor.
       \item[\bf{No fields}]
         Algebraic datatypes with multiple constructors, but without any
-        fields are essentially a way to get an enumeration-like type
-        containing alternatives. Note that Haskell's \hs{Bool} type is also 
-        defined as an enumeration type, but that there is a fixed translation 
-        for that type within the \CLaSH\ compiler. An example of such an 
-        enumeration type is the type that represents the colors in a traffic 
-        light:
+        fields are essentially enumeration types. Note that Haskell's 
+        \hs{Bool} type is also defined as an enumeration type, but that there 
+        is a fixed translation for that type within the \CLaSH\ compiler. An 
+        example of an enumeration type definition is the definition for a 
+        traffic light:
         \begin{code}
         data TrafficLight = Red | Orange | Green
         \end{code}
@@ -947,7 +947,8 @@ eventual netlist representation is also highlighted.
       \item[\bf{Multiple constructors with fields}]
         Algebraic datatypes with multiple constructors, where at least
         one of these constructors has one or more fields are currently not 
-        supported.
+        supported. Additional research is required to allow for the overlap of
+        the fields belonging to the different constructors.
     \end{xlist}
 
   \subsection{Polymorphism}\label{sec:polymorhpism}
@@ -959,38 +960,38 @@ eventual netlist representation is also highlighted.
     any number of new types.
 
     As an example of a parametric polymorphic function, consider the type of 
-    the following \hs{append} function, which appends an element to a
-    vector:\footnote{The \hs{::} operator is used to annotate a function
+    the following \hs{first} function, which returns the first element of a 
+    tuple:\footnote{The \hs{::} operator is used to annotate a function
     with its type.}
     
     \begin{code}
-    append :: [a|n] -> a -> [a|n+1]
+    first :: (a,b) -> a
     \end{code}
 
-    This type is parameterized by \hs{a}, which can contain any type at
-    all. This means that \hs{append} can append an element to a vector,
-    regardless of the type of the elements in the list (as long as the type of 
-    the value to be added is of the same type as the values in the vector). 
-    This kind of polymorphism is extremely useful in hardware designs to make 
-    operations work on a vector without knowing exactly what elements are 
-    inside, routing signals without knowing exactly what kinds of signals 
-    these are, or working with a vector without knowing exactly how long it 
-    is. Polymorphism also plays an important role in most higher order 
-    functions, as we will see in the next section.
+    This type is parameterized in both \hs{a} and \hs{b}, which can both 
+    represent any type at all (as long as that type is supported by the 
+    \CLaSH\ compiler). This means that \hs{first} works for any tuple, 
+    regardless of what elements it contains. This kind of polymorphism is 
+    extremely useful in hardware designs, for example when routing signals 
+    without knowing their exact type, or specifying vector operations that 
+    work on vectors of any length and element type. Polymorphism also plays an 
+    important role in most higher order functions, as will be shown in the 
+    next section.
 
     Another type of polymorphism is \emph{ad-hoc 
     polymorphism}~\cite{polymorphism}, which refers to polymorphic 
     functions which can be applied to arguments of different types, but which 
     behave differently depending on the type of the argument to which they are 
     applied. In Haskell, ad-hoc polymorphism is achieved through the use of 
-    type classes, where a class definition provides the general interface of a 
-    function, and class instances define the functionality for the specific 
-    types. An example of such a type class is the \hs{Num} class, which 
-    contains all of Haskell's numerical operations. A designer can make use 
-    of this ad-hoc polymorphism by adding a constraint to a parametrically 
-    polymorphic type variable. Such a constraint indicates that the type 
-    variable can only be instantiated to a type whose members supports the 
-    overloaded functions associated with the type class. 
+    \emph{type classes}, where a class definition provides the general 
+    interface of a function, and class \emph{instances} define the 
+    functionality for the specific types. An example of such a type class is 
+    the \hs{Num} class, which contains all of Haskell's numerical operations. 
+    A designer can make use of this ad-hoc polymorphism by adding a 
+    \emph{constraint} to a parametrically polymorphic type variable. Such a 
+    constraint indicates that the type variable can only be instantiated to a 
+    type whose members supports the overloaded functions associated with the 
+    type class. 
     
     An example of a type signature that includes such a constraint if the 
     signature of the \hs{sum} function, which sums the values in a vector:
@@ -1001,7 +1002,18 @@ eventual netlist representation is also highlighted.
     This type is again parameterized by \hs{a}, but it can only contain
     types that are \emph{instances} of the \emph{type class} \hs{Num}, so that  
     the compiler knows that the addition (+) operator is defined for that 
-    type. 
+    type.
+    
+    A place where class constraints also play a role is in the size and range 
+    parameters of the \hs{Vector} and numeric types. The reason being that 
+    these parameters have to be limited to types that can represent 
+    \emph{natural} numbers. This constraint will also be reflected in any of 
+    the functions that work these types. The complete type of for example the 
+    \hs{Vector} type is:
+    \begin{code}
+    Natural n => Vector n a
+    \end{code}    
+    
     % \CLaSH's built-in numerical types are also instances of the \hs{Num} 
     % class. 
     % so we can use the addition operator (and thus the \hs{sum}
@@ -1056,11 +1068,11 @@ eventual netlist representation is also highlighted.
     type as the first argument of the function passed to \hs{map}. The element 
     type of the resulting vector is equal to the return type of the function 
     passed, which need not necessarily be the same as the element type of the 
-    input vector. All of these characteristics  can readily be inferred from 
-    the type signature belonging to \hs{map}:
+    input vector. All of these characteristics can be inferred from the type 
+    signature belonging to \hs{map}:
 
     \begin{code}
-    map :: (a -> b) -> [a|n] -> [b|n]
+    map :: Natural n => (a -> b) -> [a|n] -> [b|n]
     \end{code}
 
     So far, only functions have been used as higher-order values. In
@@ -1111,13 +1123,12 @@ eventual netlist representation is also highlighted.
     % \comment{TODO: Describe ALU example (no code)}
 
   \subsection{State}
-    A very important concept in hardware is the concept of state. In a 
-    stateful design, the outputs depend on the history of the inputs, or the 
-    state. State is usually stored in registers, which retain their value 
+    In a stateful design, the outputs depend on the history of the inputs, or 
+    the state. State is usually stored in registers, which retain their value 
     during a clock cycle. As we want to describe more than simple 
     combinational designs, \CLaSH\ needs an abstraction mechanism for state.
 
-    An important property in Haskell, and in most other functional languages, 
+    An important property in Haskell, and in many other functional languages, 
     is \emph{purity}. A function is said to be \emph{pure} if it satisfies two
     conditions:
     \begin{inparaenum}
@@ -1204,9 +1215,10 @@ eventual netlist representation is also highlighted.
     As the \hs{run} function, the hardware description, and the test 
     inputs are also valid Haskell, the complete simulation can be compiled to 
     an executable binary by an optimizing Haskell compiler, or executed in an 
-    Haskell interpreter. Both simulation paths are much faster than first 
-    translating the description to \VHDL\ and then running a \VHDL\ 
-    simulation.
+    Haskell interpreter. Both simulation paths require less effort from a 
+    circuit designer than first translating the description to \VHDL\ and then 
+    running a \VHDL\ simulation; it is also very likely that both simulation 
+    paths are much faster.
     
 \section{The \CLaSH\ compiler}
 An important aspect in this research is the creation of the prototype 
@@ -1230,7 +1242,7 @@ front-end of the prototype compiler pipeline, as seen in
 \end{figure}
 
 The output of the \GHC\ front-end consists of the translation of the original 
-Haskell description in \emph{Core}~\cite{Sulzmann2007}, which is a smaller, 
+Haskell description to \emph{Core}~\cite{Sulzmann2007}, which is a smaller, 
 typed, functional language. This \emph{Core} language is relatively easy to 
 process compared to the larger Haskell language. A description in \emph{Core} 
 can still contain elements which have no direct translation to hardware, such 
@@ -1249,8 +1261,10 @@ first-order functions, and specializing polymorphic types to concrete types.
 The final step in the compiler pipeline is the translation to a \VHDL\ 
 \emph{netlist}, which is a straightforward process due to resemblance of a 
 normalized description and a set of concurrent signal assignments. We call the 
-end-product of the \CLaSH\ compiler a \VHDL\ \emph{netlist} as the resulting 
-\VHDL\ resembles an actual netlist description and not idiomatic \VHDL.
+end-product of the \CLaSH\ compiler a \VHDL\ \emph{netlist} as the result
+resembles an actual netlist description, and the fact that it is \VHDL\ is 
+only an implementation detail; the output could for example also be in 
+Verilog.
 
 \section{Use cases}
 \label{sec:usecases}
@@ -1279,7 +1293,7 @@ using higher-order functions:
 \hspace{-1.7em}
 \begin{minipage}{0.93\linewidth}
 \begin{code}
-as *+* bs = foldl1 (+) (zipWith (*) as bs)
+as *+* bs = fold (+) (zipWith (*) as bs)
 \end{code}
 \end{minipage}
 \begin{minipage}{0.07\linewidth}
@@ -1293,13 +1307,13 @@ earlier: It takes a function, two vectors, and then applies the function to
 each of the elements in the two vectors pairwise (\emph{e.g.}, \hs{zipWith (*) 
 [1, 2] [3, 4]} becomes \hs{[1 * 3, 2 * 4]}).
 
-The \hs{foldl1} function takes a binary function, a single vector, and applies 
+The \hs{fold} function takes a binary function, a single vector, and applies 
 the function to the first two elements of the vector. It then applies the
 function to the result of the first application and the next element in the 
 vector. This continues until the end of the vector is reached. The result of 
-the \hs{foldl1} function is the result of the last application. It is obvious 
+the \hs{fold} function is the result of the last application. It is obvious 
 that the \hs{zipWith (*)} function is pairwise multiplication and that the 
-\hs{foldl1 (+)} function is summation.
+\hs{fold (+)} function is summation.
 % Returning to the actual \acro{FIR} filter, we will slightly change the 
 % equation describing it, so as to make the translation to code more obvious and 
 % concise. What we do is change the definition of the vector of input samples 
@@ -1319,7 +1333,7 @@ The complete definition of the \acro{FIR} filter in code then becomes:
 \begin{minipage}{0.93\linewidth}
 \begin{code}
 fir (State (xs,hs)) x = 
-  (State (x >> xs,hs), (x +> xs) *+* hs)
+  (State (shiftInto x xs,hs), (x +> xs) *+* hs)
 \end{code}
 \end{minipage}
 \begin{minipage}{0.07\linewidth}
@@ -1332,14 +1346,14 @@ Where the vector \hs{xs} contains the previous input samples, the vector
 \hs{hs} contains the \acro{FIR} coefficients, and \hs{x} is the current input 
 sample. The concatenate operator (\hs{+>}) creates a new vector by placing the 
 current sample (\hs{x}) in front of the previous samples vector (\hs{xs}). The 
-code for the shift (\hs{>>}) operator, that adds the new input sample (\hs{x}) 
+code for the \hs{shiftInto} function, that adds the new input sample (\hs{x}) 
 to the list of previous input samples (\hs{xs}) and removes the oldest sample, 
 is shown below:
 
 \hspace{-1.7em}
 \begin{minipage}{0.93\linewidth}
 \begin{code}
-x >> xs = x +> init xs  
+shiftInto x xs = x +> init xs  
 \end{code}
 \end{minipage}
 \begin{minipage}{0.07\linewidth}
@@ -1482,13 +1496,12 @@ over existing work.
 
 \acro{HML}~\cite{HML2} is a hardware modeling language based on the strict 
 functional language \acro{ML}, and has support for polymorphic types and 
-higher-order functions. Published work suggests that there is no direct 
-simulation support for \acro{HML}, but that a description in \acro{HML} has to 
-be translated to \VHDL\ and that the translated description can then be 
-simulated in a \VHDL\ simulator. Certain aspects of HML, such as higher-order
-functions are however not supported by the \VHDL\ translator~\cite{HML3}. The 
-\CLaSH\ compiler on the other hand can correctly translate all of the language 
-constructs mentioned in this paper. % to a netlist format.
+higher-order functions. There is no direct simulation support for \acro{HML}, 
+so a description in \acro{HML} has to be translated to \VHDL\ and that the 
+translated description can then be simulated in a \VHDL\ simulator. Certain 
+aspects of HML, such as higher-order functions are however not supported by 
+the \VHDL\ translator~\cite{HML3}. The \CLaSH\ compiler on the other hand can 
+correctly translate all of the language constructs mentioned in this paper.
 
 \begin{figure}
 \centerline{\includegraphics{highordcpu.svg}}
@@ -1499,11 +1512,11 @@ constructs mentioned in this paper. % to a netlist format.
 
 Like the research presented in this paper, many functional hardware 
 description languages have some sort of foundation in the functional 
-programming language Haskell. Hawk~\cite{Hawk1} uses Haskell to describe 
-system-level executable specifications used to model the behavior of 
-superscalar microprocessors. Hawk specifications can be simulated; to the best 
-knowledge of the authors there is however no support for automated circuit 
-synthesis. 
+programming language Haskell. Hawk~\cite{Hawk1} is a hardware modeling 
+language embedded in Haskell and has sequential environments that make it 
+easier to specify stateful computation. Hawk specifications can be simulated; 
+to the best knowledge of the authors there is however no support for automated 
+circuit synthesis. 
 
 The ForSyDe~\cite{ForSyDe2} system uses Haskell to specify abstract system 
 models. A designer can model systems using heterogeneous models of 
@@ -1660,10 +1673,10 @@ languages do not offer.
 \section{Future Work}
 The choice of describing state explicitly as extra arguments and results can 
 be seen as a mixed blessing. Even though the description that use state are 
-usually very clear, one finds that dealing with unpacking, passing, receiving 
-and repacking can become tedious and even error-prone, especially in the case 
-of sub-states. Removing this boilerplate, or finding a more suitable 
-abstraction mechanism would make \CLaSH\ easier to use.
+usually very clear, one finds that distributing and collecting substate can 
+become tedious and even error-prone. Removing the required boilerplate for 
+distribution and collection, or finding a more suitable abstraction mechanism 
+for state would make \CLaSH\ easier to use.
 
 The transformations in normalization phase of the prototype compiler were 
 developed in an ad-hoc manner, which makes the existence of many desirable 
