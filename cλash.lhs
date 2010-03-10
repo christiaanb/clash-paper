@@ -1456,7 +1456,7 @@ cpu (State s) input addrs opc = (State s', out)
               , fu mul            inputs (addrs!3)
               ]
     inputs    =   0 +> (1 +> (input +> s))
-    out       =   head s'
+    out       =   last s
 \end{code}
 \end{minipage}
 \begin{minipage}{0.07\linewidth}
