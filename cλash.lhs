@@ -319,7 +319,7 @@
 
 % *** PDF, URL AND HYPERLINK PACKAGES ***
 %
-%\usepackage{url}
+\usepackage{url}
 % url.sty was written by Donald Arseneau. It provides better support for
 % handling and breaking URLs. url.sty is already installed on most LaTeX
 % systems. The latest version can be obtained at:
@@ -414,7 +414,7 @@
 Department of EEMCS, University of Twente\\
 P.O. Box 217, 7500 AE, Enschede, The Netherlands\\
 c.p.r.baaij@@utwente.nl, matthijs@@stdin.nl, j.kuper@@utwente.nl}
-% \thanks{Supported through the FP7 project: S(o)OS (248465)}
+\thanks{Supported through the FP7 project: S(o)OS (248465)}
 }
 % \and
 % \IEEEauthorblockN{Homer Simpson}
@@ -504,23 +504,22 @@ analysis.
 \IEEEpeerreviewmaketitle
 
 \section{Introduction}
-Hardware description languages (\acrop{HDL}) have allowed the productivity of 
-hardware engineers to keep pace with the development of chip technology. 
-Traditional \acrop{HDL}, like \VHDL~\cite{VHDL2008} and 
-Verilog~\cite{Verilog}, allowed an engineer to describe circuits using a 
-`programming' language. These standard languages are very good at describing 
-detailed hardware properties such as timing behavior, but are generally 
-cumbersome in expressing higher-level abstractions. In an attempt to raise the 
-abstraction level of the descriptions, a great number of approaches based on 
-functional languages has been proposed \cite{Cardelli1981,muFP,DAISY,
-T-Ruby,HML2,Hydra,Hawk1,Lava,Wired,ForSyDe1,reFLect}. The idea of using 
-functional languages for hardware descriptions started in the early 1980s 
-\cite{Cardelli1981,muFP,DAISY}, a time which also saw the birth of the 
-currently popular \acrop{HDL}, such as \VHDL. Functional 
-languages are especially well suited to describe hardware because 
-combinational circuits can be directly modeled as mathematical functions and
-functional languages are very good at describing and composing these
-functions.
+Hardware description languages (\acrop{HDL}) have not allowed the productivity 
+of hardware engineers to keep pace with the development of chip technology. 
+While traditional \acrop{HDL}, like \VHDL~\cite{VHDL2008} and 
+Verilog~\cite{Verilog}, are very good at describing detailed hardware 
+properties such as timing behavior, they are generally cumbersome in 
+expressing the higher-level abstractions needed for today's large and complex 
+circuit designs. In an attempt to raise the abstraction level of the 
+descriptions, a great number of approaches based on functional languages has 
+been proposed \cite{Cardelli1981,muFP,DAISY,T-Ruby,HML2,Hydra,Hawk1,Lava,
+Wired,ForSyDe1,reFLect}. The idea of using functional languages for hardware 
+descriptions started in the early 1980s \cite{Cardelli1981,muFP,DAISY}, a 
+time which also saw the birth of the currently popular \acrop{HDL}, such as 
+\VHDL. Functional languages are especially well suited to describe hardware 
+because combinational circuits can be directly modeled as mathematical 
+functions and functional languages are very good at describing and composing 
+these functions.
 
 In an attempt to ease the prototyping process of the language, such as 
 creating all the required tooling, like parsers and type-checkers, many 
@@ -567,16 +566,10 @@ prototype translator, which has the same name as the language:
 behaving synthesizable \VHDL\ code, ready to be converted to an actual netlist 
 format by an (optimizing) \VHDL\ synthesis tool.
 
-Besides simple circuits such as variants of both the \acro{FIR} filter and 
-the higher-order \acro{CPU} shown in \Cref{sec:usecases}, the \CLaSH\ compiler 
-has also been able to translate non-trivial functional descriptions such as a 
-streaming reduction circuit~\cite{reductioncircuit} for floating point 
-numbers.
-
 To the best knowledge of the authors, \CLaSH\ is the only (functional) 
 \acro{HDL} that allows circuit specification to be written in a very concise 
 way and at the same time support such advanced features as polymorphic typing, 
-higher order functions and pattern matching.
+user-defined higher-order functions and pattern matching.
 
 \section{Hardware description in Haskell}
 The following section describes the basic language elements of \CLaSH\ and the 
@@ -606,7 +599,7 @@ eventual netlist representation is also highlighted.
     % to understand and possibly hand-optimize the resulting \VHDL\ output of 
     % the \CLaSH\ compiler.
 
-    The short example (\ref{lst:code1}) seen below gives a demonstration of 
+    The short example (\ref{code:mac}) seen below gives a demonstration of 
     the conciseness that can be achieved with \CLaSH\ when compared with 
     other (more traditional) \acrop{HDL}. The example is a combinational 
     multiply-accumulate circuit that works for \emph{any} word length (this 
@@ -622,7 +615,7 @@ eventual netlist representation is also highlighted.
     \end{minipage}
     \begin{minipage}{0.07\linewidth}
       \begin{example}
-      \label{lst:code1}
+      \label{code:mac}
       \end{example}
     \end{minipage}
     
@@ -634,9 +627,10 @@ eventual netlist representation is also highlighted.
     \end{figure}
     
     The use of a composite result value is demonstrated in the next example 
-    (\ref{lst:code2}), where the multiply-accumulate circuit not only returns 
-    the accumulation result, but also the intermediate multiplication result. 
-    Its corresponding netlist can be seen in \Cref{img:mac-comb-composite}.
+    (\ref{code:mac-composite}), where the multiply-accumulate circuit not only 
+    returns the accumulation result, but also the intermediate multiplication 
+    result. Its corresponding netlist can be seen in 
+    \Cref{img:mac-comb-composite}.
     
     \hspace{-1.7em}
     \begin{minipage}{0.93\linewidth}
@@ -648,7 +642,7 @@ eventual netlist representation is also highlighted.
     \end{minipage}
     \begin{minipage}{0.07\linewidth}
       \begin{example}
-      \label{lst:code2}
+      \label{code:mac-composite}
       \end{example}
     \end{minipage}
     \vspace{-1.5em}
@@ -682,7 +676,7 @@ eventual netlist representation is also highlighted.
     % sum two values when they are equal or non-equal (depending on the given 
     % predicate, the \hs{pred} variable) and return 0 otherwise. 
     
-    An code example (\ref{lst:code3}) that uses a \hs{case} expression and 
+    An code example (\ref{code:counter1}) that uses a \hs{case} expression and 
     \hs{if-then-else} expressions is shown below. The function counts up or 
     down depending on the \hs{direction} variable, and has a \hs{wrap} 
     variable that determines both the upper bound and wrap-around point of the 
@@ -712,7 +706,7 @@ eventual netlist representation is also highlighted.
     \end{minipage}
     \begin{minipage}{0.07\linewidth}
       \begin{example}
-      \label{lst:code3}
+      \label{code:counter1}
       \end{example}
     \end{minipage}
     
@@ -756,11 +750,11 @@ eventual netlist representation is also highlighted.
     clause if the guard evaluates to false. Like \hs{if-then-else} 
     expressions, pattern matching and guards have a (straightforward) 
     translation to \hs{case} expressions and can as such be mapped to 
-    multiplexers. A second version (\ref{lst:code5}) of the earlier example, 
-    now using both pattern matching and guards, can be seen below. The guard 
-    is the expression that follows the vertical bar (\hs{|}) and precedes the 
-    assignment operator (\hs{=}). The \hs{otherwise} guards always evaluate to 
-    \hs{true}.
+    multiplexers. A second version (\ref{code:counter2}) of the earlier 
+    example, now using both pattern matching and guards, can be seen below. 
+    The guard is the expression that follows the vertical bar (\hs{|}) and 
+    precedes the assignment operator (\hs{=}). The \hs{otherwise} guards 
+    always evaluate to \hs{true}.
     
     The version using pattern matching and guards corresponds to the same 
     naive netlist representation (\Cref{img:counter}) as the earlier example.
@@ -776,7 +770,7 @@ eventual netlist representation is also highlighted.
     \end{minipage}
     \begin{minipage}{0.07\linewidth}
       \begin{example}
-      \label{lst:code5}
+      \label{code:counter2}
       \end{example}
     \end{minipage}
 
@@ -916,7 +910,7 @@ eventual netlist representation is also highlighted.
     Type synonyms do not need any particular translation, as a synonym  will 
     just use the same representation as the original type. 
     
-    For algebraic types, we can make the following distinctions:
+    Algebraic datatypes can be categorized as follows:
     \begin{xlist}
       \item[\bf{Single constructor}]
         Algebraic datatypes with a single constructor with one or more
@@ -1007,9 +1001,8 @@ eventual netlist representation is also highlighted.
     A place where class constraints also play a role is in the size and range 
     parameters of the \hs{Vector} and numeric types. The reason being that 
     these parameters have to be limited to types that can represent 
-    \emph{natural} numbers. This constraint will also be reflected in any of 
-    the functions that work these types. The complete type of for example the 
-    \hs{Vector} type is:
+    \emph{natural} numbers. The complete type of for example the \hs{Vector} 
+    type is:
     \begin{code}
     Natural n => Vector n a
     \end{code}    
@@ -1021,7 +1014,7 @@ eventual netlist representation is also highlighted.
 
     \CLaSH\ supports both parametric polymorphism and ad-hoc polymorphism. Any 
     function defined can have any number of unconstrained type parameters. A
-    developer can also specify his own type classes and corresponding 
+    circuit designer can also specify his own type classes and corresponding 
     instances. The \CLaSH\ compiler will infer the type of every polymorphic 
     argument depending on how the function is applied. There is however one 
     constraint: the top level function that is being translated can not have 
@@ -1050,7 +1043,7 @@ eventual netlist representation is also highlighted.
     \end{minipage}
     \begin{minipage}{0.07\linewidth}
       \begin{example}
-      \label{lst:code6}
+      \label{code:negatevector}
       \end{example}
     \end{minipage}
 
@@ -1072,7 +1065,7 @@ eventual netlist representation is also highlighted.
     signature belonging to \hs{map}:
 
     \begin{code}
-    map :: Natural n => (a -> b) -> [a|n] -> [b|n]
+    map :: (a -> b) -> [a|n] -> [b|n]
     \end{code}
 
     So far, only functions have been used as higher-order values. In
@@ -1091,7 +1084,7 @@ eventual netlist representation is also highlighted.
     \end{minipage}
     \begin{minipage}{0.07\linewidth}
       \begin{example}
-      \label{lst:code7}
+      \label{code:partialapplication}
       \end{example}
     \end{minipage}
 
@@ -1109,7 +1102,7 @@ eventual netlist representation is also highlighted.
     \end{minipage}
     \begin{minipage}{0.07\linewidth}
       \begin{example}
-      \label{lst:code8}
+      \label{code:lambdaexpression}
       \end{example}
     \end{minipage}
 
@@ -1120,13 +1113,37 @@ eventual netlist representation is also highlighted.
     function: if a function-typed argument is not applied with an actual 
     function, no hardware can be generated.    
 
-    % \comment{TODO: Describe ALU example (no code)}
+    An example of a common circuit where higher-order functions and partial 
+    application lead to a very concise and natural description is a crossbar.
+    The code (\ref{code:crossbar}) for this example can be seen below:
+    
+    \hspace{-1.7em}
+    \begin{minipage}{0.93\linewidth}
+    \begin{code}
+    crossbar inputs selects = map (mux inputs) selects
+      where
+        mux inp x = (inp ! x)
+    \end{code}
+    \end{minipage}
+    \begin{minipage}{0.07\linewidth}
+      \begin{example}
+      \label{code:crossbar}
+      \end{example}
+    \end{minipage}
+
+    The crossbar is polymorphic in the width of the input (defined by the 
+    length of \hs{inputs}), the width of the output (defined by the length of
+    \hs{selects}), and the signal type (defined by the element type of 
+    \hs{inputs}). The type-checker can also automatically infer that 
+    \hs{selects} is a vector of \hs{Index} values due to the use of the vector
+    indexing operator (\hs{!}).
 
   \subsection{State}
     In a stateful design, the outputs depend on the history of the inputs, or 
     the state. State is usually stored in registers, which retain their value 
-    during a clock cycle. As we want to describe more than simple 
-    combinational designs, \CLaSH\ needs an abstraction mechanism for state.
+    during a clock cycle. As \CLaSH\ has to be able to describe more than 
+    simple combinational designs, there is a need for an abstraction mechanism 
+    for state.
 
     An important property in Haskell, and in many other functional languages, 
     is \emph{purity}. A function is said to be \emph{pure} if it satisfies two
@@ -1144,7 +1161,7 @@ eventual netlist representation is also highlighted.
     however, it can no longer be simply described by a pure function. 
     % Simply removing the purity property is not a valid option, as the 
     % language would then lose many of it mathematical properties. 
-    In \CLaSH\ we deal with the concept of state in pure functions by making 
+    In \CLaSH\ deals with the concept of state in pure functions by making 
     the current state an additional argument of the function, and the 
     updated state part of result. In this sense the descriptions made in 
     \CLaSH\ are the combinational parts of a mealy machine.
@@ -1163,27 +1180,20 @@ eventual netlist representation is also highlighted.
     \end{minipage}
     \begin{minipage}{0.07\linewidth}
       \begin{example}
-      \label{lst:code9}
+      \label{code:macstate}
       \end{example}
     \end{minipage}
     
-    \begin{figure}
-    \centerline{\includegraphics{mac-state.svg}}
-    \caption{Stateful Multiply-Accumulate}
-    \label{img:mac-state}
-    \vspace{-1.5em}
-    \end{figure}
-    
     Note that the \hs{macS} function returns both the new state and the value
-    of the output port. The \hs{State} keyword indicates which arguments are 
+    of the output port. The \hs{State} wrapper indicates which arguments are 
     part of the current state, and what part of the output is part of the 
     updated state. This aspect will also be reflected in the type signature of 
     the function. Abstracting the state of a circuit in this way makes it very 
     explicit: which variables are part of the state is completely determined 
     by the type signature. This approach to state is well suited to be used in 
     combination with the existing code and language features, such as all the 
-    choice elements, as state values are just normal values. We can simulate 
-    stateful descriptions using the recursive \hs{run} function:
+    choice elements, as state values are just normal values. Stateful   
+    descriptions are simulated using the recursive \hs{run} function:
     
     \hspace{-1.7em}
     \begin{minipage}{0.93\linewidth}
@@ -1195,7 +1205,7 @@ eventual netlist representation is also highlighted.
     \end{minipage}
     \begin{minipage}{0.07\linewidth}
       \begin{example}
-      \label{lst:code10}
+      \label{code:run}
       \end{example}
     \end{minipage}
     
@@ -1211,6 +1221,13 @@ eventual netlist representation is also highlighted.
     order of the input, output, and state in the \hs{run} function corresponds 
     with the order of the input, output and state of the \hs{macS} function 
     described earlier.
+
+    \begin{figure}
+    \centerline{\includegraphics{mac-state.svg}}
+    \caption{Stateful Multiply-Accumulate}
+    \label{img:mac-state}
+    \vspace{-1.5em}
+    \end{figure}
     
     As the \hs{run} function, the hardware description, and the test 
     inputs are also valid Haskell, the complete simulation can be compiled to 
@@ -1235,6 +1252,7 @@ front-end of the prototype compiler pipeline, as seen in
 \Cref{img:compilerpipeline}.
 
 \begin{figure}
+\vspace{1em}
 \centerline{\includegraphics{compilerpipeline.svg}}
 \caption{\CLaSHtiny\ compiler pipeline}
 \label{img:compilerpipeline}
@@ -1260,18 +1278,16 @@ first-order functions, and specializing polymorphic types to concrete types.
 
 The final step in the compiler pipeline is the translation to a \VHDL\ 
 \emph{netlist}, which is a straightforward process due to resemblance of a 
-normalized description and a set of concurrent signal assignments. We call the 
-end-product of the \CLaSH\ compiler a \VHDL\ \emph{netlist} as the result
-resembles an actual netlist description, and the fact that it is \VHDL\ is 
-only an implementation detail; the output could for example also be in 
+normalized description and a set of concurrent signal assignments. The 
+end-product of the \CLaSH\ compiler is called a \VHDL\ \emph{netlist} as the 
+result resembles an actual netlist description, and the fact that it is \VHDL\ 
+is only an implementation detail; the output could for example also be in 
 Verilog.
 
 \section{Use cases}
 \label{sec:usecases}
 \subsection{FIR Filter}
-As an example of a common hardware design where the use of higher-order
-functions leads to a very natural description is a \acro{FIR} filter, which is 
-basically the dot-product of two vectors:
+As an example of a common hardware design where the relation between functional languages and mathematical functions, combined with the use of higher-order functions leads to a very natural description is a \acro{FIR} filter; which is basically the dot-product of two vectors:
 
 \begin{equation}
 y_t  = \sum\nolimits_{i = 0}^{n - 1} {x_{t - i}  \cdot h_i } 
@@ -1287,8 +1303,8 @@ shown below:
 \mathbf{a}\bullet\mathbf{b} = \sum\nolimits_{i = 0}^{n - 1} {a_i \cdot b_i } 
 \end{equation}
 
-We can easily and directly implement the equation for the dot-product
-using higher-order functions:
+The equation for the dot-product is easily and directly implemented using 
+higher-order functions:
 
 \hspace{-1.7em}
 \begin{minipage}{0.93\linewidth}
@@ -1298,7 +1314,7 @@ as *+* bs = fold (+) (zipWith (*) as bs)
 \end{minipage}
 \begin{minipage}{0.07\linewidth}
   \begin{example}
-  \label{lst:code13}
+  \label{code:dotproduct}
   \end{example}
 \end{minipage}
 
@@ -1327,7 +1343,7 @@ that the \hs{zipWith (*)} function is pairwise multiplication and that the
 % \begin{equation}
 % y_t  = \sum\nolimits_{i = 0}^{n - 1} {x_i  \cdot h_i } 
 % \end{equation}
-The complete definition of the \acro{FIR} filter in code then becomes:
+The complete definition of the \acro{FIR} filter in \CLaSH\ is:
 
 \hspace{-1.7em}
 \begin{minipage}{0.93\linewidth}
@@ -1338,7 +1354,7 @@ fir (State (xs,hs)) x =
 \end{minipage}
 \begin{minipage}{0.07\linewidth}
   \begin{example}
-  \label{lst:code14}
+  \label{code:fir}
   \end{example}
 \end{minipage}
 
@@ -1358,7 +1374,7 @@ shiftInto x xs = x +> init xs
 \end{minipage}
 \begin{minipage}{0.07\linewidth}
   \begin{example}
-  \label{lst:code15}
+  \label{code:shiftinto}
   \end{example}
 \end{minipage}
 
@@ -1375,27 +1391,17 @@ the vectors of the \acro{FIR} code to a length of 4, is depicted in
 \end{figure}
 
 \subsection{Higher-order CPU}
-The following simple \acro{CPU} is an example of user-defined higher order
+The following simple \acro{CPU} is an example of user-defined higher-order
 functions and pattern matching. The \acro{CPU} consists of four function 
 units, of which three have a fixed function and one can perform certain less
-common operations.
-
-The \acro{CPU} contains a number of data sources, represented by the 
-horizontal wires in \Cref{img:highordcpu}. These data sources offer the 
-previous outputs of each function units, along with the single data input the 
-\acro{CPU} has and two fixed initialization values.
-
+common operations. The \acro{CPU} contains a number of data sources, represented by the horizontal wires in \Cref{img:highordcpu}. These data sources offer the previous output of every function unit, along with the single data input of the \acro{CPU} and two fixed initialization values.
 Each of the function units has both its operands connected to all data
 sources, and can be programmed to select any data source for either
 operand. In addition, the leftmost function unit has an additional
-opcode input to select the operation it performs. The output of the rightmost 
-function unit is also the output of the entire \acro{CPU}.
+opcode input to select the operation it performs. The previous output of the 
+rightmost function unit is the output of the entire \acro{CPU}.
 
-Looking at the code, the function unit (\hs{fu}) is the most simple. It 
-arranges the operand selection for the function unit. Note that it does not
-define the actual operation that takes place inside the function unit,
-but simply accepts the (higher-order) argument \hs{op} which is a function
-of two arguments that defines the operation.
+The code of the function unit (\ref{code:functionunit}), which arranges the operand selection for the function unit, is shown below. Note that the actual operation that takes place inside the function unit is supplied as the (higher-order) argument \hs{op}, which is a function that takes two arguments.
 
 \hspace{-1.7em}
 \begin{minipage}{0.93\linewidth}
@@ -1409,15 +1415,11 @@ fu op inputs (addr1, addr2) = regIn
 \end{minipage}
 \begin{minipage}{0.07\linewidth}
   \begin{example}
-  \label{lst:code16}
+  \label{code:functionunit}
   \end{example}
 \end{minipage}
 
-The \hs{multiop} function defines the operation that takes place in the
-leftmost function unit. It is essentially a simple three operation \acro{ALU}
-that makes good use of pattern matching and guards in its description.
-The \hs{shift} function used here shifts its first operand by the number
-of bits indicated in the second operand, the \hs{xor} function produces
+The \hs{multiop} function (\ref{code:multiop}) defines the operation that takes place in the leftmost function unit. It is essentially a simple three operation \acro{ALU} that makes good use of pattern matching and guards in its description. The \hs{shift} function used here shifts its first operand by the number of bits indicated in the second operand, the \hs{xor} function produces
 the bitwise xor of its operands.
 
 \hspace{-1.7em}
@@ -1434,15 +1436,15 @@ multiop Equal   a b   | a == b      = 1
 \end{minipage}
 \begin{minipage}{0.07\linewidth}
   \begin{example}
-  \label{lst:code17}
+  \label{code:multiop}
   \end{example}
 \end{minipage}
 
-The \acro{CPU} function ties everything together. It applies the \hs{fu}
-function four times, to create a different function unit each time. The
-first application is interesting, because it does not just pass a
-function to \hs{fu}, but a partial application of \hs{multiop}. This
-shows how the first function unit effectively gets an extra input,
+The \acro{CPU} function (\ref{code:cpu}) ties everything together. It applies 
+the function unit (\hs{fu}) to several operations, to create a different 
+function unit each time. The first application is interesting, as it does not 
+just pass a function to \hs{fu}, but a partial application of \hs{multiop}. 
+This demonstrates how one function unit can effectively get extra inputs 
 compared to the others.
 
 The vector \hs{inputs} is the set of data sources, which is passed to
@@ -1475,12 +1477,12 @@ cpu (State s) input addrs opc = (State s', out)
 \end{minipage}
 \begin{minipage}{0.07\linewidth}
   \begin{example}
-  \label{lst:code18}
+  \label{code:cpu}
   \end{example}
 \end{minipage}
 
-This is still a simple example, but it could form the basis
-of an actual design, in which the same techniques can be reused.
+While this is still a simple example, it could form the basis of an actual 
+design, in which the same techniques can be reused.
 
 \section{Related work}
 This section describes the features of existing (functional) hardware 
@@ -1531,17 +1533,18 @@ explicit conversions, where function have to be wrapped in processes and
 processes have to be wrapped in systems, combined with the explicit 
 instantiations of components, also makes ForSyDe more verbose than \CLaSH.
 
-Lava~\cite{Lava} is a hardware description language, embedded in Haskell, and 
-focuses on the structural representation of hardware. Like \CLaSH, Lava has 
-support for polymorphic types and higher-order functions. Besides support for 
-simulation and circuit synthesis, Lava descriptions can be interfaced with 
-formal method tools for formal verification. As discussed in the introduction, 
-taking the embedded language approach does not allow for Haskell's choice 
-elements to be captured within the circuit descriptions. In this respect 
-\CLaSH\ differs from Lava, in that all of Haskell's choice elements, such as 
-\hs{case}-expressions and pattern matching, are synthesized to choice elements 
-in the eventual circuit. Consequently, descriptions containing rich control 
-structures can be specified in a more user-friendly way in \CLaSH\ than possible within Lava, and are hence less error-prone.
+Lava~\cite{Lava,kansaslava} is a hardware description language, embedded in 
+Haskell, and focuses on the structural representation of hardware. Like 
+\CLaSH, Lava has support for polymorphic types and higher-order functions. 
+Besides support for simulation and circuit synthesis, Lava descriptions can be 
+interfaced with formal method tools for formal verification. As discussed in 
+the introduction, taking the embedded language approach does not allow for 
+Haskell's choice elements to be captured within the circuit descriptions. In 
+this respect \CLaSH\ differs from Lava, in that all of Haskell's choice 
+elements, such as \hs{case}-expressions and pattern matching, are synthesized 
+to choice elements in the eventual circuit. Consequently, descriptions 
+containing rich control structures can be specified in a more user-friendly 
+way in \CLaSH\ than possible within Lava, and are hence less error-prone.
 
 Bluespec~\cite{Bluespec} is a high-level synthesis language that features 
 guarded atomic transactions and allows for the automated derivation of control 
@@ -1655,20 +1658,28 @@ synthesis tools that currently support the \VHDL-2008 standard.
 \section{Conclusion}
 This research demonstrates once more that functional languages are well suited 
 for hardware descriptions: function applications provide an elegant notation 
-for component instantiation. Where this research goes beyond the existing 
-(functional) hardware descriptions languages is the inclusion of various 
-choice elements, such as pattern matching, that are well suited to describe 
-the conditional assignments in control-oriented circuits. Besides being able 
-to translate these basic constructs to synthesizable \VHDL, the prototype 
-compiler can also correctly translate descriptions that contain both 
-polymorphic types and function-valued arguments.
+for component instantiation. While circuit descriptions made in \CLaSH\ are 
+very concise when compared to other (traditional) \acrop{HDL}, their intended 
+functionality remains clear. Where \CLaSH\ goes beyond the existing 
+(functional) hardware descriptions languages is the inclusion of advanced 
+choice elements, such as pattern matching and guards, that are well suited to 
+describe the conditional assignments in control-oriented circuits. Besides 
+being able to translate these basic constructs to synthesizable \VHDL, the 
+prototype compiler can also correctly translate descriptions that contain both 
+polymorphic types and user-defined higher-order functions.
 
-Where recent functional hardware description languages have mostly opted to 
-embed themselves in an existing functional language, this research features a 
-`true' compiler. As a result there is a clear distinction between compile-time 
-and run-time, which allows a myriad of choice constructs to be part of the 
-actual circuit description; a feature the embedded hardware description 
-languages do not offer.
+% Where recent functional hardware description languages have mostly opted to 
+% embed themselves in an existing functional language, this research features 
+% a `true' compiler. As a result there is a clear distinction between 
+% compile-time and run-time, which allows a myriad of choice constructs to be 
+% part of the actual circuit description; a feature the embedded hardware 
+% description languages do not offer.
+
+Besides simple circuits such as variants of both the \acro{FIR} filter and 
+the higher-order \acro{CPU} shown in \Cref{sec:usecases}, the \CLaSH\ compiler 
+has also been able to translate non-trivial functional descriptions such as a 
+streaming reduction circuit~\cite{reductioncircuit} for floating point 
+numbers.
 
 \section{Future Work}
 The choice of describing state explicitly as extra arguments and results can 
@@ -1678,14 +1689,14 @@ become tedious and even error-prone. Removing the required boilerplate for
 distribution and collection, or finding a more suitable abstraction mechanism 
 for state would make \CLaSH\ easier to use.
 
-The transformations in normalization phase of the prototype compiler were 
+The transformations in normalization phase of the prototype compiler are 
 developed in an ad-hoc manner, which makes the existence of many desirable 
 properties unclear. Such properties include whether the complete set of 
 transformations will always lead to a normal form or if the normalization 
-process always terminates. Though various use cases suggests that these 
-properties usually hold, they have not been formally proven. A systematic 
-approach to defining the set of transformations allows one to proof that the 
-earlier mentioned properties do indeed exist.
+process always terminates. Though extensive use of the compiler suggests that 
+these properties usually hold, they have not been formally proven. A 
+systematic approach to defining the set of transformations allows one to proof 
+that the earlier mentioned properties do indeed exist.
 
 % conference papers do not normally have an appendix
 
