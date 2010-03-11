@@ -1287,7 +1287,7 @@ Verilog.
 \section{Use cases}
 \label{sec:usecases}
 \subsection{FIR Filter}
-As an example of a common hardware design where the relation between functional languages and mathematical functions, combined with the use of higher-order functions leads to a very natural description is a \acro{FIR} filter; which is basically the dot-product of two vectors:
+As an example of a common hardware design where the relation between functional languages and mathematical functions, combined with the use of higher-order functions leads to a very natural description is a \acro{FIR} filter:
 
 \begin{equation}
 y_t  = \sum\nolimits_{i = 0}^{n - 1} {x_{t - i}  \cdot h_i } 
@@ -1296,8 +1296,7 @@ y_t  = \sum\nolimits_{i = 0}^{n - 1} {x_{t - i}  \cdot h_i }
 A \acro{FIR} filter multiplies fixed constants ($h$) with the current 
 and a few previous input samples ($x$). Each of these multiplications
 are summed, to produce the result at time $t$. The equation of a \acro{FIR} 
-filter is indeed equivalent to the equation of the dot-product, which is 
-shown below:
+filter is equivalent to the equation of the dot-product, which is shown below:
 
 \begin{equation}
 \mathbf{a}\bullet\mathbf{b} = \sum\nolimits_{i = 0}^{n - 1} {a_i \cdot b_i } 
@@ -1394,7 +1393,13 @@ the vectors of the \acro{FIR} code to a length of 4, is depicted in
 The following simple \acro{CPU} is an example of user-defined higher-order
 functions and pattern matching. The \acro{CPU} consists of four function 
 units, of which three have a fixed function and one can perform certain less
-common operations. The \acro{CPU} contains a number of data sources, represented by the horizontal wires in \Cref{img:highordcpu}. These data sources offer the previous output of every function unit, along with the single data input of the \acro{CPU} and two fixed initialization values.
+common operations. 
+
+The \acro{CPU} contains a number of data sources, represented by the 
+horizontal wires in \Cref{img:highordcpu}. These data sources offer the 
+previous output of every function unit, along with the single data input of 
+the \acro{CPU} and two fixed initialization values.
+
 Each of the function units has both its operands connected to all data
 sources, and can be programmed to select any data source for either
 operand. In addition, the leftmost function unit has an additional
