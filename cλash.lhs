@@ -472,9 +472,8 @@ natural way than possible in a traditional hardware description language.
 
 Circuit descriptions can be translated to synthesizable VHDL using the 
 prototype \CLaSH\ compiler. As the circuit descriptions, simulation code, and 
-test input are also valid Haskell, complete simulations can be compiled as an 
-executable binary by a Haskell compiler allowing high-speed simulation and 
-analysis.
+test input are also valid Haskell, complete simulations can be done by a 
+Haskell compiler allowing high-speed simulation and analysis.
 
 % \CLaSH\ supports stateful descriptions by explicitly making the current 
 % state an argument of the function, and the updated state part of the result. 
@@ -522,7 +521,7 @@ functions and functional languages are very good at describing and composing
 these functions.
 
 In an attempt to ease the prototyping process of the language, such as 
-creating all the required tooling, like parsers and type-checkers, many 
+creating all the required tooling like parsers and type-checkers, many 
 functional \acrop{HDL} \cite{Hydra,Hawk1,Lava,Wired} are embedded as a domain 
 specific language (\acro{DSL}) within the functional language Haskell 
 \cite{Haskell}. This means that a developer is given a library of Haskell 
@@ -530,22 +529,23 @@ functions and types that together form the language primitives of the
 \acro{DSL}. The primitive functions used to describe a circuit do not actually 
 process any signals, they instead compose a large domain-specific graph 
 (which is usually hidden from the designer). This graph is then further 
-processed by an embedded circuit compiler which can perform for example 
-simulation or synthesis. As Haskell's choice elements (\hs{case}-expressions, 
-pattern-matching etc.) are evaluated at the time the domain-specific graph is 
+processed by an embedded circuit compiler which can perform e.g. simulation or 
+synthesis. As Haskell's choice elements (\hs{case}-expressions, 
+pattern-matching, etc.) are evaluated at the time the domain-specific graph is 
 being build, they are no longer visible to the embedded compiler that 
 processes the datatype. Consequently, it is impossible to capture Haskell's 
 choice elements within a circuit description when taking the embedded language 
 approach. This does not mean that circuits specified in an embedded language 
 can not contain choice, just that choice elements only exists as functions, 
-e.g. a multiplexer function, and not as language elements.
+e.g. a multiplexer function, and not as syntactic elements of the language 
+itself.
 
 The approach taken in this research is to use (a subset of) the Haskell 
 language \emph{itself} for the purpose of describing hardware. By taking this 
 approach, this research \emph{can} capture certain language constructs, like 
 all of Haskell's choice elements, within circuit descriptions. The more 
-advanced features of Haskel, such as polymorphic typing and higher-order 
-function, are also supported.
+advanced features of Haskell, such as polymorphic typing and higher-order 
+functions, are also supported.
 
 % supporting polymorphism, higher-order functions and such an extensive array 
 % of choice-elements, combined with a very concise way of specifying circuits 
@@ -556,15 +556,18 @@ function, are also supported.
 % Haskell Compiler (\GHC)~\cite{ghc}.
 
 Where descriptions in a conventional \acro{HDL} have an explicit clock for the 
-purposes state and synchronicity, the clock is implicit for the descriptions and research presented in this paper. A circuit designer describes the behavior of the hardware between clock cycles. Many functional \acrop{HDL} model signals as a stream of all values over time; state is then modeled as a delay on this stream of values. Descriptions presented in this research make the current state an additional input and the updated state a part of their output. This abstraction of state and time limits the descriptions to synchronous hardware, there is however room within the language to eventually add a different abstraction mechanism that will allow for the modeling of asynchronous systems.
+purposes state and synchronicity, the clock is implicit for the descriptions 
+and research presented in this paper. A circuit designer describes the 
+behavior of the hardware between clock cycles. Many functional \acrop{HDL} 
+model signals as a stream of all values over time; state is then modeled as a 
+delay on this stream of values. Descriptions presented in this research make 
+the current state an additional input and the updated state a part of their 
+output. This abstraction of state and time limits the descriptions to 
+synchronous hardware, there is however room within the language to eventually 
+add a different abstraction mechanism that will allow for the modeling of 
+asynchronous systems.
 
-Like the traditional \acrop{HDL}, descriptions made in a functional \acro{HDL} 
-must eventually be converted into a netlist. This research also features a 
-prototype translator, which has the same name as the language: 
-\CLaSH\footnote{\CLaSHtiny: \acrotiny{CAES} Language for Synchronous Hardware} 
-(pronounced: clash). This compiler converts the Haskell code to equivalently 
-behaving synthesizable \VHDL\ code, ready to be converted to an actual netlist 
-format by an (optimizing) \VHDL\ synthesis tool.
+Likewise as with the traditional \acrop{HDL}, descriptions made in a functional \acro{HDL} must eventually be converted into a netlist. This research also features a prototype compiler, which has the same name as the language: \CLaSH\footnote{\CLaSHtiny: \acrotiny{CAES} Language for Synchronous Hardware, where \acrotiny{CAES} is the acronyom of our chair.} (pronounced: clash). This compiler converts the Haskell code to equivalently behaving synthesizable \VHDL\ code, ready to be converted to an actual netlist format by an (optimizing) \VHDL\ synthesis tool.
 
 To the best knowledge of the authors, \CLaSH\ is the only (functional) 
 \acro{HDL} that allows circuit specification to be written in a very concise 
@@ -572,7 +575,7 @@ way and at the same time support such advanced features as polymorphic typing,
 user-defined higher-order functions and pattern matching.
 
 \section{Hardware description in Haskell}
-The following section describes the basic language elements of \CLaSH\ and the 
+This section describes the basic language elements of \CLaSH\ and the 
 extensiveness of the support of these elements within the \CLaSH\ compiler. In 
 various subsections, the relation between the language elements and their 
 eventual netlist representation is also highlighted. 
@@ -599,7 +602,7 @@ eventual netlist representation is also highlighted.
     % to understand and possibly hand-optimize the resulting \VHDL\ output of 
     % the \CLaSH\ compiler.
 
-    The short example (\ref{code:mac}) seen below gives a demonstration of 
+    The short example below (\ref{code:mac}) gives a demonstration of 
     the conciseness that can be achieved with \CLaSH\ when compared with 
     other (more traditional) \acrop{HDL}. The example is a combinational 
     multiply-accumulate circuit that works for \emph{any} word length (this 
@@ -629,8 +632,8 @@ eventual netlist representation is also highlighted.
     The use of a composite result value is demonstrated in the next example 
     (\ref{code:mac-composite}), where the multiply-accumulate circuit not only 
     returns the accumulation result, but also the intermediate multiplication 
-    result. Its corresponding netlist can be seen in 
-    \Cref{img:mac-comb-composite}.
+    result (see \Cref{img:mac-comb-composite}, where the double arrow suggests 
+    the composite output).
     
     \hspace{-1.7em}
     \begin{minipage}{0.93\linewidth}
@@ -663,7 +666,7 @@ eventual netlist representation is also highlighted.
     \hs{case} expressions). When transforming a \CLaSH\ description to a   
     netlist, a \hs{case} expression is translated to a multiplexer. The 
     control value of the \hs{case} expression is fed into a number of 
-    comparators and their combined output forms the selection port of the 
+    comparators, and their combined output forms the selection port of the 
     multiplexer. The result of each alternative in the \hs{case} expression is 
     linked to the corresponding input port of the multiplexer.
     % A \hs{case} expression can in turn simply be translated to a conditional 
@@ -676,9 +679,9 @@ eventual netlist representation is also highlighted.
     % sum two values when they are equal or non-equal (depending on the given 
     % predicate, the \hs{pred} variable) and return 0 otherwise. 
     
-    An code example (\ref{code:counter1}) that uses a \hs{case} expression and 
+    A code example (\ref{code:counter1}) that uses a \hs{case} expression and 
     \hs{if-then-else} expressions is shown below. The function counts up or 
-    down depending on the \hs{direction} variable, and has a \hs{wrap} 
+    down depending on the \hs{direction} variable, and has a \hs{bound} 
     variable that determines both the upper bound and wrap-around point of the 
     counter. The \hs{direction} variable is of the following, user-defined, 
     enumeration datatype:
@@ -690,18 +693,18 @@ eventual netlist representation is also highlighted.
     The naive netlist corresponding to this example is depicted in 
     \Cref{img:counter}. Note that the \hs{direction} variable is only
     compared to \hs{Up}, as an inequality immediately implies that 
-    \hs{direction} is \hs{Down}.
+    \hs{direction} is \hs{Down} (as derived by the compiler).
 
     \hspace{-1.7em}
     \begin{minipage}{0.93\linewidth}
     \begin{code}    
-    counter direction wrap x = case direction of
-        Up    -> if   x < wrap  then 
-                      x + 1     else 
+    counter bound direction x = case direction of
+        Up    -> if   x < bound   then 
+                      x + 1       else 
                       0
-        Down  -> if   x > 0   then 
-                      x - 1   else 
-                      wrap
+        Down  -> if   x > 0       then 
+                      x - 1       else 
+                      bound
     \end{code}
     \end{minipage}
     \begin{minipage}{0.07\linewidth}
@@ -756,16 +759,17 @@ eventual netlist representation is also highlighted.
     precedes the assignment operator (\hs{=}). The \hs{otherwise} guards 
     always evaluate to \hs{true}.
     
-    The version using pattern matching and guards corresponds to the same 
-    naive netlist representation (\Cref{img:counter}) as the earlier example.
+    The second version corresponds to the same naive netlist representation 
+    (\Cref{img:counter}) as the earlier example.
     
     \hspace{-1.7em}
     \begin{minipage}{0.93\linewidth}
     \begin{code}
-    counter Up    wrap x  | x < wrap    = x + 1
-                          | otherwise   = 0
-    counter Down  wrap x  | x > 0       = x - 1
-                          | otherwise   = wrap
+    counter bound Up    x  | x < bound  = x + 1
+                           | otherwise  = 0
+                           
+    counter bound Down  x  | x > 0      = x - 1
+                           | otherwise  = bound
     \end{code}
     \end{minipage}
     \begin{minipage}{0.07\linewidth}
@@ -782,21 +786,20 @@ eventual netlist representation is also highlighted.
 
   \subsection{Types}
     Haskell is a statically-typed language, meaning that the type of a 
-    variable or function is determined at compile-time. Not all of Haskell's 
-    typing constructs have a clear translation to hardware, this section will 
-    therefore only deal with the types that do have a clear correspondence 
-    to hardware. The translatable types are divided into two categories: 
-    \emph{built-in} types and \emph{user-defined} types. Built-in types are 
-    those types for which a fixed translation is defined within the \CLaSH\ 
-    compiler. The \CLaSH\ compiler has generic translation rules to
+    variable or function is determined at compile-time. Not all of 
+    Haskell's typing constructs have a clear translation to hardware, this 
+    section therefor only deals with the types that do have a clear 
+    correspondence to hardware. The translatable types are divided into two 
+    categories: \emph{built-in} types and \emph{user-defined} types. Built-in 
+    types are those types for which a fixed translation is defined within the 
+    \CLaSH\ compiler. The \CLaSH\ compiler has generic translation rules to
     translate the user-defined types, which are described later on.
 
     The \CLaSH\ compiler is able to infer unspecified (polymorphic) types,
     meaning that a developer does not have to annotate every function with a 
-    type signature. % (even if it is good practice to do so).
-    Given that the top-level entity of a circuit design is annotated with 
-    concrete/monomorphic types, the \CLaSH\ compiler can specialize 
-    polymorphic functions to functions with concrete types.
+    type signature. Given that the top-level entity of a circuit design is 
+    annotated with specific types, the \CLaSH\ compiler can specialize 
+    polymorphic functions to functions with specific types.
   
     % Translation of two most basic functional concepts has been
     % discussed: function application and choice. Before looking further
@@ -828,10 +831,9 @@ eventual netlist representation is also highlighted.
         % type (where a value of \hs{True} corresponds to a value of 
         % \hs{High}). 
         Supporting the Bool type is required in order to support the
-        \hs{if-then-else} expression, which requires a \hs{Bool} value for 
-        the condition.
+        \hs{if-then-else} expression.
       \item[\bf{Signed}, \bf{Unsigned}]
-        these are types to represent integers and both are parametrizable in 
+        these are types to represent integers, and both are parametrizable in 
         their size. The overflow behavior of the numeric operators defined for 
         these types is \emph{wrap-around}.
         % , so you can define an unsigned word of 32 bits wide as follows:
@@ -847,14 +849,14 @@ eventual netlist representation is also highlighted.
         % types are translated to the \VHDL\ \texttt{unsigned} and 
         % \texttt{signed} respectively.
       \item[\bf{Vector}]
-        this is a vector type that can contain elements of any other type and
-        has a static length. The \hs{Vector} type constructor takes two type 
-        arguments: the length of the vector and the type of the elements 
-        contained in it. The short-hand notation used for the vector type in  
-        the rest of paper is: \hs{[a|n]}, where \hs{a} is the element 
-        type, and \hs{n} is the length of the vector. Note that this is
-        a notation used in this paper only, vectors are slightly more
-        verbose in real \CLaSH\ descriptions.
+        this type can contain elements of any type and has a static length. 
+        The \hs{Vector} type constructor takes two arguments: the length of 
+        the vector and the type of the elements contained in it. The 
+        short-hand notation used for the vector type in the rest of paper is: 
+        \hs{[a|n]}, where \hs{a} is the element type, and \hs{n} is the length 
+        of the vector. 
+        % Note that this is a notation used in this paper only, vectors are 
+        % slightly more verbose in real \CLaSH\ descriptions.
         % The state type of an 8 element register bank would then for example 
         % be:
 
@@ -870,11 +872,12 @@ eventual netlist representation is also highlighted.
         % vector is translated to a \VHDL\ array type.
       \item[\bf{Index}]
         the main purpose of the \hs{Index} type is to be used as an index into 
-        a \hs{Vector}, and has no specified bit-size, but a specified upper 
-        bound. This means that its range is not limited to powers of two, but 
-        can be any number. An \hs{Index} only has an upper bound, its lower 
-        bound is implicitly zero. If a value of this type exceeds either 
-        bounds, an error will be thrown at \emph{simulation}-time. 
+        a \hs{Vector}, and has an integer range from zero to a specified upper 
+        bound.
+        % This means that its range is not limited to powers of two, but 
+        % can be any number.  
+        If a value of this type exceeds either bounds, an error will be thrown 
+        during simulation. 
 
         % \comment{TODO: Perhaps remove this example?} To define an index for 
         % the 8 element vector above, we would do:
@@ -900,9 +903,9 @@ eventual netlist representation is also highlighted.
     % Haskell. As it is currently unclear how these advanced type constructs 
     % correspond to hardware, they are for now unsupported by the \CLaSH\ 
     % compiler.
-    A completely new type is introduced by an algebraic datatype declaration 
-    which is defined using the \hs{data} keyword. Type synonyms can be 
-    introduced using the \hs{type} keyword.
+    A designer may define a completely new type by an algebraic datatype 
+    declaration using the \hs{data} keyword. Type synonyms can be introduced 
+    using the \hs{type} keyword.
     % Only an algebraic datatype declaration actually introduces a
     % completely new type. Type synonyms and type renaming only define new 
     % names for existing types, where synonyms are completely interchangeable 
@@ -913,24 +916,24 @@ eventual netlist representation is also highlighted.
     Algebraic datatypes can be categorized as follows:
     \begin{xlist}
       \item[\bf{Single constructor}]
-        Algebraic datatypes with a single constructor with one or more
-        fields allow values to be packed together in a record-like structure. 
-        Haskell's built-in tuple types are also defined as single constructor 
-        algebraic types (using a bit of syntactic sugar). An example of a 
-        single constructor type with multiple fields is the following pair of 
+        datatypes with a single constructor with one or more fields allow 
+        values to be packed together in a record-like structure. Haskell's 
+        built-in tuple types are also defined as single constructor algebraic 
+        types (using a bit of syntactic sugar). An example of a  single 
+        constructor type with multiple fields is the following pair of 
         integers:
         \begin{code}
         data IntPair = IntPair Int Int
         \end{code}
         % These types are translated to \VHDL\ record types, with one field 
         % for every field in the constructor.
-      \item[\bf{No fields}]
-        Algebraic datatypes with multiple constructors, but without any
-        fields are essentially enumeration types. Note that Haskell's 
-        \hs{Bool} type is also defined as an enumeration type, but that there 
-        is a fixed translation for that type within the \CLaSH\ compiler. An 
-        example of an enumeration type definition is the definition for a 
-        traffic light:
+      \item[\bf{Multiple constructors, No fields}]
+        datatypes with multiple constructors, but without any
+        fields are essentially enumeration types. 
+        % Note that Haskell's \hs{Bool} type is also defined as an enumeration 
+        % type, but that there is a fixed translation for that type within the 
+        % \CLaSH\ compiler. 
+        An example of an enumeration type definition is:
         \begin{code}
         data TrafficLight = Red | Orange | Green
         \end{code}
@@ -939,19 +942,18 @@ eventual netlist representation is also highlighted.
         % constructors to be translated to the corresponding enumeration 
         % value.
       \item[\bf{Multiple constructors with fields}]
-        Algebraic datatypes with multiple constructors, where at least
+        datatypes with multiple constructors, where at least
         one of these constructors has one or more fields are currently not 
-        supported. Additional research is required to allow for the overlap of
-        the fields belonging to the different constructors.
+        supported. Additional research is required to optimize the overlap of
+        fields belonging to the different constructors.
     \end{xlist}
 
   \subsection{Polymorphism}\label{sec:polymorhpism}
     A powerful feature of most (functional) programming languages is 
     polymorphism, it allows a function to handle values of different data 
-    types in a uniform way. Haskell supports \emph{parametric 
-    polymorphism}~\cite{polymorphism}, meaning functions can be written 
-    without mention of any specific type and can be used transparently with 
-    any number of new types.
+    types in a uniform way. Haskell supports \emph{parametric polymorphism}, 
+    meaning that functions can be written without mentioning specific types, 
+    and they can be used for arbitrary types.
 
     As an example of a parametric polymorphic function, consider the type of 
     the following \hs{first} function, which returns the first element of a 
@@ -962,7 +964,7 @@ eventual netlist representation is also highlighted.
     first :: (a,b) -> a
     \end{code}
 
-    This type is parameterized in both \hs{a} and \hs{b}, which can both 
+    This type is parameterized in \hs{a} and \hs{b}, which can both 
     represent any type at all (as long as that type is supported by the 
     \CLaSH\ compiler). This means that \hs{first} works for any tuple, 
     regardless of what elements it contains. This kind of polymorphism is 
@@ -972,60 +974,76 @@ eventual netlist representation is also highlighted.
     important role in most higher order functions, as will be shown in the 
     next section.
 
-    Another type of polymorphism is \emph{ad-hoc 
-    polymorphism}~\cite{polymorphism}, which refers to polymorphic 
-    functions which can be applied to arguments of different types, but which 
-    behave differently depending on the type of the argument to which they are 
-    applied. In Haskell, ad-hoc polymorphism is achieved through the use of 
-    \emph{type classes}, where a class definition provides the general 
-    interface of a function, and class \emph{instances} define the 
-    functionality for the specific types. An example of such a type class is 
-    the \hs{Num} class, which contains all of Haskell's numerical operations. 
-    A designer can make use of this ad-hoc polymorphism by adding a 
-    \emph{constraint} to a parametrically polymorphic type variable. Such a 
-    constraint indicates that the type variable can only be instantiated to a 
-    type whose members supports the overloaded functions associated with the 
-    type class. 
+    % Another type of polymorphism is \emph{ad-hoc 
+    % polymorphism}~\cite{polymorphism}, which refers to polymorphic 
+    % functions which can be applied to arguments of different types, but 
+    % which behave differently depending on the type of the argument to which 
+    % they are applied. In Haskell, ad-hoc polymorphism is achieved through 
+    % the use of \emph{type classes}, where a class definition provides the 
+    % general interface of a function, and class \emph{instances} define the 
+    % functionality for the specific types. An example of such a type class is 
+    % the \hs{Num} class, which contains all of Haskell's numerical 
+    % operations. A designer can make use of this ad-hoc polymorphism by 
+    % adding a \emph{constraint} to a parametrically polymorphic type 
+    % variable. Such a constraint indicates that the type variable can only be 
+    % instantiated to a type whose members supports the overloaded functions 
+    % associated with the type class. 
     
-    An example of a type signature that includes such a constraint if the 
-    signature of the \hs{sum} function, which sums the values in a vector:
+    Another type of polymorphism is \emph{ad-hoc polymorphism}, which refers
+    to function that can be applied to arguments of a limited set to types.
+    Furthermore, how such functions work may depend on the type of their
+    arguments. For example, addition only works for numeric types, and it 
+    works differently for e.g. integers and complex numbers.
+    
+    In Haskell, ad-hoc polymorphism is achieved through the use of \emph{type
+    classes}, where a class definition provides the general interface of a 
+    function, and class \emph{instances} define the functionality for the 
+    specific types. For example, all numeric types are gathered in the 
+    \hs{Num} class, and the type of \emph{addition} is expressed by prefixing
+    by prefixing the type signature with a constraint on the type parameter:
+    
     \begin{code}
-    sum :: Num a => [a|n] -> a
+    (+) :: Num a => a -> a -> a
     \end{code}
-
-    This type is again parameterized by \hs{a}, but it can only contain
-    types that are \emph{instances} of the \emph{type class} \hs{Num}, so that  
-    the compiler knows that the addition (+) operator is defined for that 
-    type.
     
-    A place where class constraints also play a role is in the size and range 
-    parameters of the \hs{Vector} and numeric types. The reason being that 
-    these parameters have to be limited to types that can represent 
-    \emph{natural} numbers. The complete type of for example the \hs{Vector} 
-    type is:
-    \begin{code}
-    Natural n => Vector n a
-    \end{code}    
+    % An example of a type signature that includes such a constraint if the 
+    % signature of the \hs{sum} function, which sums the values in a vector:
+    % \begin{code}
+    % sum :: Num a => [a|n] -> a
+    % \end{code}
+    % 
+    % This type is again parameterized by \hs{a}, but it can only contain
+    % types that are \emph{instances} of the \emph{type class} \hs{Num}, so 
+    % that the compiler knows that the addition (+) operator is defined for 
+    % that type.
+    
+    % A place where class constraints also play a role is in the size and 
+    % range parameters of the \hs{Vector} and numeric types. The reason being 
+    % that these parameters have to be limited to types that can represent 
+    % \emph{natural} numbers. The complete type of for example the \hs{Vector} 
+    % type is:
+    % \begin{code}
+    % Natural n => Vector n a
+    % \end{code}    
     
     % \CLaSH's built-in numerical types are also instances of the \hs{Num} 
     % class. 
     % so we can use the addition operator (and thus the \hs{sum}
     % function) with \hs{Signed} as well as with \hs{Unsigned}.
 
-    \CLaSH\ supports both parametric polymorphism and ad-hoc polymorphism. Any 
-    function defined can have any number of unconstrained type parameters. A
-    circuit designer can also specify his own type classes and corresponding 
+    \CLaSH\ supports both parametric polymorphism and ad-hoc polymorphism. A
+    circuit designer can specify his own type classes and corresponding 
     instances. The \CLaSH\ compiler will infer the type of every polymorphic 
     argument depending on how the function is applied. There is however one 
     constraint: the top level function that is being translated can not have 
-    any polymorphic arguments. The arguments of the top-level can not be 
-    polymorphic as the function is never applied and consequently there is no 
-    way to determine the actual types for the type parameters. 
+    polymorphic arguments. The arguments of the top-level can not be 
+    polymorphic as there would be no way to infer the specific types of 
+    the arguments. 
     
     With regard to the built-in types, it should be noted that members of 
     some of the standard Haskell type classes are supported as built-in 
     functions. These include: the numerial operators of \hs{Num}, the equality 
-    operators of \hs{Eq}, and the comparison/order operators of \hs{Ord}.
+    operators of \hs{Eq}, and the comparison (order) operators of \hs{Ord}.
 
   \subsection{Higher-order functions \& values}
     Another powerful abstraction mechanism in functional languages, is
@@ -1400,6 +1418,13 @@ horizontal wires in \Cref{img:highordcpu}. These data sources offer the
 previous output of every function unit, along with the single data input of 
 the \acro{CPU} and two fixed initialization values.
 
+\begin{figure}
+\centerline{\includegraphics{highordcpu.svg}}
+\caption{CPU with higher-order Function Units}
+\label{img:highordcpu}
+\vspace{-1.5em}
+\end{figure}
+
 Each of the function units has both its operands connected to all data
 sources, and can be programmed to select any data source for either
 operand. In addition, the leftmost function unit has an additional
@@ -1509,13 +1534,6 @@ translated description can then be simulated in a \VHDL\ simulator. Certain
 aspects of HML, such as higher-order functions are however not supported by 
 the \VHDL\ translator~\cite{HML3}. The \CLaSH\ compiler on the other hand can 
 correctly translate all of the language constructs mentioned in this paper.
-
-\begin{figure}
-\centerline{\includegraphics{highordcpu.svg}}
-\caption{CPU with higher-order Function Units}
-\label{img:highordcpu}
-\vspace{-1.5em}
-\end{figure}
 
 Like the research presented in this paper, many functional hardware 
 description languages have some sort of foundation in the functional 
