@@ -575,10 +575,10 @@ way and at the same time support such advanced features as polymorphic typing,
 user-defined higher-order functions and pattern matching.
 
 \section{Hardware description in Haskell}
-This section describes the basic language elements of \CLaSH\ and the 
-extensiveness of the support of these elements within the \CLaSH\ compiler. In 
-various subsections, the relation between the language elements and their 
-eventual netlist representation is also highlighted. 
+This section describes the basic language elements of \CLaSH\ and the support 
+of these elements within the \CLaSH\ compiler. In various subsections, the 
+relation between the language elements and their eventual netlist 
+representation is also highlighted. 
 
   \subsection{Function application}
     Two basic elements of a functional program are functions and function 
@@ -910,8 +910,8 @@ eventual netlist representation is also highlighted.
     % completely new type. Type synonyms and type renaming only define new 
     % names for existing types, where synonyms are completely interchangeable 
     % and a type renaming requires an explicit conversion. 
-    Type synonyms do not need any particular translation, as a synonym  will 
-    just use the same representation as the original type. 
+    Type synonyms do not need any particular translation, as a synonym will 
+    use the same representation as the original type. 
     
     Algebraic datatypes can be categorized as follows:
     \begin{xlist}
@@ -949,11 +949,11 @@ eventual netlist representation is also highlighted.
     \end{xlist}
 
   \subsection{Polymorphism}\label{sec:polymorhpism}
-    A powerful feature of most (functional) programming languages is 
-    polymorphism, it allows a function to handle values of different data 
-    types in a uniform way. Haskell supports \emph{parametric polymorphism}, 
-    meaning that functions can be written without mentioning specific types, 
-    and they can be used for arbitrary types.
+    A powerful feature of some programming languages is polymorphism, it 
+    allows a function to handle values of different data types in a uniform 
+    way. Haskell supports \emph{parametric polymorphism}, meaning that 
+    functions can be written without mentioning specific types, and they can 
+    be used for arbitrary types.
 
     As an example of a parametric polymorphic function, consider the type of 
     the following \hs{first} function, which returns the first element of a 
@@ -965,8 +965,8 @@ eventual netlist representation is also highlighted.
     \end{code}
 
     This type is parameterized in \hs{a} and \hs{b}, which can both 
-    represent any type at all (as long as that type is supported by the 
-    \CLaSH\ compiler). This means that \hs{first} works for any tuple, 
+    represent any type at all, as long as that type is supported by the 
+    \CLaSH\ compiler. This means that \hs{first} works for any tuple, 
     regardless of what elements it contains. This kind of polymorphism is 
     extremely useful in hardware designs, for example when routing signals 
     without knowing their exact type, or specifying vector operations that 
@@ -1056,7 +1056,7 @@ eventual netlist representation is also highlighted.
     the concept of \emph{functions as a first class value} and
     \emph{higher-order functions}. These concepts allows a function to be 
     treated as a value and be passed around, even as the argument of another
-    function. The following example should clarify this concept:
+    function. The following example clarifies this concept:
     
     \hspace{-1.7em}
     \begin{minipage}{0.93\linewidth}
@@ -1074,7 +1074,7 @@ eventual netlist representation is also highlighted.
     The code above defines the \hs{negate{-"\!\!\!"-}Vector} function, which 
     takes a vector of booleans, \hs{xs}, and returns a vector where all the 
     values are negated. It achieves this by calling the \hs{map} function, and 
-    passing it \emph{another function}, boolean negation, and the vector of 
+    passing it another \emph{function}, boolean negation, and the vector of 
     booleans, \hs{xs}. The \hs{map} function applies the negation function to 
     all the elements in the vector.
 
@@ -1093,11 +1093,11 @@ eventual netlist representation is also highlighted.
     \end{code}
 
     In Haskell, there are two more ways to obtain a function-typed value:
-    partial application and lambda abstraction. Partial application
-    means that a function that takes multiple arguments can be applied
-    to a single argument, and the result will again be a function (but
-    that takes one argument less). As an example, consider the following
-    expression, that adds one to every element of a vector:
+    partial application and lambda abstraction. Partial application means that 
+    a function that takes multiple arguments can be applied to a single 
+    argument, and the result will again be a function, but takes one argument 
+    less. As an example, consider the following expression, that adds one to 
+    every element of a vector:
 
     \hspace{-1.7em}
     \begin{minipage}{0.93\linewidth}
@@ -1113,11 +1113,11 @@ eventual netlist representation is also highlighted.
 
     Here, the expression \hs{(add 1)} is the partial application of the
     addition function to the value \hs{1}, which is again a function that
-    adds one to its (next) argument. 
+    adds 1 to its (next) argument. 
     
-    A lambda expression allows one to introduce an anonymous function in any 
-    expression. Consider the following expression, which again adds one to 
-    every element of a vector:
+    A lambda expression allows a designer to introduce an anonymous function 
+    in any expression. Consider the following expression, which again adds 1 
+    to every element of a vector:
 
     \hspace{-1.7em}
     \begin{minipage}{0.93\linewidth}
@@ -1258,8 +1258,8 @@ eventual netlist representation is also highlighted.
     \vspace{-1.5em}
     \end{figure}
     
-    The complete simulation can be compiled to an executable binary by an 
-    optimizing Haskell compiler, or executed in an Haskell interpreter. Both 
+    The complete simulation can be compiled to an executable binary by a 
+    Haskell compiler, or executed in an Haskell interpreter. Both 
     simulation paths require less effort from a circuit designer than first 
     translating the description to \VHDL\ and then running a \VHDL\ 
     simulation; it is also very likely that both simulation paths are much 
@@ -1305,12 +1305,11 @@ responsible for the reduction of higher-order functions to `regular'
 first-order functions, and specializing polymorphic types to concrete types.
 
 The final step in the compiler pipeline is the translation to a \VHDL\ 
-\emph{netlist}, which is a straightforward process due to resemblance of a 
+\emph{netlist}, which is a straightforward process due to the resemblance of a 
 normalized description and a set of concurrent signal assignments. The 
 end-product of the \CLaSH\ compiler is called a \VHDL\ \emph{netlist} as the 
 result resembles an actual netlist description, and the fact that it is \VHDL\ 
-is only an implementation detail; the output could for example also be in 
-Verilog.
+is only an implementation detail; e.g., the output could have been Verilog.
 
 \section{Use cases}
 \label{sec:usecases}
@@ -1794,11 +1793,11 @@ numbers.
 \section{Future Work}
 The choice of describing state explicitly as and extra argument and result can 
 be seen as a mixed blessing. Even though descriptions that use state are 
-usually very clear, one finds that distributing and collecting substate can 
-become tedious and even error-prone. Automating the required distribution and 
-collection, or finding a more suitable abstraction mechanism for state would 
-make \CLaSH\ easier to use. Currently, one of the examined approaches to 
-suppress state in the specification is by using Haskell's arrow-abstraction.
+usually very clear, distributing and collecting substate can become tedious 
+and even error-prone. Automating the required distribution and collection, or 
+finding a more suitable abstraction mechanism for state would make \CLaSH\ 
+easier to use. Currently, one of the examined approaches to suppress state in 
+the specification is by using Haskell's arrow-abstraction.
 
 The transformations in the normalization phase of the prototype compiler are 
 developed in an ad-hoc manner, which makes the existence of many desirable 
