@@ -409,13 +409,23 @@
 % author names and affiliations
 % use a multiple column layout for up to three different
 % affiliations
-\author{\IEEEauthorblockN{Christiaan P.R. Baaij, Matthijs Kooijman, Jan Kuper, Marco E.T. Gerards}%, Bert Molenkamp, Sabih H. Gerez}
+% \author{\IEEEauthorblockN{Christiaan Baaij, Matthijs Kooijman, Jan Kuper, Arjan Boeijink, Marco Gerards}%, Bert Molenkamp, Sabih H. Gerez}
+% \IEEEauthorblockA{%Computer Architecture for Embedded Systems (CAES)\\ 
+% Department of EEMCS, University of Twente\\
+% P.O. Box 217, 7500 AE, Enschede, The Netherlands\\
+% c.p.r.baaij@@utwente.nl, matthijs@@stdin.nl, j.kuper@@utwente.nl}
+% \thanks{Supported through the FP7 project: S(o)OS (248465)}
+% }
+
+\author{\IEEEauthorblockN{Blind Review}%, Bert Molenkamp, Sabih H. Gerez}
 \IEEEauthorblockA{%Computer Architecture for Embedded Systems (CAES)\\ 
-Department of EEMCS, University of Twente\\
-P.O. Box 217, 7500 AE, Enschede, The Netherlands\\
-c.p.r.baaij@@utwente.nl, matthijs@@stdin.nl, j.kuper@@utwente.nl}
-\thanks{Supported through the FP7 project: S(o)OS (248465)}
+\\
+\\
+\\
 }
+\thanks{Supported through: hidden for blind review}
+}
+
 % \and
 % \IEEEauthorblockN{Homer Simpson}
 % \IEEEauthorblockA{Twentieth Century Fox\\
@@ -468,12 +478,13 @@ c.p.r.baaij@@utwente.nl, matthijs@@stdin.nl, j.kuper@@utwente.nl}
 syntax and semantics from the functional programming language Haskell. 
 Polymorphism and higher-order functions provide a level of abstraction and 
 generality that allow a circuit designer to describe circuits in a more 
-natural way than possible in a traditional hardware description language.
+natural way than possible with the language elements found in the traditional 
+hardware description languages.
 
 Circuit descriptions can be translated to synthesizable VHDL using the 
 prototype \CLaSH\ compiler. As the circuit descriptions, simulation code, and 
 test input are also valid Haskell, complete simulations can be done by a 
-Haskell compiler allowing high-speed simulation and analysis.
+Haskell compiler or interpreter, allowing high-speed simulation and analysis.
 
 % \CLaSH\ supports stateful descriptions by explicitly making the current 
 % state an argument of the function, and the updated state part of the result. 
@@ -510,7 +521,7 @@ Verilog~\cite{Verilog}, are very good at describing detailed hardware
 properties such as timing behavior, they are generally cumbersome in 
 expressing the higher-level abstractions needed for today's large and complex 
 circuit designs. In an attempt to raise the abstraction level of the 
-descriptions, a great number of approaches based on functional languages has 
+descriptions, a great number of approaches based on functional languages have 
 been proposed \cite{Cardelli1981,muFP,DAISY,T-Ruby,HML2,Hydra,Hawk1,Lava,
 Wired,ForSyDe1,reFLect}. The idea of using functional languages for hardware 
 descriptions started in the early 1980s \cite{Cardelli1981,muFP,DAISY}, a 
@@ -520,32 +531,17 @@ because combinational circuits can be directly modeled as mathematical
 functions and functional languages are very good at describing and composing 
 these functions.
 
-In an attempt to ease the prototyping process of the language, such as 
-creating all the required tooling like parsers and type-checkers, many 
-functional \acrop{HDL} \cite{Hydra,Hawk1,Lava,Wired} are embedded as a domain 
-specific language (\acro{DSL}) within the functional language Haskell 
-\cite{Haskell}. This means that a developer is given a library of Haskell 
-functions and types that together form the language primitives of the 
-\acro{DSL}. The primitive functions used to describe a circuit do not actually 
-process any signals, they instead compose a large domain-specific graph 
-(which is usually hidden from the designer). This graph is then further 
-processed by an embedded circuit compiler which can perform e.g. simulation or 
-synthesis. As Haskell's choice elements (\hs{case}-expressions, 
-pattern-matching, etc.) are evaluated at the time the domain-specific graph is 
-being build, they are no longer visible to the embedded compiler that 
-processes the datatype. Consequently, it is impossible to capture Haskell's 
-choice elements within a circuit description when taking the embedded language 
-approach. This does not mean that circuits specified in an embedded language 
-can not contain choice, just that choice elements only exists as functions, 
-e.g. a multiplexer function, and not as syntactic elements of the language 
-itself.
+In an attempt to reduce the effort involved with prototyping a new 
+language, such as creating all the required tooling like parsers and 
+type-checkers, many functional \acrop{HDL} \cite{Hydra,Hawk1,Lava,Wired} are 
+embedded as a domain specific language (\acro{DSL}) within the functional 
+language Haskell \cite{Haskell}. This means that a developer is given a 
+library of Haskell functions and types that together form the language 
+primitives of the \acro{DSL}. The primitive functions used to describe a 
+circuit do not actually process any signals, they instead compose a large 
+graph (which is usually hidden from the designer). This graph is then further processed by an embedded circuit compiler which can perform e.g. simulation or synthesis. As Haskell's choice elements (\hs{case}-expressions, pattern-matching, etc.) are evaluated at the time the graph is being build, they are no longer visible to the embedded compiler that processes the datatype. Consequently, it is impossible to capture Haskell's choice elements within a circuit description when taking the embedded language approach. This does not mean that circuits specified in an embedded language can not contain choice, just that choice elements only exists as functions, e.g. a multiplexer function, and not as syntactic elements of the language itself.
 
-The approach taken in this research is to use (a subset of) the Haskell 
-language \emph{itself} for the purpose of describing hardware. By taking this 
-approach, this research \emph{can} capture certain language constructs, like 
-all of Haskell's choice elements, within circuit descriptions. The more 
-advanced features of Haskell, such as polymorphic typing and higher-order 
-functions, are also supported.
+This research is uses (a subset of) the Haskell language \emph{itself} for the purpose of describing hardware. By taking this approach, this research \emph{can} capture certain language constructs, like all of Haskell's choice elements, within circuit descriptions. Advanced features of Haskell, such as polymorphic typing and higher-order functions, are also supported.
 
 % supporting polymorphism, higher-order functions and such an extensive array 
 % of choice-elements, combined with a very concise way of specifying circuits 
@@ -558,22 +554,32 @@ functions, are also supported.
 Where descriptions in a conventional \acro{HDL} have an explicit clock for the 
 purposes state and synchronicity, the clock is implicit for the descriptions 
 and research presented in this paper. A circuit designer describes the 
-behavior of the hardware between clock cycles. Many functional \acrop{HDL} 
-model signals as a stream of all values over time; state is then modeled as a 
-delay on this stream of values. Descriptions presented in this research make 
-the current state an additional input and the updated state a part of their 
-output. This abstraction of state and time limits the descriptions to 
-synchronous hardware, there is however room within the language to eventually 
-add a different abstraction mechanism that will allow for the modeling of 
-asynchronous systems.
+behavior of the hardware between clock cycles, as a transition from the 
+current state to the next. Many functional \acrop{HDL} model signals as a 
+stream of values over time; state is then modeled as a delay on this stream of 
+values. Descriptions presented in this research make the current state an 
+additional input and the updated state a part of their output. This 
+abstraction of state and time limits the descriptions to synchronous hardware. 
+However, there is room with the language to eventually add an abstraction 
+mechanism that allows modeling of asynchronous and multi-clock systems.
 
-Likewise as with the traditional \acrop{HDL}, descriptions made in a functional \acro{HDL} must eventually be converted into a netlist. This research also features a prototype compiler, which has the same name as the language: \CLaSH\footnote{\CLaSHtiny: \acrotiny{CAES} Language for Synchronous Hardware, where \acrotiny{CAES} is the acronyom of our chair.} (pronounced: clash). This compiler converts the Haskell code to equivalently behaving synthesizable \VHDL\ code, ready to be converted to an actual netlist format by an (optimizing) \VHDL\ synthesis tool.
+Likewise as with the traditional \acrop{HDL}, descriptions made in a 
+functional \acro{HDL} must eventually be converted into a netlist. This 
+research also features a prototype compiler, which has the same name as the 
+language: \CLaSH\footnote{\CLaSHtiny: \acrotiny{CAES} Language for Synchronous 
+Hardware, where \acrotiny{CAES} % the acronyom of our chair.} 
+is hidden for blind review.} 
+(pronounced: clash). This compiler converts the Haskell code to equivalently 
+behaving synthesizable \VHDL\ code, ready to be converted to an actual netlist 
+format by an (optimizing) \VHDL\ synthesis tool.
 
 To the best knowledge of the authors, \CLaSH\ is the only (functional) 
 \acro{HDL} that allows circuit specification to be written in a very concise 
 way and at the same time support such advanced features as polymorphic typing, 
 user-defined higher-order functions and pattern matching.
 
+The next section will describe the language elements of \CLaSH, and \Cref{sec:compiler} gives a high-level overview of the \CLaSH\ compiler. \Cref{sec:usecases} discusses two use-cases, a \acro{FIR} filter, and a higher-order \acro{CPU} design. At the end, \Cref{sec:relatedwork} compares \CLaSH\ to existing (functional) \acrop{HDL}, conclusions are given in \Cref{sec:conclusion}, and future work is discussed in \Cref{sec:futurework}.
+ 
 \section{Hardware description in Haskell}
 This section describes the basic language elements of \CLaSH\ and the support 
 of these elements within the \CLaSH\ compiler. In various subsections, the 
@@ -590,14 +596,15 @@ representation is also highlighted.
             and
       \item function applications are translated to component instantiations.
     \end{inparaenum} 
-    The result value can have a composite type (such as a tuple), so having 
-    just a single result value does not pose any limitation. The actual 
-    arguments of a function application are assigned to signals, which are 
-    then mapped to the corresponding input ports of the component. The output 
-    port of the function is also mapped to a signal, which is used as the 
-    result of the application itself. Since every top level function generates 
-    its own component, the hierarchy of function calls is reflected in the 
-    final netlist. %, creating a hierarchical description of the hardware. 
+    The result value can have a composite type (such as a tuple), so the fact 
+    that a function has just a single result value does not pose any 
+    limitation. The actual arguments of a function application are assigned to 
+    signals, which are then mapped to the corresponding input ports of the 
+    component. The output port of the function is also mapped to a signal, 
+    which is used as the result of the application itself. Since every top 
+    level function generates its own component, the hierarchy of function 
+    calls is reflected in the final netlist. 
+    %, creating a hierarchical description of the hardware. 
     % The separation in different components makes it easier for a developer 
     % to understand and possibly hand-optimize the resulting \VHDL\ output of 
     % the \CLaSH\ compiler.
@@ -651,7 +658,6 @@ representation is also highlighted.
     \vspace{-1.5em}
     
     \begin{figure}
-    \vspace{1em}
     \centerline{\includegraphics{mac-nocurry.svg}}
     \caption{Combinational Multiply-Accumulate (composite output)}
     \label{img:mac-comb-composite}
@@ -741,11 +747,11 @@ representation is also highlighted.
     \centerline{\includegraphics{counter.svg}}
     \caption{Counter netlist}
     \label{img:counter}
-    \vspace{-2em}
+    \vspace{-1.5em}
     \end{figure}
 
-    A user-friendly and also very powerful form of choice that is not found in 
-    the traditional hardware description languages is pattern matching. A 
+    A \emph{user-friendly} and also powerful form of choice that is not found 
+    in the traditional hardware description languages is pattern matching. A 
     function can be defined in multiple clauses, where each clause corresponds 
     to a pattern. When an argument matches a pattern, the corresponding clause 
     will be used. Expressions can also contain guards, where the expression is 
@@ -795,11 +801,9 @@ representation is also highlighted.
     \CLaSH\ compiler. The \CLaSH\ compiler has generic translation rules to
     translate the user-defined types, which are described later on.
 
-    The \CLaSH\ compiler is able to infer unspecified (polymorphic) types,
-    meaning that a developer does not have to annotate every function with a 
-    type signature. Given that the top-level entity of a circuit design is 
-    annotated with specific types, the \CLaSH\ compiler can specialize 
-    polymorphic functions to functions with specific types.
+    Type annotations (entities in \VHDL) are optional, since the \CLaSH\ 
+    compiler can derive them, when the top-level function \emph{is} annotated
+    with its type.    
   
     % Translation of two most basic functional concepts has been
     % discussed: function application and choice. Before looking further
@@ -928,8 +932,8 @@ representation is also highlighted.
         % These types are translated to \VHDL\ record types, with one field 
         % for every field in the constructor.
       \item[\bf{Multiple constructors, No fields}]
-        datatypes with multiple constructors, but without any
-        fields are essentially enumeration types. 
+        datatypes with multiple constructors, but without any fields are 
+        enumeration types. 
         % Note that Haskell's \hs{Bool} type is also defined as an enumeration 
         % type, but that there is a fixed translation for that type within the 
         % \CLaSH\ compiler. 
@@ -952,8 +956,8 @@ representation is also highlighted.
     A powerful feature of some programming languages is polymorphism, it 
     allows a function to handle values of different data types in a uniform 
     way. Haskell supports \emph{parametric polymorphism}, meaning that 
-    functions can be written without mentioning specific types, and they can 
-    be used for arbitrary types.
+    functions can be written without mentioning specific types, and that they 
+    can be used for arbitrary types.
 
     As an example of a parametric polymorphic function, consider the type of 
     the following \hs{first} function, which returns the first element of a 
@@ -965,14 +969,13 @@ representation is also highlighted.
     \end{code}
 
     This type is parameterized in \hs{a} and \hs{b}, which can both 
-    represent any type at all, as long as that type is supported by the 
-    \CLaSH\ compiler. This means that \hs{first} works for any tuple, 
-    regardless of what elements it contains. This kind of polymorphism is 
-    extremely useful in hardware designs, for example when routing signals 
-    without knowing their exact type, or specifying vector operations that 
-    work on vectors of any length and element type. Polymorphism also plays an 
-    important role in most higher order functions, as will be shown in the 
-    next section.
+    represent any type that is supported by the \CLaSH\ compiler. This means 
+    that \hs{first} works for any tuple, regardless of what elements it 
+    contains. This kind of polymorphism is extremely useful in hardware 
+    designs, for example when routing signals without knowing their exact 
+    type, or specifying vector operations that work on vectors of any length 
+    and element type. Polymorphism also plays an important role in most higher 
+    order functions, as will be shown in the next section.
 
     % Another type of polymorphism is \emph{ad-hoc 
     % polymorphism}~\cite{polymorphism}, which refers to polymorphic 
@@ -990,7 +993,7 @@ representation is also highlighted.
     % associated with the type class. 
     
     Another type of polymorphism is \emph{ad-hoc polymorphism}, which refers
-    to function that can be applied to arguments of a limited set to types.
+    to functions that can be applied to arguments of a limited set to types.
     Furthermore, how such functions work may depend on the type of their
     arguments. For example, addition only works for numeric types, and it 
     works differently for e.g. integers and complex numbers.
@@ -1086,7 +1089,7 @@ representation is also highlighted.
     type of the resulting vector is equal to the return type of the function 
     passed, which need not necessarily be the same as the element type of the 
     input vector. All of these characteristics can be inferred from the type 
-    signature belonging to \hs{map}:
+    signature of \hs{map}:
 
     \begin{code}
     map :: (a -> b) -> [a|n] -> [b|n]
@@ -1168,9 +1171,9 @@ representation is also highlighted.
   \subsection{State}
     In a stateful design, the outputs depend on the history of the inputs, or 
     the state. State is usually stored in registers, which retain their value 
-    during a clock cycle. As \CLaSH\ has to be able to describe more than 
-    plain combinational designs, there is a need for an abstraction mechanism 
-    for state.
+    during a clock cycle. 
+    % As \CLaSH\ has to be able to describe more than plain combinational 
+    % designs, there is a need for an abstraction mechanism for state.
 
     An important property in Haskell, and in many other functional languages, 
     is \emph{purity}. A function is said to be \emph{pure} if it satisfies two
@@ -1183,9 +1186,9 @@ representation is also highlighted.
     % This purity property is important for functional languages, since it 
     % enables all kinds of mathematical reasoning that could not be guaranteed 
     % correct for impure functions. 
-    Pure functions are as such a perfect match for combinational circuits, 
-    where the output solely depends on the inputs. When a circuit has state 
-    however, it can no longer be described by a pure function. 
+    Pure functions are a perfect match for combinational circuits, where the 
+    output solely depends on the inputs. When a circuit has state however, it 
+    can no longer be described by a pure function. 
     % Simply removing the purity property is not a valid option, as the 
     % language would then lose many of it mathematical properties. 
     \CLaSH\ deals with the concept of state by making the current state an 
@@ -1200,7 +1203,7 @@ representation is also highlighted.
     \hspace{-1.7em}
     \begin{minipage}{0.93\linewidth}
     \begin{code}
-    macS (State c) a b = (State c', c')
+    macS (State c) (a, b) = (State c', c')
       where
         c' = mac a b c
     \end{code}
@@ -1244,12 +1247,12 @@ representation is also highlighted.
     first input value, \hs{i}. The result is the first output value, \hs{o}, 
     and the updated state \hs{s'}. The next iteration of the \hs{run} function 
     is then called with the updated state, \hs{s'}, and the rest of the 
-    inputs, \hs{inps}. For the time being, and in the context of this paper, 
-    it is assumed that there is one input per clock cycle. Note that the order 
-    of \hs{s',o,s,i} in the where clause of the \hs{run} functions corresponds 
-    with the order of the input, output and state of the \hs{macS} function 
-    described earlier. Thus, in Haskell the expression \hs{run macS 0 inputs} 
-    simulates \hs{macS} on \hs{inputs} starting with the value \hs{0}
+    inputs, \hs{inps}. In the context of this paper, it is assumed that there 
+    is one input per clock cycle. Note that the order of \hs{s',o,s,i} in the 
+    where clause of the \hs{run} functions corresponds with the order of the 
+    input, output and state of the \hs{macS} function (\ref{code:macstate}). 
+    Thus, in Haskell the expression \hs{run macS 0 inputs} simulates \hs{macS} 
+    on \hs{inputs} starting with the value \hs{0}
 
     \begin{figure}
     \centerline{\includegraphics{mac-state.svg}}
@@ -1266,17 +1269,16 @@ representation is also highlighted.
     faster.
     
 \section{The \CLaSH\ compiler}
-An important aspect in this research is the creation of the prototype 
-compiler, which allows us to translate descriptions made in the \CLaSH\ 
+\label{sec:compiler}
+The prototype \CLaSH\ compiler translates descriptions made in the \CLaSH\ 
 language as described in the previous section to synthesizable \VHDL. 
 % , allowing a designer to actually run a \CLaSH\ design on an \acro{FPGA}.
 
-The Glasgow Haskell Compiler (\GHC)~\cite{ghc} is an open-source Haskell 
+The Glasgow Haskell Compiler (\GHC)~\cite{ghc} is an open source Haskell 
 compiler that also provides a high level \acro{API} to most of its internals. 
-The availability of this high-level \acro{API} obviated the need to design 
-many of the tedious parts of the prototype compiler, such as the parser, 
-semantics checker, and especially the type-checker. These parts together form 
-the front-end of the prototype compiler pipeline, as seen in
+Furthermore, it provides several parts of the prototype compiler for free, 
+such as the parser, the semantics checker, and the type checker. These parts 
+together form the front-end of the prototype compiler pipeline, as seen in
 \Cref{img:compilerpipeline}.
 
 \begin{figure}
@@ -1293,15 +1295,14 @@ typed functional language. This \emph{Core} language is relatively easy to
 process compared to the larger Haskell language. A description in \emph{Core} 
 can still contain elements which have no direct translation to hardware, such 
 as polymorphic types and function-valued arguments. Such a description needs 
-to be transformed to a \emph{normal form}, which only contains elements that 
-have a direct translation. The second stage of the compiler, the 
-\emph{normalization} phase, exhaustively applies a set of 
-\emph{meaning-preserving} transformations on the \emph{Core} description until 
-this description is in a \emph{normal form}. This set of transformations 
-includes transformations typically found in reduction systems and lambda 
-calculus~\cite{lambdacalculus}, such as $\beta$-reduction and 
-$\eta$-expansion. It also includes self-defined transformations that are 
-responsible for the reduction of higher-order functions to `regular' 
+to be transformed to a \emph{normal form}, which corresponds directly to 
+hardware. The second stage of the compiler, the \emph{normalization} phase, 
+exhaustively applies a set of \emph{meaning-preserving} transformations on the 
+\emph{Core} description until this description is in a \emph{normal form}. 
+This set of transformations includes transformations typically found in 
+reduction systems and lambda calculus~\cite{lambdacalculus}, such as 
+$\beta$-reduction and $\eta$-expansion. It also includes transformations that 
+are responsible for the specialization of higher-order functions to `regular' 
 first-order functions, and specializing polymorphic types to concrete types.
 
 The final step in the compiler pipeline is the translation to a \VHDL\ 
@@ -1309,7 +1310,8 @@ The final step in the compiler pipeline is the translation to a \VHDL\
 normalized description and a set of concurrent signal assignments. The 
 end-product of the \CLaSH\ compiler is called a \VHDL\ \emph{netlist} as the 
 result resembles an actual netlist description, and the fact that it is \VHDL\ 
-is only an implementation detail; e.g., the output could have been Verilog.
+is only an implementation detail; e.g., the output could have been Verilog or 
+even \acro{EDIF}.
 
 \section{Use cases}
 \label{sec:usecases}
@@ -1422,11 +1424,10 @@ the vectors of the \acro{FIR} code to a length of 4, is depicted in
 
 \subsection{Higher-order CPU}
 %format fun x = "\textit{fu}_" x
-In this section discusses a somewhat more serious example in which 
-user-defined higher-order function, partial application, lambda expressions, 
-and pattern matching are exploited. The example concerns a \acro{CPU} which 
-consists of four function unites \hs{fun 0,{-"\ldots"-},fun 3} (see 
-\Cref{img:highordcpu}) that each perform some binary operation.
+This section discusses a somewhat more serious example in which user-defined 
+higher-order function, partial application, lambda expressions, and pattern 
+matching are exploited. The example concerns a \acro{CPU} which consists of 
+four function units, \hs{fun 0,{-"\ldots"-},fun 3}, (see \Cref{img:highordcpu}) that each perform some binary operation.
 
 \begin{figure}
 \centerline{\includegraphics{highordcpu.svg}}
@@ -1435,28 +1436,23 @@ consists of four function unites \hs{fun 0,{-"\ldots"-},fun 3} (see
 \vspace{-1.5em}
 \end{figure}
 
-Every function unit has seven data inputs (of type \hs{Word}), and two address 
-inputs (of type \hs{Index 6}) which indicate which data inputs have to be 
-chosen as arguments for the the binary operation that the unit performs. These 
-data inputs consists of one external input \hs{x}, two fixed initialization 
-values (0 and 1), and the previous outputs of the four function units. The 
-output of the \acro{CPU} as a whole is the previous output of \hs{fun 3}.
+Every function unit has seven data inputs (of type \hs{Signed 16}), and two 
+address inputs (of type \hs{Index 6}) that indicate which data inputs have to 
+be chosen as arguments for the binary operation that the unit performs. 
+These data inputs consists of one external input \hs{x}, two fixed 
+initialization values (0 and 1), and the previous outputs of the four function 
+units. The output of the \acro{CPU} as a whole is the previous output of 
+\hs{fun 3}.
 
-The function units \hs{fun 1, fun 2, fun 3} can perform a fixed binary 
-operation, whereas \hs{fun 0} has an additional input for an opcode to choose 
-a binary operation out of a few possibilities.
-
-Each function unit outputs its result into a register, i.e., the state of the 
-\acro{CPU}. This can can e.g. be defined as follows:
+The function units \hs{fun 1, fun 2}, and \hs{fun 3} can perform a fixed binary operation, whereas \hs{fun 0} has an additional input for an opcode to choose a binary operation out of a few possibilities. Each function unit outputs its result into a register, i.e., the state of the \acro{CPU}. This state can e.g. be defined as follows:
 
 \begin{code}
-type CpuState = State [Word | 4]
+type CpuState = State [Signed 16 | 4]
 \end{code}
 
 Every function unit can now be defined by the following higher-order function 
 \hs{fu}, which takes three arguments: the operation \hs{op} that the function 
-unit performs, the seven \hs{inputs}, and the pair \hs{(a1,a2)} of two 
-addresses:
+unit performs, the seven \hs{inputs}, and the address pair \hs{(a1,a2)}:
 
 \hspace{-1.7em}
 \begin{minipage}{0.93\linewidth}
@@ -1474,7 +1470,7 @@ fu op inputs (a1, a2) = regIn
   \end{example}
 \end{minipage}
 
-Using partial application we now define:
+\noindent Using partial application we now define:
 
 \hspace{-1.7em}
 \begin{minipage}{0.93\linewidth}
@@ -1490,11 +1486,9 @@ fun 3 = fu mul
   \end{example}
 \end{minipage}
 
-In order to define \hs{fun 0} we first define the type \hs{Opcode} for the 
-opcode and the function \hs{multiop} that chooses a specific operation given 
-the opcode. We assume that the functions \hs{shifts} (which shifts its first 
+In order to define \hs{fun 0}, the \hs{Opcode} type, and the \hs{multiop} functions that chooses a specific operation given the opcode, are defined first. It is assumed that the functions \hs{shifts} (which shifts its first 
 operand by the number of bits indicate in the second operand), \hs{xor} (for 
-the bitwise \hs{xor}), and (==) (for equality) already exits.
+the bitwise \hs{xor}), and (==) (for equality) already exist.
 
 \hspace{-1.7em}
 \begin{minipage}{0.93\linewidth}
@@ -1513,8 +1507,8 @@ multiop Equal   = \a b -> if a == b then 1 else 0
 \end{minipage}
 
 Note that the result of \hs{multiop} is a binary function; this is supported 
-by \CLaSH. We can now define \hs{fun 0} as a function which takes an opcode as 
-additional argument:
+by \CLaSH. The complete definition of \hs{fun 0}, which takes an opcode as 
+additional argument, is:
 
 \hspace{-1.7em}
 \begin{minipage}{0.93\linewidth}
@@ -1528,7 +1522,7 @@ fun 0 c = fu (multiop c)
   \end{example}
 \end{minipage}
 
-Now we come to the definition \hs{cpu} of the full \acro{CPU}. Its type is:
+\noindent Now comes the definition of the full \acro{CPU}. Its type is:
 
 \begin{code}
 cpu :: CpuState 
@@ -1536,8 +1530,8 @@ cpu :: CpuState
   -> (CpuState, Word)
 \end{code}
 
-Note that this type fits the requirements of the function \hs{run}. The 
-definition of the \hs{cpu} now is:
+\noindent Note that this type fits the requirements of the \hs{run} function. 
+The definition of the \hs{cpu} function now is:
 
 \hspace{-1.7em}
 \begin{minipage}{0.93\linewidth}
@@ -1601,8 +1595,9 @@ actual designs.
 % design, in which the same techniques can be reused.
 
 \section{Related work}
+\label{sec:relatedwork}
 This section describes the features of existing (functional) hardware 
-description languages and highlights the advantages that this research has 
+description languages and highlights the advantages that \CLaSH\ has 
 over existing work.
 
 % Many functional hardware description languages have been developed over the 
@@ -1622,12 +1617,12 @@ the \VHDL\ translator~\cite{HML3}. The \CLaSH\ compiler on the other hand can
 correctly translate all of its language constructs.
 
 Like the research presented in this paper, many functional hardware 
-description languages have some sort of foundation in the functional 
-programming language Haskell. Hawk~\cite{Hawk1} is a hardware modeling 
-language embedded in Haskell and has sequential environments that make it 
-easier to specify stateful computation (by using the \acro{ST} monad). Hawk 
-specifications can be simulated; to the best knowledge of the authors there is 
-however no support for automated circuit synthesis. 
+description languages have a foundation in the functional programming language 
+Haskell. Hawk~\cite{Hawk1} is a hardware modeling language embedded in Haskell 
+and has sequential environments that make it easier to specify stateful 
+computation (by using the \acro{ST} monad). Hawk specifications can be 
+simulated; to the best knowledge of the authors there is however no support 
+for automated circuit synthesis. 
 
 The ForSyDe~\cite{ForSyDe2} system uses Haskell to specify abstract system 
 models. A designer can model systems using heterogeneous models of 
@@ -1765,6 +1760,7 @@ currently support the \VHDL-2008 standard.
 
 
 \section{Conclusion}
+\label{sec:conclusion}
 This research demonstrates once more that functional languages are well suited 
 for hardware descriptions: function applications provide an elegant notation 
 for component instantiation. While circuit descriptions made in \CLaSH\ are 
@@ -1774,8 +1770,8 @@ hardware descriptions languages by including advanced choice elements, such as
 pattern matching and guards, which are well suited to describe the conditional 
 assignments in control-oriented circuits. Besides being able to translate 
 these basic constructs to synthesizable \VHDL, the prototype compiler can also 
-correctly translate descriptions that contain both polymorphic types and 
-user-defined higher-order functions.
+translate descriptions that contain both polymorphic types and user-defined 
+higher-order functions.
 
 % Where recent functional hardware description languages have mostly opted to 
 % embed themselves in an existing functional language, this research features 
@@ -1787,10 +1783,11 @@ user-defined higher-order functions.
 Besides simple circuits such as variants of both the \acro{FIR} filter and 
 the higher-order \acro{CPU} shown in \Cref{sec:usecases}, the \CLaSH\ compiler 
 has also been able to translate non-trivial functional descriptions such as a 
-streaming reduction circuit~\cite{reductioncircuit} for floating point 
-numbers.
+streaming reduction circuit~\cite{blindreview} %~\cite{reductioncircuit}
+for floating point numbers.
 
 \section{Future Work}
+\label{sec:futurework}
 The choice of describing state explicitly as and extra argument and result can 
 be seen as a mixed blessing. Even though descriptions that use state are 
 usually very clear, distributing and collecting substate can become tedious 

@@ -1,3 +1,4 @@
 %format !=  = "\neq"
 %format *+* = "\bullet"
 %format +>  = "\succ"
+%format ==  = "=="
