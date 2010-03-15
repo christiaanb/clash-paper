@@ -1471,14 +1471,16 @@ four function units, \hs{fun 0,{-"\ldots"-},fun 3}, (see
 \end{figure}
 
 Every function unit has seven data inputs (of type \hs{Signed 16}), and two 
-address inputs (of type \hs{Index 6}) that indicate which data inputs have to 
-be chosen as arguments for the binary operation that the unit performs. 
-These data inputs consist of one external input \hs{x}, two fixed 
+address inputs (of type \hs{Index 6}). The latter two addresses indicate
+which of the seven data inputs are to be used as operands for the binary
+operation the function unit performs.
+
+These seven data inputs consist of one external input \hs{x}, two fixed 
 initialization values (0 and 1), and the previous outputs of the four function 
 units. The output of the \acro{CPU} as a whole is the previous output of 
 \hs{fun 3}.
 
-The function units \hs{fun 1}, \hs{fun 2}, and \hs{fun 3} can perform a fixed 
+Function units \hs{fun 1}, \hs{fun 2}, and \hs{fun 3} can perform a fixed 
 binary operation, whereas \hs{fun 0} has an additional input for an opcode to 
 choose a binary operation out of a few possibilities. Each function unit 
 outputs its result into a register, i.e., the state of the \acro{CPU}. This 
@@ -1490,8 +1492,10 @@ type CpuState = State [Signed 16 | 4]
 
 Every function unit can now be defined by the following higher-order function, 
 \hs{fu}, which takes three arguments: the operation \hs{op} that the function 
-unit performs, the seven \hs{inputs}, and the address pair 
-\hs{({-"a_0"-},{-"a_1"-})}:
+unit should perform, the seven \hs{inputs}, and the address pair 
+\hs{({-"a_0"-},{-"a_1"-})}.  It selects two inputs, based on the
+addresses, and applies the given operation to them, returning the
+result:
 
 \hspace{-1.7em}
 \begin{minipage}{0.93\linewidth}
@@ -1568,8 +1572,9 @@ cpu :: CpuState
   -> (CpuState, Signed 16)
 \end{code}
 
-\noindent Note that this type fits the requirements of the \hs{run} function. 
-The actual definition of the \hs{cpu} function is:
+\noindent Note that this type fits the requirements of the \hs{run}
+function (meaning it can be simulated and synthesized). The actual
+definition of the \hs{cpu} function is:
 
 \hspace{-1.7em}
 \begin{minipage}{0.93\linewidth}
@@ -1591,8 +1596,8 @@ cpu (State s) (x,opc,addrs) = (State s', out)
   \end{example}
 \end{minipage}
 
-Due to space restrictions, \Cref{img:highordcpu} does not depict the actual 
-functionality of the \hs{fu}-components, but note that e.g. \hs{multiop} is a 
+Due to space restrictions, \Cref{img:highordcpu} does not show the
+internals of each function unit, but note that e.g. \hs{multiop} is a
 subcomponent of \hs{fun 0}.
 
 While the \acro{CPU} has a simple (and maybe not very useful) design, it 
