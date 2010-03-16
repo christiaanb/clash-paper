@@ -475,9 +475,17 @@
 
 \begin{abstract}
 %\boldmath
-\CLaSH\ is a functional hardware description language that borrows both its syntax and semantics from the functional programming language Haskell. Polymorphism and higher-order functions provide a level of abstraction and generality that allow a circuit designer to describe circuits in a more natural way than possible with the language elements found in the traditional hardware description languages.
+\CLaSH\ is a functional hardware description language that borrows both its 
+syntax and semantics from the functional programming language Haskell. 
+Polymorphism and higher-order functions provide a level of abstraction and 
+generality that allow a circuit designer to describe circuits in a more 
+natural way than possible with the language elements found in the traditional 
+hardware description languages.
 
-Circuit descriptions can be translated to synthesizable \VHDL\ using the prototype \CLaSH\ compiler. As the circuit descriptions, simulation code, and test input are also valid Haskell, complete simulations can be done by a Haskell compiler or interpreter, allowing high-speed simulation and analysis.
+Circuit descriptions can be translated to synthesizable \VHDL\ using the 
+prototype \CLaSH\ compiler. As the circuit descriptions, simulation code, and 
+test input are also valid Haskell, complete simulations can be done by a 
+Haskell compiler or interpreter, allowing high-speed simulation and analysis.
 
 % \CLaSH\ supports stateful descriptions by explicitly making the current 
 % state an argument of the function, and the updated state part of the result. 
@@ -558,13 +566,13 @@ higher-order functions, are also supported.
 % Haskell Compiler (\GHC)~\cite{ghc}.
 
 Where descriptions in a conventional \acro{HDL} have an explicit clock for the 
-purposes state and synchronicity, the clock is implicit for the descriptions 
-and research presented in this paper. A circuit designer describes the 
-behavior of the hardware between clock cycles, as a transition from the 
-current state to the next. Many functional \acrop{HDL} model signals as a 
-stream of values over time; state is then modeled as a delay on this stream of 
-values. Descriptions presented in this research make the current state an 
-additional input and the updated state a part of their output. This 
+purposes of state updates and synchronicity, the clock is implicit for the 
+descriptions and research presented in this paper. A circuit designer 
+describes the behavior of the hardware between clock cycles, as a transition 
+from the current state to the next. Many functional \acrop{HDL} model signals 
+as a stream of values over time; state is then modeled as a delay on this 
+stream of values. Descriptions presented in this research make the current 
+state an additional input and the updated state a part of their output. This
 abstraction of state and time limits the descriptions to synchronous hardware. 
 However, work is in progress to add an abstraction mechanism that allows the 
 modeling of asynchronous and multi-clock systems.
@@ -578,7 +586,7 @@ language: \CLaSH\footnote{\CLaSHtiny:
 } 
 (pronounced: clash). This compiler converts the Haskell code to equivalently 
 behaving synthesizable \VHDL\ code, ready to be converted to an actual netlist 
-format by an (optimizing) \VHDL\ synthesis tool.
+format by a standard \VHDL\ synthesis tool.
 
 To the best knowledge of the authors, \CLaSH\ is the only (functional) 
 \acro{HDL} that allows circuit specification to be written in a very concise 
@@ -940,7 +948,7 @@ representation is also highlighted.
         types (using some syntactic sugar). An example of a single constructor 
         type with multiple fields is the following pair of integers:
         \begin{code}
-        data IntPair = IntPair Int Int
+        data IntPair = Pair Int Int
         \end{code}
         % These types are translated to \VHDL\ record types, with one field 
         % for every field in the constructor.
@@ -975,7 +983,8 @@ representation is also highlighted.
     As an example of a parametric polymorphic function, consider the type of 
     the \hs{first} function, which returns the first element of a 
     tuple:\footnote{The \hs{::} operator is used to annotate a function
-    with its type.}
+    with its type, where the annotation \hs{z :: x -> y} indicates that \hs{z} 
+	is a function with an argument of type \hs{x} and a result of type \hs{y}}
     
     \begin{code}
     first :: (a,b) -> a
@@ -1215,7 +1224,7 @@ representation is also highlighted.
     \CLaSH\ deals with the concept of state by making the current state an 
     additional argument of the function, and the updated state part of the 
     result. In this sense the descriptions made in \CLaSH\ are the 
-    combinational parts of a mealy machine.
+    combinational parts of a Mealy machine.
     
     A simple example is adding an accumulator register to the earlier 
     multiply-accumulate circuit, of which the resulting netlist can be seen in 
@@ -1235,17 +1244,17 @@ representation is also highlighted.
       \end{example}
     \end{minipage}
     
-    Note that the \hs{macS} function returns both the new state and the value
-    of the output port. The \hs{State} wrapper indicates which arguments are 
-    part of the current state, and what part of the output is part of the 
-    updated state. This aspect will also be reflected in the type signature of 
-    the function. Abstracting the state of a circuit in this way makes it very 
-    explicit: which variables are part of the state is completely determined 
-    by the type signature. This approach to state is well suited to be used in 
-    combination with the existing code and language features, such as all the 
-    choice elements, as state values are just normal values from Haskell's 
-    point of view. Stateful descriptions are simulated using the recursive 
-    \hs{run} function:
+    Note that the \hs{macS} function returns both the new state (\hs{State 
+	c'}) and the value of the output port (\hs{c'}). The \hs{State} wrapper 
+	indicates which arguments are part of the current state, and what part of 
+	the output is part of the updated state. This aspect will also be 
+	reflected in the type signature of the function. Abstracting the state of 
+	a circuit in this way makes it very explicit: which variables are part of 
+	the state is completely determined by the type signature. This approach to 
+	state is well suited to be used in combination with the existing code and 
+	language features, such as all the choice elements, as state values are 
+	just normal values from Haskell's point of view. Stateful descriptions are 
+	simulated using the recursive \hs{run} function:
     
     \hspace{-1.7em}
     \begin{minipage}{0.93\linewidth}
@@ -1269,11 +1278,12 @@ representation is also highlighted.
     and the updated state \hs{s'}. The next iteration of the \hs{run} function 
     is then called with the updated state, \hs{s'}, and the rest of the 
     inputs, \hs{inps}. In the context of this paper, it is assumed that there 
-    is one input per clock cycle. Note that the order of \hs{s',o,s,i} in the 
-    \hs{where} clause of the \hs{run} functions corresponds with the order of 
-    the input, output and state of the \hs{macS} function
-    (\ref{code:macstate}). Thus, the expression below (\ref{code:runmacs}) 
-    simulates \hs{macS} on \hs{inputpairs} starting with the value \hs{0}: 
+    is one input per clock cycle. However, this input can be a variable with 
+	multiple fields. Note that the order of \hs{s',o,s,i} in the \hs{where} 
+	clause of the \hs{run} functions corresponds with the order of the input, 
+	output and state of the \hs{macS} function (\ref{code:macstate}). Thus, 
+	the expression below (\ref{code:runmacs}) simulates \hs{macS} on 
+	\hs{inputpairs} starting with the value \hs{0}: 
     
     \hspace{-1.7em}
     \begin{minipage}{0.93\linewidth}
@@ -1464,6 +1474,7 @@ four function units, \hs{fun 0,{-"\ldots"-},fun 3}, (see
 \Cref{img:highordcpu}) that each perform some binary operation.
 
 \begin{figure}
+\vspace{1.5em}
 \centerline{\includegraphics{highordcpu.svg}}
 \caption{CPU with higher-order Function Units}
 \label{img:highordcpu}
@@ -1668,7 +1679,7 @@ description languages have a foundation in the functional programming language
 Haskell. Hawk~\cite{Hawk1} is a hardware modeling language embedded in Haskell 
 and has sequential environments that make it easier to specify stateful 
 computation (by using the \acro{ST} monad). Hawk specifications can be 
-simulated; to the best knowledge of the authors there is however no support 
+simulated; to the best knowledge of the authors there is, however, no support 
 for automated circuit synthesis. 
 
 The ForSyDe~\cite{ForSyDe2} system uses Haskell to specify abstract system 
