@@ -383,6 +383,8 @@
 
 \epstopdfDeclareGraphicsRule{.svg}{pdf}{.pdf}{rsvg-convert --format=pdf < #1 > \noexpand\OutputFile}
 
+\usepackage{booktabs}
+
 %include polycode.fmt
 %include clash.fmt
 
@@ -523,9 +525,9 @@ properties such as timing behavior, they are generally cumbersome in
 expressing the higher-level abstractions needed for today's large and complex 
 circuit designs. In an attempt to raise the abstraction level of the 
 descriptions, a great number of approaches based on functional languages have 
-been proposed \cite{Cardelli1981,muFP,DAISY,FHDL,T-Ruby,HML2,Hydra,Hawk1,Lava,
-Wired,ForSyDe1,reFLect}. The idea of using functional languages for hardware 
-descriptions started in the early 1980s \cite{Cardelli1981,muFP,DAISY,FHDL}, a 
+been proposed \cite{Cardelli1981,muFP,DAISY,HML2,Hawk1,Lava,Wired,
+ForSyDe1,kansaslava}. The idea of using functional languages for hardware 
+descriptions started in the early 1980s \cite{Cardelli1981,muFP,DAISY}, a 
 time which also saw the birth of the currently popular \acrop{HDL}, such as 
 \VHDL. Functional languages are especially well suited to describe hardware 
 because combinational circuits can be directly modeled as mathematical 
@@ -534,8 +536,8 @@ these functions.
 
 In an attempt to reduce the effort involved with prototyping a new 
 language, such as creating all the required tooling like parsers and 
-type-checkers, many functional \acrop{HDL} \cite{Hydra,Hawk1,Lava,Wired} are 
-embedded as a domain specific language (\acro{DSL}) within the functional 
+type-checkers, many functional \acrop{HDL} \cite{Hawk1,Lava,Wired,kansaslava} 
+are embedded as a domain specific language (\acro{DSL}) within the functional 
 language Haskell \cite{Haskell}. This means that a developer is given a 
 library of Haskell functions and types that together form the language 
 primitives of the \acro{DSL}. The primitive functions used to describe a 
@@ -654,6 +656,7 @@ representation is also highlighted.
     
     \begin{figure}
     \centerline{\includegraphics{mac.svg}}
+    \vspace{-0.5em}
     \caption{Combinational Multiply-Accumulate}
     \label{img:mac-comb}
     \vspace{-1.5em}
@@ -682,6 +685,7 @@ representation is also highlighted.
     
     \begin{figure}
     \centerline{\includegraphics{mac-nocurry.svg}}
+    \vspace{-0.5em}
     \caption{Combinational Multiply-Accumulate (composite output)}
     \label{img:mac-comb-composite}
     \vspace{-1.5em}
@@ -768,6 +772,7 @@ representation is also highlighted.
 
     \begin{figure}
     \centerline{\includegraphics{counter.svg}}
+    \vspace{-0.5em}
     \caption{Counter netlist}
     \label{img:counter}
     \vspace{-1.5em}
@@ -1087,7 +1092,7 @@ representation is also highlighted.
   \subsection{Higher-order functions \& values}
     Another powerful abstraction mechanism in functional languages, is
     the concept of \emph{functions as a first class value} and
-    \emph{higher-order functions}. These concepts allows a function to be 
+    \emph{higher-order functions}. These concepts allow a function to be 
     treated as a value and be passed around, even as the argument of another
     function. The following example clarifies this concept:
     
@@ -1148,9 +1153,9 @@ representation is also highlighted.
     addition function to the value \hs{1}, which is again a function that
     adds 1 to its (next) argument. 
     
-    A lambda expression allows a designer to introduce an anonymous function 
-    in any expression. Consider the following expression, which again adds 1 
-    to every element of a vector:
+    A lambda expression allows a designer to introduce a function in any 
+	expression without first defining that function. Consider the following 
+	expression, which again adds 1 to every element of a vector:
 
     \hspace{-1.7em}
     \begin{minipage}{0.93\linewidth}
@@ -1279,16 +1284,16 @@ representation is also highlighted.
     is then called with the updated state, \hs{s'}, and the rest of the 
     inputs, \hs{inps}. In the context of this paper, it is assumed that there 
     is one input per clock cycle. However, this input can be a variable with 
-	multiple fields. Note that the order of \hs{s',o,s,i} in the \hs{where} 
-	clause of the \hs{run} functions corresponds with the order of the input, 
-	output and state of the \hs{macS} function (\ref{code:macstate}). Thus, 
-	the expression below (\ref{code:runmacs}) simulates \hs{macS} on 
-	\hs{inputpairs} starting with the value \hs{0}: 
+	  multiple fields. Note that the order of \hs{s',o,s,i} in the \hs{where} 
+	  clause of the \hs{run} functions corresponds with the order of the input, 
+	  output and state of the \hs{macS} function (\ref{code:macstate}). Thus, 
+	  the expression below (\ref{code:runmacs}) simulates \hs{macS} on 
+	  \hs{inputpairs} starting with the value \hs{0}: 
     
     \hspace{-1.7em}
     \begin{minipage}{0.93\linewidth}
     \begin{code}
-    run macS 0 inputpairs 
+    run macS (State 0) inputpairs 
     \end{code}
     \end{minipage}
     \begin{minipage}{0.07\linewidth}
@@ -1299,6 +1304,7 @@ representation is also highlighted.
     
     \begin{figure}
     \centerline{\includegraphics{mac-state.svg}}
+    \vspace{-0.5em}
     \caption{Stateful Multiply-Accumulate}
     \label{img:mac-state}
     \vspace{-1.5em}
@@ -1325,8 +1331,8 @@ together form the front-end of the prototype compiler pipeline, as seen in
 \Cref{img:compilerpipeline}.
 
 \begin{figure}
-\vspace{1em}
 \centerline{\includegraphics{compilerpipeline.svg}}
+\vspace{-0.5em}
 \caption{\CLaSHtiny\ compiler pipeline}
 \label{img:compilerpipeline}
 \vspace{-1.5em}
@@ -1359,10 +1365,17 @@ even \acro{EDIF}.
 \section{Use cases}
 \label{sec:usecases}
 \subsection{FIR Filter}
-As an example of a common hardware design where the relation between 
-functional languages and mathematical functions, combined with the use of 
-higher-order functions leads to a very natural description is a \acro{FIR} 
-filter:
+An example of a common hardware design where the relation between functional 
+languages and mathematical functions, combined with the use of higher-order 
+functions leads to a very natural description is a \acro{FIR} filter:
+
+\begin{figure}
+\centerline{\includegraphics{4tapfir.svg}}
+\vspace{-0.5em}
+\caption{4-taps \acrotiny{FIR} Filter}
+\label{img:4tapfir}
+\vspace{-1.5em}
+\end{figure}
 
 \begin{equation}
 y_t  = \sum\nolimits_{i = 0}^{n - 1} {x_{t - i}  \cdot h_i } 
@@ -1458,13 +1471,6 @@ The resulting netlist of a 4-taps \acro{FIR} filter, created by specializing
 the vectors of the \acro{FIR} code to a length of 4, is depicted in 
 \Cref{img:4tapfir}.
 
-\begin{figure}
-\centerline{\includegraphics{4tapfir.svg}}
-\caption{4-taps \acrotiny{FIR} Filter}
-\label{img:4tapfir}
-\vspace{-1.5em}
-\end{figure}
-
 \subsection{Higher-order CPU}
 %format fun x = "\textit{fu}_" x
 This section discusses a somewhat more elaborate example in which user-defined 
@@ -1474,8 +1480,8 @@ four function units, \hs{fun 0,{-"\ldots"-},fun 3}, (see
 \Cref{img:highordcpu}) that each perform some binary operation.
 
 \begin{figure}
-\vspace{1.5em}
 \centerline{\includegraphics{highordcpu.svg}}
+\vspace{-0.5em}
 \caption{CPU with higher-order Function Units}
 \label{img:highordcpu}
 \vspace{-1.5em}
@@ -1501,12 +1507,22 @@ state can e.g. be defined as follows:
 type CpuState = State [Signed 16 | 4]
 \end{code}
 
-Every function unit can now be defined by the following higher-order function, 
-\hs{fu}, which takes three arguments: the operation \hs{op} that the function 
-unit should perform, the seven \hs{inputs}, and the address pair 
-\hs{({-"a_0"-},{-"a_1"-})}.  It selects two inputs, based on the
-addresses, and applies the given operation to them, returning the
-result:
+i.e., the state consists of a vector of four elements of type \hs{Signed 16}. 
+The type of the \acro{CPU} as a whole can now be defined as (\hs{Opcode will 
+be defined later}):
+
+\begin{code}
+cpu :: CpuState 
+  -> (Signed 16, Opcode, [(Index 6, Index 6) | 4])
+  -> (CpuState, Signed 16)
+\end{code}
+
+Note that this type fits the requirements of the \hs{run} function. Every 
+function unit can be defined by the following higher-order function, \hs{fu}, 
+which takes three arguments: the operation \hs{op} that the function unit 
+should perform, the seven \hs{inputs}, and the address pair 
+\hs{({-"a_0"-},{-"a_1"-})}.  It selects two inputs, based on the addresses, 
+and applies the given operation to them, returning the result:
 
 \hspace{-1.7em}
 \begin{minipage}{0.93\linewidth}
@@ -1537,6 +1553,11 @@ fun 3 = fu mul
   \end{example}
 \end{minipage}
 
+Note that the types of these functions can be derived from the types of the 
+\hs{cpu} function, thus determining what component instantiations are needed. 
+For example, the function \hs{add} should take two \hs{Signed 16} values and 
+also deliver a \hs{Signed 16} value.
+
 In order to define \hs{fun 0}, the \hs{Opcode} type and the \hs{multiop} 
 function that chooses a specific operation given the opcode, are defined 
 first. It is assumed that the binary functions \hs{shift} (where \hs{shift a 
@@ -1559,9 +1580,10 @@ multiop Equal   = \a b -> if a == b then 1 else 0
   \end{example}
 \end{minipage}
 
-Note that the result of \hs{multiop} is a binary function; this is supported 
-by \CLaSH. The complete definition of \hs{fun 0}, which takes an opcode as 
-additional argument, is:
+Note that the result of \hs{multiop} is a binary function from two \hs{Signed 
+16} values into one \hs{Signed 16} value; this is supported by \CLaSH. The 
+complete definition of \hs{fun 0}, which takes an opcode as additional 
+argument, is:
 
 \hspace{-1.7em}
 \begin{minipage}{0.93\linewidth}
@@ -1575,17 +1597,8 @@ fun 0 c = fu (multiop c)
   \end{example}
 \end{minipage}
 
-\noindent Now comes the definition of the full \acro{CPU}. Its type is:
-
-\begin{code}
-cpu :: CpuState 
-  -> (Signed 16, Opcode, [(Index 6, Index 6) | 4])
-  -> (CpuState, Signed 16)
-\end{code}
-
-\noindent Note that this type fits the requirements of the \hs{run}
-function (meaning it can be simulated and synthesized). The actual
-definition of the \hs{cpu} function is:
+The complete definition of the \hs{cpu} function is (note that \hs{addrs} 
+contains four address pairs):
 
 \hspace{-1.7em}
 \begin{minipage}{0.93\linewidth}
@@ -1608,8 +1621,8 @@ cpu (State s) (x,opc,addrs) = (State s', out)
 \end{minipage}
 
 Due to space restrictions, \Cref{img:highordcpu} does not show the
-internals of each function unit, but note that e.g. \hs{multiop} is a
-subcomponent of \hs{fun 0}.
+internals of each function unit. We remark that \CLaSH\ generates e.g. 
+\hs{multiop} as a subcomponent of \hs{fun 0}.
 
 While the \acro{CPU} has a simple (and maybe not very useful) design, it 
 illustrates some possibilities that \CLaSH\ offers and suggests how to write 
@@ -1839,11 +1852,29 @@ functions.
 % part of the actual circuit description; a feature the embedded hardware 
 % description languages do not offer.
 
-Besides simple circuits such as variants of both the \acro{FIR} filter and 
-the higher-order \acro{CPU} shown in \Cref{sec:usecases}, the \CLaSH\ compiler 
-has also been able to translate non-trivial functional descriptions such as a 
-streaming reduction circuit~\cite{blindreview} %~\cite{reductioncircuit}
-for floating point numbers.
+The \CLaSH\ compiler has also been used to translate non-trivial functional 
+descriptions such as a streaming reduction circuit~\cite{blindreview} 
+%~\cite{reductioncircuit} 
+for floating point numbers. \Cref{tab:resources} displays the design 
+characteristics of both the \CLaSH\ design and the hand-optimized \VHDL\ 
+design for the same \acro{FPGA}; it shows that a designer does not sacrifice 
+on speed when using \CLaSH. Because the compiler is still in its prototyping 
+stage, no effort has been put in optimizing the resource usage. However, 
+future work includes optimizations passes within the compiler that will reduce 
+the resource usage.
+
+\begin{table}
+\caption{Design characteristics Reduction circuit}
+\label{tab:resources}
+\vspace{-0.5em}
+\centerline{\begin{tabular}{lrr} \toprule
+  & \textbf{\CLaSH} & \textbf{\acro{VHDL}}\\ \midrule
+CLB Slices \& \acrop{LUT} & 8184  & 4734 \\
+Dffs or Latches           & 2937  & 2810 \\
+MHz                       & 165   & 171  \\ \bottomrule
+\end{tabular}}
+\vspace{-1em}
+\end{table}
 
 \section{Future Work}
 \label{sec:futurework}
@@ -1851,18 +1882,19 @@ The choice of describing state explicitly as an extra argument and result can
 be seen as a mixed blessing. Even though descriptions that use state are 
 usually very clear, distributing and collecting substate can become tedious 
 and even error-prone. Automating the required distribution and collection, or 
-finding a more suitable abstraction mechanism for state would make \CLaSH\ 
+finding a abstraction mechanism that suppresses state would make \CLaSH\ 
 easier to use. Currently, one of the examined approaches to suppress state in 
 the specification is by using Haskell's arrow-abstraction.
 
 The transformations in the normalization phase of the prototype compiler are 
 developed in an ad-hoc manner, which makes the existence of many desirable 
 properties unclear. Such properties include whether the complete set of 
-transformations will always lead to a normal form or whether the normalization 
-process always terminates. Although extensive use of the compiler suggests 
-that these properties usually hold, they have not been formally proven. A 
-systematic approach to defining the set of transformations allows one to proof 
-that the earlier mentioned properties do indeed hold.
+transformation will always bring the description into a form that can be 
+translated to hardware or whether the normalization process always terminates.
+Although extensive use of the compiler suggests that these properties hold, 
+they have not been formally proven. A systematic approach to defining the set 
+of transformations allows one to proof that the earlier mentioned properties 
+do indeed hold.
 
 % conference papers do not normally have an appendix
 
@@ -1901,7 +1933,6 @@ that the earlier mentioned properties do indeed hold.
 %   0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
 % 
 % \end{thebibliography}
-
 
 
 
