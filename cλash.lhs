@@ -525,8 +525,8 @@ properties such as timing behavior, they are generally cumbersome in
 expressing the higher-level abstractions needed for today's large and complex 
 circuit designs. In an attempt to raise the abstraction level of the 
 descriptions, a great number of approaches based on functional languages have 
-been proposed \cite{Cardelli1981,muFP,DAISY,HML2,Hawk1,Lava,Wired,
-ForSyDe1,kansaslava}. The idea of using functional languages for hardware 
+been proposed \cite{Cardelli1981,muFP,DAISY,T-Ruby,HML2,Hawk1,Lava,Wired,
+kansaslava, ForSyDe2}. The idea of using functional languages for hardware 
 descriptions started in the early 1980s \cite{Cardelli1981,muFP,DAISY}, a 
 time which also saw the birth of the currently popular \acrop{HDL}, such as 
 \VHDL. Functional languages are especially well suited to describe hardware 
@@ -788,7 +788,7 @@ representation is also highlighted.
     matching and guards have a (straightforward) translation to \hs{case} 
     expressions and can as such be mapped to multiplexers. A second version 
     (\ref{code:counter2}) of the earlier example, now using both pattern 
-    matching and guards, can be seen below. The guard is the expression that 
+    matching and guards, can be seen on the next page. The guard is the expression that 
     follows the vertical bar (\hs{|}) and precedes the assignment operator 
     (\hs{=}). The \hs{otherwise} guards always evaluate to \hs{true}.
     
@@ -1002,7 +1002,7 @@ representation is also highlighted.
     designs, for example when routing signals without knowing their exact 
     type, or specifying vector operations that work on vectors of any length 
     and element type. Polymorphism also plays an important role in most higher 
-    order functions, as will be shown in the next section.
+    order functions, as will be shown in the next subsection.
 
     % Another type of polymorphism is \emph{ad-hoc 
     % polymorphism}~\cite{polymorphism}, which refers to polymorphic 
@@ -1090,7 +1090,7 @@ representation is also highlighted.
     operators of \hs{Eq}, and the comparison (order) operators of \hs{Ord}.
 
   \subsection{Higher-order functions \& values}
-    Another powerful abstraction mechanism in functional languages, is
+    Another powerful abstraction mechanism in functional languages is
     the concept of \emph{functions as a first class value} and
     \emph{higher-order functions}. These concepts allow a function to be 
     treated as a value and be passed around, even as the argument of another
@@ -1250,16 +1250,16 @@ representation is also highlighted.
     \end{minipage}
     
     Note that the \hs{macS} function returns both the new state (\hs{State 
-	c'}) and the value of the output port (\hs{c'}). The \hs{State} wrapper 
-	indicates which arguments are part of the current state, and what part of 
-	the output is part of the updated state. This aspect will also be 
-	reflected in the type signature of the function. Abstracting the state of 
-	a circuit in this way makes it very explicit: which variables are part of 
-	the state is completely determined by the type signature. This approach to 
-	state is well suited to be used in combination with the existing code and 
-	language features, such as all the choice elements, as state values are 
-	just normal values from Haskell's point of view. Stateful descriptions are 
-	simulated using the recursive \hs{run} function:
+	  c'}) and the value of the output port (\hs{c'}). The \hs{State} wrapper 
+	  indicates which arguments are part of the current state, and what part of 
+	  the output is part of the updated state. This aspect will also be 
+	  reflected in the type signature of the function. Abstracting the state of 
+	  a circuit in this way makes it very explicit: which variables are part of 
+	  the state is completely determined by the type signature. This approach to 
+	  state is well suited to be used in combination with the existing code and 
+	  language features, such as all the choice elements, as state values are 
+	  just normal values from Haskell's point of view. Stateful descriptions are 
+	  simulated using the recursive \hs{run} function:
     
     \hspace{-1.7em}
     \begin{minipage}{0.93\linewidth}
@@ -1508,8 +1508,8 @@ type CpuState = State [Signed 16 | 4]
 \end{code}
 
 i.e., the state consists of a vector of four elements of type \hs{Signed 16}. 
-The type of the \acro{CPU} as a whole can now be defined as (\hs{Opcode will 
-be defined later}):
+The type of the \acro{CPU} as a whole can now be defined as (\hs{Opcode} will 
+be defined later):
 
 \begin{code}
 cpu :: CpuState 
@@ -1553,7 +1553,7 @@ fun 3 = fu mul
   \end{example}
 \end{minipage}
 
-Note that the types of these functions can be derived from the types of the 
+Note that the types of these functions can be derived from the type of the 
 \hs{cpu} function, thus determining what component instantiations are needed. 
 For example, the function \hs{add} should take two \hs{Signed 16} values and 
 also deliver a \hs{Signed 16} value.
