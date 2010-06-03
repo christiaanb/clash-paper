@@ -411,23 +411,23 @@
 % author names and affiliations
 % use a multiple column layout for up to three different
 % affiliations
-% \author{\IEEEauthorblockN{Christiaan Baaij, Matthijs Kooijman, Jan Kuper, Arjan Boeijink, Marco Gerards}%, Bert Molenkamp, Sabih H. Gerez}
-% \IEEEauthorblockA{Computer Architecture for Embedded Systems (CAES) \\
-% Department of EEMCS, University of Twente\\
-% P.O. Box 217, 7500 AE, Enschede, The Netherlands\\
-% c.p.r.baaij@@utwente.nl, matthijs@@stdin.nl, j.kuper@@utwente.nl}
-% \thanks{Supported through the FP7 project: S(o)OS (248465)}
-% }
+\author{\IEEEauthorblockN{Christiaan Baaij, Matthijs Kooijman, Jan Kuper, Arjan Boeijink, Marco Gerards}%, Bert Molenkamp, Sabih H. Gerez}
+\IEEEauthorblockA{Computer Architecture for Embedded Systems (CAES) \\
+Department of EEMCS, University of Twente\\
+P.O. Box 217, 7500 AE, Enschede, The Netherlands\\
+c.p.r.baaij@@utwente.nl, matthijs@@stdin.nl, j.kuper@@utwente.nl}
+\thanks{Supported through the FP7 project: S(o)OS (248465)}
+}
 
-\author{\IEEEauthorblockN{Blind Review}%, Bert Molenkamp, Sabih H. Gerez}
-\IEEEauthorblockA{
-\\
-\\
-\\
-\\
-}
-\thanks{Supported through: ``Hidden for blind review''}
-}
+% \author{\IEEEauthorblockN{Blind Review}%, Bert Molenkamp, Sabih H. Gerez}
+% \IEEEauthorblockA{
+% \\
+% \\
+% \\
+% \\
+% }
+% \thanks{Supported through: ``Hidden for blind review''}
+% }
 
 % \and
 % \IEEEauthorblockN{Homer Simpson}
@@ -525,9 +525,9 @@ properties such as timing behavior, they are generally cumbersome in
 expressing the higher-level abstractions needed for today's large and complex 
 circuit designs. In an attempt to raise the abstraction level of the 
 descriptions, a great number of approaches based on functional languages have 
-been proposed \cite{Cardelli1981,muFP,DAISY,T-Ruby,HML2,Hawk1,Lava,Wired,
+been proposed \cite{Cardelli1981,muFP,HML2,Hawk1,Lava,Wired,
 kansaslava, ForSyDe2}. The idea of using functional languages for hardware 
-descriptions started in the early 1980s \cite{Cardelli1981,muFP,DAISY}, a 
+descriptions started in the early 1980s \cite{Cardelli1981,muFP}, a 
 time which also saw the birth of the currently popular \acrop{HDL}, such as 
 \VHDL. Functional languages are especially well suited to describe hardware 
 because combinational circuits can be directly modeled as mathematical 
@@ -583,8 +583,8 @@ Likewise as with the traditional \acrop{HDL}, descriptions made in a
 functional \acro{HDL} must eventually be converted into a netlist. This 
 research also features a prototype compiler, which has the same name as the 
 language: \CLaSH\footnote{\CLaSHtiny: 
-% \acrotiny{CAES} Language for Synchronous Hardware.
-``Hidden for blind review'' Language for Synchronous Hardware
+\acrotiny{CAES} Language for Synchronous Hardware.
+% ``Hidden for blind review'' Language for Synchronous Hardware
 } 
 (pronounced: clash). This compiler converts the Haskell code to equivalently 
 behaving synthesizable \VHDL\ code, ready to be converted to an actual netlist 
@@ -1079,8 +1079,8 @@ representation is also highlighted.
     circuit designer can specify his own type classes and corresponding 
     instances. The \CLaSH\ compiler will infer the type of every polymorphic 
     argument depending on how the function is applied. There is however one 
-    constraint: the top level function that is being translated can not have 
-    polymorphic arguments. The arguments of the top-level can not be 
+    constraint: the top level function that is being translated cannot have 
+    polymorphic arguments. The arguments of the top-level cannot be 
     polymorphic as there is no way to infer the \emph{specific} types of the 
     arguments. 
     
@@ -1154,8 +1154,8 @@ representation is also highlighted.
     adds 1 to its (next) argument. 
     
     A lambda expression allows a designer to introduce a function in any 
-	expression without first defining that function. Consider the following 
-	expression, which again adds 1 to every element of a vector:
+	  expression without first defining that function. Consider the following 
+	  expression, which again adds 1 to every element of a vector:
 
     \hspace{-1.7em}
     \begin{minipage}{0.93\linewidth}
@@ -1349,7 +1349,7 @@ hardware. The second stage of the compiler, the \emph{normalization} phase,
 exhaustively applies a set of \emph{meaning-preserving} transformations on the 
 \emph{Core} description until this description is in a \emph{normal form}. 
 This set of transformations includes transformations typically found in 
-reduction systems and lambda calculus~\cite{lambdacalculus}, such as 
+reduction systems and lambda calculus, such as 
 $\beta$-reduction and $\eta$-expansion. It also includes transformations that 
 are responsible for the specialization of higher-order functions to `regular' 
 first-order functions, and specializing polymorphic types to concrete types.
@@ -1360,7 +1360,7 @@ normalized description and a set of concurrent signal assignments. The
 end-product of the \CLaSH\ compiler is called a \VHDL\ \emph{netlist} as the 
 result resembles an actual netlist description, and the fact that it is \VHDL\ 
 is only an implementation detail; e.g., the output could have been Verilog or 
-even \acro{EDIF}.
+even \acro{EDIF}. For verification purposes of the generated \VHDL, the compiler also creates a test bench and corresponding input, allowing a developer to compare the external behavior of the \VHDL\ netlist against the original \CLaSH\ design.
 
 \section{Use cases}
 \label{sec:usecases}
@@ -1669,7 +1669,7 @@ actual designs.
 \label{sec:relatedwork}
 This section describes the features of existing (functional) hardware 
 description languages and highlights the advantages that \CLaSH\ has 
-over existing work.
+over existing work. % Note that a more comprehensive and quantitative comparison is planned as future research.
 
 % Many functional hardware description languages have been developed over the 
 % years. Early work includes such languages as $\mu$\acro{FP}~\cite{muFP}, an 
@@ -1853,15 +1853,14 @@ functions.
 % description languages do not offer.
 
 The \CLaSH\ compiler has also been used to translate non-trivial functional 
-descriptions such as a streaming reduction circuit~\cite{blindreview} 
-%~\cite{reductioncircuit} 
+descriptions such as a streaming reduction circuit~\cite{reductioncircuit} 
 for floating point numbers. \Cref{tab:resources} displays the design 
-characteristics of both the \CLaSH\ design and the hand-optimized \VHDL\ 
-design for the same \acro{FPGA}; it shows that a designer does not sacrifice 
-on speed when using \CLaSH. Because the compiler is still in its prototyping 
-stage, no effort has been put in optimizing the resource usage. However, 
-future work includes optimizations passes within the compiler that will reduce 
-the resource usage.
+characteristics of both the \CLaSH\ design and a hand-optimized \VHDL\ 
+design where the same global design decisions and local optimizations were 
+applied to both designs. The figures in the table show that the results are 
+comparable, but we remark that they only give a first impression. Future 
+research includes a more thorough investigation into the performance 
+differences of the two designs.
 
 \begin{table}
 \caption{Design characteristics Reduction circuit}
@@ -1869,9 +1868,9 @@ the resource usage.
 \vspace{-0.5em}
 \centerline{\begin{tabular}{lrr} \toprule
   & \textbf{\CLaSH} & \textbf{\acro{VHDL}}\\ \midrule
-CLB Slices \& \acrop{LUT} & 8184  & 4734 \\
-Dffs or Latches           & 2937  & 2810 \\
-MHz                       & 165   & 171  \\ \bottomrule
+CLB Slices \& \acrop{LUT} & 4076  & 4734 \\
+Dffs or Latches           & 2467  & 2810 \\
+Operating Frequency (MHz) & 159   & 171  \\ \bottomrule
 \end{tabular}}
 \vspace{-1em}
 \end{table}
@@ -1882,7 +1881,7 @@ The choice of describing state explicitly as an extra argument and result can
 be seen as a mixed blessing. Even though descriptions that use state are 
 usually very clear, distributing and collecting substate can become tedious 
 and even error-prone. Automating the required distribution and collection, or 
-finding a abstraction mechanism that suppresses state would make \CLaSH\ 
+finding an abstraction mechanism that suppresses state would make \CLaSH\ 
 easier to use. Currently, one of the examined approaches to suppress state in 
 the specification is by using Haskell's arrow-abstraction.
 
